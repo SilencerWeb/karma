@@ -1,0 +1,121 @@
+{
+  "name": "react-atomic-boilerplate",
+  "version": "0.1.0",
+  "private": false,
+  "dependencies": {
+    "@storybook/react": "^3.4.6",
+    "normalize.css": "^8.0.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-router-dom": "^4.2.2",
+    "styled-components": "^3.3.2",
+    "webpack": "3.8.1",
+    "webpack-dev-server": "2.9.4"
+  },
+  "devDependencies": {
+    "@atomix/eslint-config-react": "^6.4.0",
+    "autoprefixer": "8.6.0",
+    "babel-core": "6.26.3",
+    "babel-eslint": "8.2.3",
+    "babel-jest": "23.0.1",
+    "babel-loader": "7.1.4",
+    "babel-preset-react-app": "^3.1.1",
+    "babel-runtime": "6.26.0",
+    "case-sensitive-paths-webpack-plugin": "2.1.2",
+    "chalk": "2.4.1",
+    "concurrently": "^3.5.1",
+    "css-loader": "0.28.11",
+    "dotenv": "6.0.0",
+    "dotenv-expand": "4.2.0",
+    "eslint": "4.19.1",
+    "eslint-loader": "2.0.0",
+    "eslint-plugin-flowtype": "2.49.3",
+    "extract-text-webpack-plugin": "3.0.2",
+    "file-loader": "1.1.11",
+    "fs-extra": "6.0.1",
+    "gh-pages": "^1.2.0",
+    "html-webpack-plugin": "3.2.0",
+    "husky": "0.15.0-rc.13",
+    "jest": "23.1.0",
+    "lint-staged": "^7.1.3",
+    "object-assign": "4.1.1",
+    "postcss-flexbugs-fixes": "3.3.1",
+    "postcss-loader": "2.1.5",
+    "promise": "8.0.1",
+    "raf": "3.4.0",
+    "react-dev-utils": "^5.0.1",
+    "resolve": "1.7.1",
+    "style-loader": "0.21.0",
+    "svg-sprite-loader": "^3.8.0",
+    "svgo": "^1.0.5",
+    "svgo-loader": "^2.1.0",
+    "sw-precache-webpack-plugin": "0.11.5",
+    "url-loader": "1.0.1",
+    "webpack-manifest-plugin": "2.0.3",
+    "whatwg-fetch": "2.0.4"
+  },
+  "scripts": {
+    "dev:storybook": "start-storybook -p 3001 -c .storybook",
+    "dev:webpack": "node scripts/start.js",
+    "dev": "flow && concurrently 'yarn dev:storybook' 'yarn dev:webpack'",
+    "dev:without-flow": "concurrently 'yarn dev:storybook' 'node scripts/start.js'",
+    "build:storybook": "build-storybook -c .storybook -o build/storybook",
+    "build": "flow && node scripts/build.js",
+    "build:without-flow": "node scripts/build.js",
+    "deploy": "yarn build && yarn gh-pages",
+    "deploy:without-flow": "yarn build:without-flow && yarn gh-pages",
+    "deploy:with-storybook": "yarn build && yarn build:storybook && yarn gh-pages",
+    "deploy:with-storybook:without-flow": "yarn build:without-flow && yarn build:storybook && yarn gh-pages",
+    "deploy:without-flow:with-storybook": "yarn deploy:with-storybook:without-flow",
+    "lint": "yarn eslint src",
+    "lint:fix": "yarn eslint src --fix",
+    "test": "node scripts/test.js --env=jsdom",
+    "gh-pages": "gh-pages -d build",
+    "precommit": "flow && lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "yarn lint"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,mjs}"
+    ],
+    "setupFiles": [
+      "<rootDir>/config/polyfills.js"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}",
+      "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}"
+    ],
+    "testEnvironment": "node",
+    "testURL": "http://localhost",
+    "transform": {
+      "^.+\\.(js|jsx|mjs)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"
+    ],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node",
+      "mjs"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  }
+}
