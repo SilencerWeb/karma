@@ -1,7 +1,7 @@
 {
   "name": "react-atomic-boilerplate",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "dependencies": {
     "@storybook/react": "^3.4.6",
     "normalize.css": "^8.0.0",
@@ -14,7 +14,6 @@
     "webpack-dev-server": "2.9.4"
   },
   "devDependencies": {
-    "@atomix/eslint-config-react": "^6.4.0",
     "autoprefixer": "8.6.0",
     "babel-core": "6.26.3",
     "babel-eslint": "8.2.3",
@@ -68,16 +67,9 @@
     "deploy:with-storybook": "yarn build && yarn build:storybook && yarn gh-pages",
     "deploy:with-storybook:without-flow": "yarn build:without-flow && yarn build:storybook && yarn gh-pages",
     "deploy:without-flow:with-storybook": "yarn deploy:with-storybook:without-flow",
-    "lint": "yarn eslint src",
-    "lint:fix": "yarn eslint src --fix",
     "test": "node scripts/test.js --env=jsdom",
     "gh-pages": "gh-pages -d build",
     "precommit": "flow && lint-staged"
-  },
-  "lint-staged": {
-    "src/**/*.js": [
-      "yarn lint"
-    ]
   },
   "jest": {
     "collectCoverageFrom": [
