@@ -1,269 +1,60 @@
 // @flow
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
+import { withKnobs, select, object, text, boolean, number } from '@storybook/addon-knobs';
 
 import { Button } from './';
 
 import { shortLeftArrow } from 'ui/outlines';
 
 
-storiesOf('Button/raised', module)
-  .add('primary', () => (
-    <Button type={ 'raised' } theme="primary">Hi, I'm raised button :)</Button>
-  ))
-  .add('secondary', () => (
-    <Button type={ 'raised' } theme="secondary">Hi, I'm raised button :)</Button>
-  ));
+const stories = storiesOf('Button', module);
 
-storiesOf('Button/raised/as tag \'a\'', module)
-  .add('primary', () => (
-    <Button tag='a' type={ 'raised' } theme="primary">Hi, I'm raised button :)</Button>
-  ))
-  .add('secondary', () => (
-    <Button tag='a' type={ 'raised' } theme="secondary">Hi, I'm raised button :)</Button>
-  ));
+stories.addDecorator(withKnobs);
 
-storiesOf('Button/raised/iconic/left', module)
-  .add('primary', () => (
-    <Button
-      type={ 'raised' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      type={ 'raised' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ));
+stories.add('default', () => {
+  const tag = select('tag', {
+    button: 'button',
+    a: 'a',
+  }, 'button');
 
-storiesOf('Button/raised/iconic/left/as tag \'a\'', module)
-  .add('primary', () => (
-    <Button
-      tag='a'
-      type={ 'raised' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      tag='a'
-      type={ 'raised' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ));
+  const type = select('type', {
+    raised: 'raised',
+    flat: 'flat',
+  }, 'raised');
 
-storiesOf('Button/raised/iconic/right', module)
-  .add('primary', () => (
-    <Button
-      type={ 'raised' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      type={ 'raised' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ));
+  const theme = select('theme', {
+    primary: 'primary',
+    secondary: 'secondary',
+  }, 'primary');
 
-storiesOf('Button/raised/iconic/right/as tag \'a\'', module)
-  .add('primary', () => (
-    <Button
-      tag='a'
-      type={ 'raised' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      tag='a'
-      type={ 'raised' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm raised button :)
-    </Button>
-  ));
+  const icon = {
+    svg: shortLeftArrow,
+    height: number(`icon's height (rem)`, 1.6),
+    position: select(`icon's position`, {
+      left: 'left',
+      right: 'right',
+    }, 'right'),
+    rotation: number(`icon's rotation (deg)`, 0),
+  };
 
-storiesOf('Button/flat', module)
-  .add('primary', () => (
-    <Button type={ 'flat' } theme="primary">Hi, I'm flat button :)</Button>
-  ))
-  .add('secondary', () => (
-    <Button type={ 'flat' } theme="secondary">Hi, I'm flat button :)</Button>
-  ));
+  const attributes = object('attributes', {});
 
-storiesOf('Button/flat/as tag \'a\'', module)
-  .add('primary', () => (
-    <Button tag='a' type={ 'flat' } theme="primary">Hi, I'm flat button :)</Button>
-  ))
-  .add('secondary', () => (
-    <Button tag='a' type={ 'flat' } theme="secondary">Hi, I'm flat button :)</Button>
-  ));
+  const onClick = () => alert('onClick works!');
+  const shouldOnClickWork = boolean('onClick', false);
 
-storiesOf('Button/flat/iconic/left', module)
-  .add('primary', () => (
-    <Button
-      type={ 'flat' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
-    >
-      Hi, I'm flat button :)
-    </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      type={ 'flat' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
-    >
-      Hi, I'm flat button :)
-    </Button>
-  ));
+  const content = text('content', `Hi, I'm button :)`);
 
-storiesOf('Button/flat/iconic/left/as tag \'a\'', module)
-  .add('primary', () => (
+  return (
     <Button
-      tag='a'
-      type={ 'flat' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
+      tag={ tag }
+      type={ type }
+      theme={ theme }
+      icon={ icon }
+      attributes={ attributes }
+      onClick={ shouldOnClickWork && onClick }
     >
-      Hi, I'm flat button :)
+      { content }
     </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      tag='a'
-      type={ 'flat' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'left',
-      } }
-    >
-      Hi, I'm flat button :)
-    </Button>
-  ));
-
-storiesOf('Button/flat/iconic/right', module)
-  .add('primary', () => (
-    <Button
-      type={ 'flat' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm flat button :)
-    </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      type={ 'flat' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm flat button :)
-    </Button>
-  ));
-
-storiesOf('Button/flat/iconic/right/as tag \'a\'', module)
-  .add('primary', () => (
-    <Button
-      tag='a'
-      type={ 'flat' }
-      theme="primary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm flat button :)
-    </Button>
-  ))
-  .add('secondary', () => (
-    <Button
-      tag='a'
-      type={ 'flat' }
-      theme="secondary"
-      icon={ {
-        svg: shortLeftArrow,
-        position: 'right',
-        rotation: 180,
-      } }
-    >
-      Hi, I'm flat button :)
-    </Button>
-  ));
-
-storiesOf('Button', module)
-  .add('with onClick callback', () => (
-    <Button type={ 'raised' } theme="primary" onClick={ () => alert('it works!') }>Hi, I'm raised button :)</Button>
-  ));
+  );
+});

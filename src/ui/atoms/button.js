@@ -10,8 +10,8 @@ import { color } from 'ui/theme';
 type props = {
   className?: string,
   tag?: string,
-  type: string,
-  theme: string,
+  type?: string,
+  theme?: string,
   icon?: {
     svg: any,
     height?: number,
@@ -30,7 +30,7 @@ const Wrapper = styled.button`
   vertical-align: top;
   font-size: 1.4rem;
   font-weight: 500;
-  line-height: inherit;
+  line-height: 1;
   text-transform: uppercase;
   text-decoration: none;
   border: none;
@@ -40,6 +40,14 @@ const Wrapper = styled.button`
   padding-left: 2rem;
   outline: none;
   cursor: pointer;
+  
+  span {
+    vertical-align: middle;
+  }
+  
+  svg {
+    vertical-align: middle;
+  }
 
   ${props => props.buttonType === 'raised' && css`
     color: ${color.text.secondary};
@@ -75,14 +83,6 @@ const Wrapper = styled.button`
       }
     `}
   `}
-  
-  span {
-    vertical-align: middle;
-  }
-  
-  svg {
-    vertical-align: middle;
-  }
 `;
 
 export const Button = (props: props) => {
@@ -102,8 +102,8 @@ export const Button = (props: props) => {
   return (
     <WrapperWithAnotherTag
       className={ props.className }
-      buttonType={ props.type }
-      theme={ props.theme }
+      buttonType={ props.type || 'raised' }
+      theme={ props.theme || 'primary' }
       icon={ props.icon && {
         isIconic: props.icon.svg,
         position: props.icon.position,

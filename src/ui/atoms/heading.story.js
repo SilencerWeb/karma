@@ -1,75 +1,43 @@
 // @flow
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
+import { withKnobs, select, text } from '@storybook/addon-knobs';
 
 import { Heading } from './';
 
+const stories = storiesOf('Heading', module);
 
-storiesOf('Heading/dark/simple', module)
-  .add('h1', () => (
-    <Heading>Hello, I'm heading :)</Heading>
-  ))
-  .add('h2', () => (
-    <Heading tag={ 'h2' }>Hello, I'm heading :)</Heading>
-  ))
-  .add('h3', () => (
-    <Heading tag={ 'h3' }>Hello, I'm heading :)</Heading>
-  ))
-  .add('h4', () => (
-    <Heading tag={ 'h4' }>Hello, I'm heading :)</Heading>
-  ))
-  .add('h5', () => (
-    <Heading tag={ 'h5' }>Hello, I'm heading :)</Heading>
-  ))
-  .add('h6', () => (
-    <Heading tag={ 'h6' }>Hello, I'm heading :)</Heading>
-  ));
+stories.addDecorator(withKnobs);
 
-storiesOf('Heading/dark/titles', module)
-  .add('h1', () => (
-    <Heading title>Hello, I'm heading :)</Heading>
-  ))
-  .add('h2', () => (
-    <Heading tag={ 'h2' } title>Hello, I'm heading :)</Heading>
-  ))
-  .add('h3', () => (
-    <Heading tag={ 'h3' } title>Hello, I'm heading :)</Heading>
-  ))
-  .add('h4', () => (
-    <Heading tag={ 'h4' } title>Hello, I'm heading :)</Heading>
-  ));
+stories.add('default', () => {
+  const tag = select('tag', {
+    h1: 'h1',
+    h2: 'h2',
+    h3: 'h3',
+    h4: 'h4',
+    h5: 'h5',
+    h6: 'h6',
+  }, 'h1');
 
+  const type = select('type', {
+    simple: 'simple',
+    title: 'title',
+  }, 'simple');
 
-storiesOf('Heading/light/simple', module)
-  .add('h1', () => (
-    <Heading light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h2', () => (
-    <Heading tag={ 'h2' } light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h3', () => (
-    <Heading tag={ 'h3' } light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h4', () => (
-    <Heading tag={ 'h4' } light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h5', () => (
-    <Heading tag={ 'h5' } light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h6', () => (
-    <Heading tag={ 'h6' } light>Hello, I'm heading :)</Heading>
-  ));
+  const theme = select('theme', {
+    dark: 'dark',
+    light: 'light',
+  }, 'dark');
 
-storiesOf('Heading/light/titles', module)
-  .add('h1', () => (
-    <Heading title light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h2', () => (
-    <Heading tag={ 'h2' } title light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h3', () => (
-    <Heading tag={ 'h3' } title light>Hello, I'm heading :)</Heading>
-  ))
-  .add('h4', () => (
-    <Heading tag={ 'h4' } title light>Hello, I'm heading :)</Heading>
-  ));
+  const content = text('content', `Hi, I'm heading :)`);
+
+  return (
+    <Heading
+      tag={ tag }
+      type={ type }
+      theme={ theme }
+    >
+      { content }
+    </Heading>
+  );
+});

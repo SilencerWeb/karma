@@ -8,16 +8,16 @@ import { font, color } from 'ui/theme';
 type props = {
   className?: string,
   tag?: string,
-  title?: boolean,
-  light?: boolean,
+  type?: string,
+  theme?: string,
   children: React.Node
 };
 
 const Wrapper = styled.h1`
-  font-family: ${props => props.title ? font.family.secondary : font.family.primary};
+  font-family: ${props => props.type === 'simple' ? font.family.primary : font.family.secondary};
   font-size: ${props => props.fontSize};
-  font-weight: ${props => props.title ? 700 : 300};
-  color: ${props => props.light ? color.text.secondary : color.text.primary};
+  font-weight: ${props => props.type === 'simple' ? 300 : 700};
+  color: ${props => props.theme === 'dark' ? color.text.primary : color.text.secondary};
   margin-top: 0;
   margin-bottom: 0;
   
@@ -43,19 +43,12 @@ export const Heading = (props: props) => {
   return (
     <WrapperWithAnotherTag
       className={ props.className }
-      title={ props.title }
-      fontSize={ props.tag && fontSizes[props.tag] }
-      light={ props.light }
+      type={ props.type || 'simple' }
+      theme={ props.theme || 'dark' }
+      fontSize={ props.tag && fontSizes[props.tag] || fontSizes['h1'] }
       isH6={ props.tag === 'h6' }
     >
       { props.children }
     </WrapperWithAnotherTag>
   );
-};
-
-Heading.defaultProps = {
-  className: '',
-  tag: 'h1',
-  title: false,
-  light: false,
 };
