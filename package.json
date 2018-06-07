@@ -71,6 +71,9 @@
     "gh-pages": "gh-pages -d build",
     "precommit": "flow && lint-staged"
   },
+  "lint-staged": {
+    "src/**/*.js": []
+  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,mjs}"

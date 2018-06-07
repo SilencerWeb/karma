@@ -10,7 +10,7 @@ const SVG = styled.svg`
   ${(p) => p.icon && css`
     width: ${p.icon.node.viewBox.animVal.width / p.icon.node.viewBox.animVal.height}em;
     height: 1em;
-    font-size: ${(p.height || p.icon.node.viewBox.animVal.height) / 10}rem;
+    font-size: ${p.height || (p.icon.node.viewBox.animVal.height / 10)}rem;
   `};
 
   fill: currentColor;
@@ -19,7 +19,7 @@ const SVG = styled.svg`
 export const Icon = (props) => {
   return (
     <SVG className={ props.className } icon={ props.icon } height={ props.height }>
-      <use xlinkHref={ `#${props.icon.id}` } />
+      <use xlinkHref={ `#${props.icon.id}` }/>
     </SVG>
   );
 };

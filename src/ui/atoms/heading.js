@@ -13,7 +13,7 @@ type props = {
   children: React.Node
 };
 
-const StyledHeading = styled.h1`
+const Wrapper = styled.h1`
   font-family: ${props => props.title ? font.family.secondary : font.family.primary};
   font-size: ${props => props.fontSize};
   font-weight: ${props => props.title ? 700 : 300};
@@ -37,11 +37,11 @@ export const Heading = (props: props) => {
     h6: '1.2rem',
   };
 
-  const HeadingWithAnotherTag = props.tag && props.tag !== 'h1' ?
-    StyledHeading.withComponent(props.tag) : StyledHeading;
+  const WrapperWithAnotherTag = props.tag && props.tag !== 'h1' ?
+    Wrapper.withComponent(props.tag) : Wrapper;
 
   return (
-    <HeadingWithAnotherTag
+    <WrapperWithAnotherTag
       className={ props.className }
       title={ props.title }
       fontSize={ props.tag && fontSizes[props.tag] }
@@ -49,7 +49,7 @@ export const Heading = (props: props) => {
       isH6={ props.tag === 'h6' }
     >
       { props.children }
-    </HeadingWithAnotherTag>
+    </WrapperWithAnotherTag>
   );
 };
 
