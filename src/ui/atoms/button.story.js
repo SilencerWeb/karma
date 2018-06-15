@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
-import { withKnobs, select, object, text, boolean, number } from '@storybook/addon-knobs';
+import { withKnobs, select, text, number } from '@storybook/addon-knobs';
 
 import { Button } from './';
 
@@ -9,52 +9,73 @@ import { shortLeftArrow } from 'ui/outlines';
 
 
 const stories = storiesOf('Button', module);
-
 stories.addDecorator(withKnobs);
 
-stories.add('default', () => {
-  const tag = select('tag', {
-    button: 'button',
-    a: 'a',
-  }, 'button');
+stories
+  .add('default', () => {
+    const content = text('content', `Hi, I'm button`);
 
-  const type = select('type', {
-    raised: 'raised',
-    flat: 'flat',
-  }, 'raised');
+    const tag = select('tag', {
+      button: 'button',
+      a: 'a',
+    }, 'button');
 
-  const theme = select('theme', {
-    primary: 'primary',
-    secondary: 'secondary',
-  }, 'primary');
+    const type = select('type', {
+      raised: 'raised',
+      flat: 'flat',
+    }, 'raised');
 
-  const icon = {
-    svg: shortLeftArrow,
-    height: number(`icon's height (rem)`, 1.6),
-    position: select(`icon's position`, {
-      left: 'left',
-      right: 'right',
-    }, 'right'),
-    rotation: number(`icon's rotation (deg)`, 0),
-  };
+    const theme = select('theme', {
+      primary: 'primary',
+      secondary: 'secondary',
+    }, 'primary');
 
-  const attributes = object('attributes', {});
+    return (
+      <Button
+        tag={ tag }
+        type={ type }
+        theme={ theme }
+      >
+        { content }
+      </Button>
+    );
+  })
+  .add('iconic', () => {
+    const content = text('content', `Hi, I'm button`);
 
-  const onClick = () => alert('onClick works!');
-  const shouldOnClickWork = boolean('onClick', false);
+    const tag = select('tag', {
+      button: 'button',
+      a: 'a',
+    }, 'button');
 
-  const content = text('content', `Hi, I'm button :)`);
+    const type = select('type', {
+      raised: 'raised',
+      flat: 'flat',
+    }, 'raised');
 
-  return (
-    <Button
-      tag={ tag }
-      type={ type }
-      theme={ theme }
-      icon={ icon }
-      attributes={ attributes }
-      onClick={ shouldOnClickWork && onClick }
-    >
-      { content }
-    </Button>
-  );
-});
+    const theme = select('theme', {
+      primary: 'primary',
+      secondary: 'secondary',
+    }, 'primary');
+
+    const icon = {
+      svg: shortLeftArrow,
+      height: number(`icon's height (rem)`, 1.6),
+      position: select(`icon's position`, {
+        left: 'left',
+        right: 'right',
+      }, 'right'),
+      rotation: number(`icon's rotation (deg)`, 0),
+    };
+
+    return (
+      <Button
+        tag={ tag }
+        type={ type }
+        theme={ theme }
+        icon={ icon }
+      >
+        { content }
+      </Button>
+    );
+  });

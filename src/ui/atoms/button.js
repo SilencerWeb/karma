@@ -22,8 +22,9 @@ type props = {
     string: any,
   },
   onClick?: Function,
-  children: React.Node,
+  children: string,
 };
+
 
 const Wrapper = styled.button`
   display: inline-block;
@@ -49,21 +50,21 @@ const Wrapper = styled.button`
     vertical-align: middle;
   }
 
-  ${props => props.buttonType === 'raised' && css`
+  ${p => p.buttonType === 'raised' && css`
     color: ${color.text.secondary};
-    background-color: ${props => props.theme === 'primary' ? color.primary : color.secondary};
+    background-color: ${p => p.theme === 'primary' ? color.primary : color.secondary};
     border-radius: 0.4rem;
     box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
   `}
 
-  ${props => props.buttonType === 'flat' && css`
-    color: ${props => props.theme === 'primary' ? color.primary : color.secondary};
+  ${p => p.buttonType === 'flat' && css`
+    color: ${p => p.theme === 'primary' ? color.primary : color.secondary};
     background-color: transparent;
   `}
   
-  ${props => props.icon && props.icon.isIconic && css`
+  ${p => p.icon && css`
 
-    ${props.icon.position === 'left' ? css`
+    ${p.icon.position === 'left' ? css`
       padding-left: 1.2rem;
       
       span {
@@ -77,13 +78,16 @@ const Wrapper = styled.button`
       }
     `}
     
-    ${props.icon.rotation && css`
+    // p.icon.rotation > 0 is because of the bug with styled-components where if you pass 0 it doesn't go below this line
+    ${p.icon.rotation > 0 && css`
+
       svg {
-        transform: rotate(${props.icon.rotation}deg);
+        transform: rotate(${p.icon.rotation}deg);
       }
     `}
   `}
 `;
+
 
 export const Button = (props: props) => {
   const DEFAULT_ICON_HEIGHT = 1.6;
@@ -96,8 +100,7 @@ export const Button = (props: props) => {
     icon = <Icon icon={ props.icon.svg } height={ iconHeight }/>;
   }
 
-  const WrapperWithAnotherTag = props.tag && props.tag !== 'button' ?
-    Wrapper.withComponent(props.tag) : Wrapper;
+  const WrapperWithAnotherTag = props.tag && props.tag !== 'button' ? Wrapper.withComponent(props.tag) : Wrapper;
 
   return (
     <WrapperWithAnotherTag
@@ -105,7 +108,6 @@ export const Button = (props: props) => {
       buttonType={ props.type || 'raised' }
       theme={ props.theme || 'primary' }
       icon={ props.icon && {
-        isIconic: props.icon.svg,
         position: props.icon.position,
         rotation: props.icon.rotation,
       } }

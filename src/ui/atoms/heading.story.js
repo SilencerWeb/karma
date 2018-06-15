@@ -5,8 +5,8 @@ import { withKnobs, select, text } from '@storybook/addon-knobs';
 
 import { Heading } from './';
 
-const stories = storiesOf('Heading', module);
 
+const stories = storiesOf('Heading', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {
@@ -29,7 +29,7 @@ stories.add('default', () => {
     light: 'light',
   }, 'dark');
 
-  const content = text('content', `Hi, I'm heading :)`);
+  const content = text('content', `Hi, I'm heading`);
 
   return (
     <Heading

@@ -10,22 +10,24 @@ type props = {
   tag?: string,
   type?: string,
   theme?: string,
-  children: React.Node
+  children: string
 };
 
+
 const Wrapper = styled.h1`
-  font-family: ${props => props.type === 'simple' ? font.family.primary : font.family.secondary};
-  font-size: ${props => props.fontSize};
-  font-weight: ${props => props.type === 'simple' ? 300 : 700};
-  color: ${props => props.theme === 'dark' ? color.text.primary : color.text.secondary};
+  font-family: ${p => p.type === 'simple' ? font.family.primary : font.family.secondary};
+  font-size: ${p => p.fontSize};
+  font-weight: ${p => p.type === 'simple' ? 300 : 700};
+  color: ${p => p.theme === 'dark' ? color.text.primary : color.text.secondary};
   margin-top: 0;
   margin-bottom: 0;
   
-  ${props => props.isH6 && css`
+  ${p => p.isH6 && css`
     font-weight: 500;
     text-transform: uppercase;
   `}
 `;
+
 
 export const Heading = (props: props) => {
   const fontSizes = {

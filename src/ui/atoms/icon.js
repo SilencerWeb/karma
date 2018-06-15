@@ -3,26 +3,32 @@ import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
 
-const SVG = styled.svg`
+const Wrapper = styled.svg`
   display: inline-block;
   vertical-align: top;
 
-  ${(p) => p.icon && css`
-    width: ${p.icon.node.viewBox.animVal.width / p.icon.node.viewBox.animVal.height}em;
+  ${p => p.svgWidth && p.svgHeight && css`
+    width: ${p.svgWidth / p.svgHeight}em;
     height: 1em;
-    font-size: ${p.height || (p.icon.node.viewBox.animVal.height / 10)}rem;
+    font-size: ${p.iconHeight || p.svgHeight / 10}rem; // p.svgHeight / 10 is transfer from PX into REM
   `};
 
   fill: currentColor;
 `;
 
+
 export const Icon = (props) => {
+  const svgWidth = props.icon.node.viewBox.animVal.width;
+  const svgHeight = props.icon.node.viewBox.animVal.height;
+  const iconHeight = props.height;
+
   return (
-    <SVG className={ props.className } icon={ props.icon } height={ props.height }>
+    <Wrapper className={ props.className } svgWidth={ svgWidth } svgHeight={ svgHeight } iconHeight={ iconHeight }>
       <use xlinkHref={ `#${props.icon.id}` }/>
-    </SVG>
+    </Wrapper>
   );
 };
+
 
 Icon.propTypes = {
   className: PropTypes.string,
