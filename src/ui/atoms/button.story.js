@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
-import { withKnobs, select, text, number } from '@storybook/addon-knobs';
+import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
 import { Button } from './';
 

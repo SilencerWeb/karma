@@ -10,7 +10,7 @@ const Wrapper = styled.svg`
   ${p => p.svgWidth && p.svgHeight && css`
     width: ${p.svgWidth / p.svgHeight}em;
     height: 1em;
-    font-size: ${p.iconHeight || p.svgHeight / 10}rem; // p.svgHeight / 10 is transfer from PX into REM
+    font-size: ${p.height || p.svgHeight / 10}rem; // p.svgHeight / 10 is transfer from PX into REM
   `};
 
   fill: currentColor;
@@ -20,10 +20,9 @@ const Wrapper = styled.svg`
 export const Icon = (props) => {
   const svgWidth = props.icon.node.viewBox.animVal.width;
   const svgHeight = props.icon.node.viewBox.animVal.height;
-  const iconHeight = props.height;
 
   return (
-    <Wrapper className={ props.className } svgWidth={ svgWidth } svgHeight={ svgHeight } iconHeight={ iconHeight }>
+    <Wrapper className={ props.className } svgWidth={ svgWidth } svgHeight={ svgHeight } height={ props.height }>
       <use xlinkHref={ `#${props.icon.id}` }/>
     </Wrapper>
   );
