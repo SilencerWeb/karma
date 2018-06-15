@@ -28,7 +28,7 @@ type props = {
 
 const Input = styled.input`
   width: 100%;
-  min-height: 28px;
+  min-height: 2.8rem;
   font-weight: 300;
   color: ${color.text.primary};
   background-color: transparent;
@@ -81,8 +81,8 @@ const Textarea = Input.withComponent('textarea').extend`
 
 const Wrapper = styled.div`
   position: relative;
-  max-width: 200px;
-  margin-bottom: 4px;
+  max-width: 20rem;
+  margin-bottom: 0.4rem;
   
   &:last-child {
     margin-bottom: 0;
@@ -92,7 +92,7 @@ const Wrapper = styled.div`
 
     svg {
       position: absolute;
-      top: calc(50% - 4.5px);
+      top: calc(50% - 0.45rem);
       transform: translateY(-50%);
       transition: ${transition};
     }

@@ -6,3 +6,4 @@ export { HelperText } from './helper-text';
 export { TextField } from './text-field';
 export { Checkbox } from './checkbox';
 export { Radio } from './radio';
+export { Switch } from './switch';
