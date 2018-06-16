@@ -6,7 +6,7 @@ import { withKnobs, text, boolean, number, object, array, select } from '@storyb
 import { Checkbox } from './';
 
 
-const stories = storiesOf('Checkbox', module);
+const stories = storiesOf('atoms/Checkbox', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {

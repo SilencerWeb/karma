@@ -8,7 +8,7 @@ import { TextField } from './';
 import { pencil } from 'ui/outlines';
 
 
-const stories = storiesOf('TextField', module);
+const stories = storiesOf('atoms/TextField', module);
 stories.addDecorator(withKnobs);
 
 stories

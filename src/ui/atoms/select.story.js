@@ -20,7 +20,7 @@ import avatar5_2x from 'assets/images/avatars/avatar5@2x.png';
 import avatar6_2x from 'assets/images/avatars/avatar6@2x.png';
 
 
-const stories = storiesOf('Select', module);
+const stories = storiesOf('atoms/Select', module);
 stories.addDecorator(withKnobs);
 
 stories

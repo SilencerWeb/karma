@@ -6,7 +6,7 @@ import { withKnobs, text, boolean, number, object, array, select } from '@storyb
 import { Label } from './';
 
 
-const stories = storiesOf('Label', module);
+const stories = storiesOf('atoms/Label', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {

@@ -8,7 +8,7 @@ import { FormField } from './';
 import { warning } from 'ui/outlines';
 
 
-const stories = storiesOf('FormField', module);
+const stories = storiesOf('molecules/FormField', module);
 stories.addDecorator(withKnobs);
 
 stories

@@ -6,7 +6,7 @@ import { withKnobs, text, boolean, number, object, array, select } from '@storyb
 import { Radio } from './';
 
 
-const stories = storiesOf('Radio', module);
+const stories = storiesOf('atoms/Radio', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {

@@ -5,7 +5,7 @@ import { storiesOf } from '@storybook/react';
 import { Switch } from './';
 
 
-storiesOf('Switch', module)
+storiesOf('atoms/Switch', module)
   .add('default', () => (
     <Switch/>
   ));

@@ -8,7 +8,7 @@ import { Button } from './';
 import { shortLeftArrow } from 'ui/outlines';
 
 
-const stories = storiesOf('Button', module);
+const stories = storiesOf('atoms/Button', module);
 stories.addDecorator(withKnobs);
 
 stories

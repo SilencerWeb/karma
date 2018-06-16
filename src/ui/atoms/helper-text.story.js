@@ -8,7 +8,7 @@ import { HelperText } from './';
 import { warning } from 'ui/outlines';
 
 
-const stories = storiesOf('HelperText', module);
+const stories = storiesOf('atoms/HelperText', module);
 stories.addDecorator(withKnobs);
 
 stories
