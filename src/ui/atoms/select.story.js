@@ -32,59 +32,10 @@ stories
       multi: 'multi',
     }, 'single');
 
-    const disabled = boolean('disabled', false);
-
-    const error = boolean('error', false);
-
-    const fullWidth = boolean('full width', false);
-
-    const options = [
-      {
-        label: 'Neil Roberts',
-        value: 'neil roberts',
-        isDisabled: true,
-      },
-      {
-        label: 'Ray Clarke',
-        value: 'ray clarke',
-      },
-      {
-        label: 'Theresa Mason',
-        value: 'theresa mason',
-      },
-      {
-        label: 'Samantha Kennedy',
-        value: 'samantha kennedy',
-      },
-      {
-        label: 'Alice Kelly',
-        value: 'alice kelly',
-      },
-      {
-        label: 'Liam Hughes',
-        value: 'liam hughes',
-      },
-    ];
-
-    return (
-      <Select
-        placeholder={ placeholder }
-        options={ options }
-        type={ type }
-        theme={ 'simple' }
-        disabled={ disabled }
-        error={ error }
-        fullWidth={ fullWidth }
-      />
-    );
-  })
-  .add('with avatars', () => {
-    const placeholder = text('placeholder', `Choose a person`);
-
-    const type = select('type', {
-      single: 'single',
-      multi: 'multi',
-    }, 'single');
+    const theme = select('theme', {
+      simple: 'simple',
+      avatar: 'avatar',
+    }, 'simple');
 
     const disabled = boolean('disabled', false);
 
@@ -149,7 +100,7 @@ stories
         placeholder={ placeholder }
         options={ options }
         type={ type }
-        theme={ 'avatar' }
+        theme={ theme }
         disabled={ disabled }
         error={ error }
         fullWidth={ fullWidth }

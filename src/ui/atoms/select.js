@@ -33,11 +33,17 @@ type props = {
 
 const Wrapper = styled.div`
   max-width: 20rem;
+  margin-bottom: 0.4rem;
   transition: ${transition};
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   .react-select {
 
     &__control {
+      min-height: 3.4rem;
       background-color: transparent;
       border: none;
       border-bottom: 0.1rem solid #bdbdbd;
@@ -105,6 +111,7 @@ const Wrapper = styled.div`
     }
     
     &__placeholder {
+      width: 100%;
       white-space: nowrap; 
       text-overflow: ellipsis; 
       color: #828282;
@@ -112,13 +119,6 @@ const Wrapper = styled.div`
       margin-right: 0;
       margin-left: 0;
       overflow: hidden;
-    }
-    
-    &__input {
-      
-      input {
-        font-weight: 300;
-      }
     }
   
     &__indicator-separator {

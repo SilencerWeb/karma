@@ -107,19 +107,34 @@ export class FormField extends React.Component<props, state> {
           </Label>
         }
 
-        <TextField
-          id={ id }
-          tag={ this.props.tag }
-          placeholder={ this.props.placeholder }
-          value={ this.state.value }
-          icon={ this.props.icon }
-          disabled={ this.props.disabled }
-          error={ this.props.error || isLimited && !doesValuePassLimit }
-          fullWidth={ this.props.fullWidth }
-          onChange={ this.handleTextFieldChange }
-          onFocus={ this.handleTextFieldFocus }
-          onBlur={ this.handleTextFieldBlur }
-        />
+        {
+          this.props.tag === 'select' ?
+            <Select
+              id={ id }
+              placeholder={ this.props.placeholder }
+              options={ this.props.options }
+              type={ this.props.type }
+              theme={ this.props.theme }
+              disabled={ this.props.disabled }
+              error={ this.props.error }
+              fullWidth={ this.props.fullWidth }
+              onChange={ this.handleTextFieldChange }
+            />
+            :
+            <TextField
+              id={ id }
+              tag={ this.props.tag }
+              placeholder={ this.props.placeholder }
+              value={ this.state.value }
+              icon={ this.props.icon }
+              disabled={ this.props.disabled }
+              error={ this.props.error || isLimited && !doesValuePassLimit }
+              fullWidth={ this.props.fullWidth }
+              onChange={ this.handleTextFieldChange }
+              onFocus={ this.handleTextFieldFocus }
+              onBlur={ this.handleTextFieldBlur }
+            />
+        }
 
         {
           isLimited ?

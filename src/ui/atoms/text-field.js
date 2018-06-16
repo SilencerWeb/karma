@@ -27,9 +27,12 @@ type props = {
 
 
 const Input = styled.input`
+  display: inline-block;
+  vertical-align: top;
   width: 100%;
-  min-height: 2.8rem;
+  min-height: 3.4rem;
   font-weight: 300;
+  line-height: 1.5;
   color: ${color.text.primary};
   background-color: transparent;
   border: none;
