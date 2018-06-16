@@ -172,6 +172,8 @@ export const TextField = (props: props) => {
         disabled={ props.disabled }
         error={ props.error }
         onChange={ props.onChange }
+        onFocus={ props.onFocus }
+        onBlur={ props.onBlur }
       />
       { props.icon && props.icon.position !== 'left' && icon /* Default icon position */ }
     </Wrapper>

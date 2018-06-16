@@ -7,6 +7,10 @@ import { color, transition } from 'ui/theme';
 
 type props = {
   className?: string,
+  content: {
+    off: string,
+    on: string,
+  },
   checked?: boolean,
 };
 
@@ -33,11 +37,18 @@ const Thumb = styled.span`
   transition: ${transition};
 `;
 
+const IconWrapper = styled.div`
+  position: relative;
+  margin-right: 0.8rem;
+  margin-left: 0.8rem;
+`;
+
 const Wrapper = styled.label`
   position: relative;
-  display: inline-block;
-  vertical-align: top;
-  cursor: pointer;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  transition: ${transition};
   
   input {
     position: absolute;
@@ -60,15 +71,24 @@ const Wrapper = styled.label`
       }
     }
   }
+  
+  ${p => p.disabled && css`
+    opacity: 0.5;
+    cursor: not-allowed;
+  `}
 `;
 
 
 export const Switch = (props: props) => {
   return (
-    <Wrapper className={ props.className }>
-      <input type="checkbox" checked={ props.checked }/>
-      <Track/>
-      <Thumb/>
+    <Wrapper className={ props.className } disabled={ props.disabled }>
+      <span>{ props.content.off }</span>
+      <IconWrapper>
+        <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
+        <Track/>
+        <Thumb/>
+      </IconWrapper>
+      <span>{ props.content.on }</span>
     </Wrapper>
   );
 };

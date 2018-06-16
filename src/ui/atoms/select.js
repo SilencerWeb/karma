@@ -498,7 +498,6 @@ export const Select = (props: props) => {
         isMulti={ props.type === 'multi' }
         isSearchable={ false }
         isDisabled={ props.disabled }
-        menuIsOpen={ true }
       />
     </Wrapper>
   );
