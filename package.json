@@ -1,16 +1,15 @@
 {
   "name": "react-atomic-boilerplate",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
+    "classnames": "^2.2.6",
     "normalize.css": "^8.0.0",
     "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-router-dom": "^4.2.2",
-    "styled-components": "^3.3.2",
-    "webpack": "3.8.1",
-    "webpack-dev-server": "2.9.4"
+    "react-select": "^2.0.0-beta.6",
+    "styled-components": "^3.3.2"
   },
   "devDependencies": {
     "@storybook/addon-knobs": "^3.4.6",
@@ -52,6 +51,8 @@
     "svgo-loader": "^2.1.0",
     "sw-precache-webpack-plugin": "0.11.5",
     "url-loader": "1.0.1",
+    "webpack": "3.8.1",
+    "webpack-dev-server": "2.9.4",
     "webpack-manifest-plugin": "2.0.3",
     "whatwg-fetch": "2.0.4"
   },

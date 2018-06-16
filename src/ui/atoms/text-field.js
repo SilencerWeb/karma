@@ -64,6 +64,7 @@ const Input = styled.input`
   
   ${p => p.disabled && css`
     opacity: 0.5;
+    cursor: not-allowed;
   
     &:hover {
       border-bottom-color: #bdbdbd;
@@ -130,6 +131,7 @@ const Wrapper = styled.div`
 
     svg {
       opacity: 0.5;
+      cursor: not-allowed;
     }
   `}
   

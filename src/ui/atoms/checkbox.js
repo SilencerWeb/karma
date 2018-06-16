@@ -75,6 +75,7 @@ const Wrapper = styled.label`
   
   ${p => p.disabled && css`
     opacity: 0.5;
+    cursor: not-allowed;
   `}
 `;
 
@@ -82,7 +83,7 @@ const Wrapper = styled.label`
 export const Checkbox = (props: props) => {
   return (
     <Wrapper className={ props.className } disabled={ props.disabled }>
-      <input type="checkbox" checked={ props.checked }/>
+      <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
       <Checkmark>
         <Icon icon={ check }/>
       </Checkmark>

@@ -64,6 +64,8 @@ stories
 
     const error = boolean('error', false);
 
+    const fullWidth = boolean('full width', false);
+
     return (
       <FormField
         tag={ tag }
@@ -71,6 +73,7 @@ stories
         helperText={ helperText }
         disabled={ disabled }
         error={ error }
+        fullWidth={ fullWidth }
       />
     );
   })
@@ -81,13 +84,16 @@ stories
 
     const error = boolean('error', false);
 
+    const fullWidth = boolean('full width', false);
+
     return (
       <FormField
         tag={ 'textarea' }
         label={ 'Textarea with limited symbols length' }
+        limit={ limit }
         disabled={ disabled }
         error={ error }
-        limit={ limit }
+        fullWidth={ fullWidth }
       />
     );
   });

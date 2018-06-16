@@ -7,3 +7,5 @@ export { TextField } from './text-field';
 export { Checkbox } from './checkbox';
 export { Radio } from './radio';
 export { Switch } from './switch';
+export { Select } from './select';
+export { RetinaImage } from './retina-image';

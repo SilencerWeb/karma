@@ -38,10 +38,10 @@ type state = {
 
 
 const Wrapper = styled.div`
-  width: 20rem;
+  max-width: 20rem;
   
   ${p => p.fullWidth && css`
-    width: 100%;
+    max-width: initial;
   `}
 `;
 
@@ -106,7 +106,7 @@ export class FormField extends React.Component<props, state> {
           value={ this.state.value }
           icon={ this.props.icon }
           disabled={ this.props.disabled }
-          error={ this.props.error || !doesValuePassLimit }
+          error={ this.props.error || isLimited && !doesValuePassLimit }
           fullWidth={ this.props.fullWidth }
           onChange={ this.handleTextFieldChange }
         />
@@ -114,4 +114,4 @@ export class FormField extends React.Component<props, state> {
       </Wrapper>
     );
   }
-};
+}
