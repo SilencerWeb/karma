@@ -1,32 +1,13 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
 import { color } from 'ui/theme';
 
 
-type props = {
-  className?: string,
-  tag?: string,
-  type?: string,
-  theme?: string,
-  icon?: {
-    svg: any,
-    height?: number,
-    position?: string,
-    rotation?: number,
-  },
-  attributes?: {
-    string: any,
-  },
-  onClick?: Function,
-  children: string,
-};
-
-
-const Wrapper = styled.button`
+const WrapperAsButton = styled.button`
   display: inline-block;
   vertical-align: top;
   font-size: 1.4rem;
@@ -47,17 +28,18 @@ const Wrapper = styled.button`
   }
   
   svg {
+    font-size: 1.6rem;
     vertical-align: middle;
   }
 
-  ${p => p.buttonType === 'raised' && css`
+  ${p => p.type === 'raised' && css`
     color: ${color.text.secondary};
     background-color: ${p => p.theme === 'primary' ? color.primary : color.secondary};
     border-radius: 0.4rem;
     box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
   `}
 
-  ${p => p.buttonType === 'flat' && css`
+  ${p => p.type === 'flat' && css`
     color: ${p => p.theme === 'primary' ? color.primary : color.secondary};
     background-color: transparent;
   `}
@@ -88,25 +70,20 @@ const Wrapper = styled.button`
   `}
 `;
 
+const WrapperAsLink = WrapperAsButton.withComponent('a');
+
 
 export const Button = (props: props) => {
-  const DEFAULT_ICON_HEIGHT = 1.6;
+  const Wrapper = props.tag && props.tag === 'a' ? WrapperAsLink : WrapperAsButton;
 
-  let icon;
-
-  if (props.icon && props.icon.svg) {
-    const iconHeight = props.icon.height || DEFAULT_ICON_HEIGHT;
-
-    icon = <Icon icon={ props.icon.svg } height={ iconHeight }/>;
-  }
-
-  const WrapperWithAnotherTag = props.tag && props.tag !== 'button' ? Wrapper.withComponent(props.tag) : Wrapper;
+  const icon = props.icon && props.icon.svg ? <Icon icon={ props.icon.svg }/> : null;
 
   return (
-    <WrapperWithAnotherTag
+    <Wrapper
+      id={ props.id }
       className={ props.className }
-      buttonType={ props.type || 'raised' }
-      theme={ props.theme || 'primary' }
+      type={ props.type }
+      theme={ props.theme }
       icon={ props.icon && {
         position: props.icon.position,
         rotation: props.icon.rotation,
@@ -118,7 +95,34 @@ export const Button = (props: props) => {
       <span>
         { props.children }
       </span>
-      { props.icon && props.icon.position !== 'left' && icon /* Default icon position */ }
-    </WrapperWithAnotherTag>
+      { props.icon && props.icon.position === 'right' && icon }
+    </Wrapper>
   );
+};
+
+
+Button.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  tag: PropTypes.string,
+  type: PropTypes.string,
+  theme: PropTypes.string,
+  icon: PropTypes.shape({
+    svg: PropTypes.any.isRequired,
+    position: PropTypes.string,
+    rotation: PropTypes.number,
+  }),
+  attributes: PropTypes.object,
+  onClick: PropTypes.func,
+  children: PropTypes.string.isRequired,
+};
+
+Button.defaultProps = {
+  tag: 'button',
+  type: 'raised',
+  theme: 'primary',
+  svg: {
+    position: 'right',
+    rotation: 0,
+  },
 };
