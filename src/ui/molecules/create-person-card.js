@@ -1,6 +1,6 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
@@ -9,13 +9,6 @@ import { PersonCard } from 'ui/molecules';
 import { plus } from 'ui/outlines';
 
 import { color } from 'ui/theme';
-
-
-type props = {
-  className?: string
-};
-
-type state = {};
 
 
 const Wrapper = styled.div`
@@ -38,7 +31,7 @@ const Wrapper = styled.div`
 `;
 
 
-export class CreatePersonCard extends React.Component<props, state> {
+export class CreatePersonCard extends React.Component {
   state = {
     isCreating: false,
   };
@@ -86,3 +79,8 @@ export class CreatePersonCard extends React.Component<props, state> {
     );
   }
 }
+
+
+CreatePersonCard.propTypes = {
+  className: PropTypes.string,
+};
