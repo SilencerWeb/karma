@@ -1,24 +1,10 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
 import { transition } from 'ui/theme';
-
-
-type props = {
-  className?: string,
-  disabled?: boolean,
-  error?: boolean,
-  icon?: {
-    svg: any,
-    height?: number,
-    position?: string,
-    rotation?: number,
-  },
-  children: string,
-};
 
 
 const Wrapper = styled.div`
@@ -29,49 +15,50 @@ const Wrapper = styled.div`
   color: #828282;
   transition: color ${transition}, opacity ${transition};
   
-  ${p => p.disabled && css`
-    opacity: 0.5;
-  `}
+  svg {
+    font-size: 1.5rem;
+  }
   
-  ${p => p.error && !p.disabled && css`
-    color: #db4437;
-  `}
-
-  ${p => p.icon && css`
-
-    ${p.icon.position === 'left' ? css`
-      
-      span {
-        margin-left: 1.2rem;
-      }
-    ` : css`
-
-      span {
-        margin-right: 1.2rem;
-      }
+  ${p => css`
+  
+    ${p.disabled && css`
+      opacity: 0.5;
     `}
     
-    // p.icon.rotation > 0 is because of the bug with styled-components where if you pass 0 it doesn't go below this line
-    ${p.icon.rotation > 0 && css`
-
-      svg {
-        transform: rotate(${p.icon.rotation}deg);
-      }
+    ${p.error && !p.disabled && css`
+      color: #db4437;
+    `}
+  
+    ${p.icon && css`
+  
+      ${p.icon.position === 'left' && css`
+        
+        span {
+          margin-left: 1.2rem;
+        }
+      `}
+  
+      ${p.icon.position === 'right' && css`
+        
+      span {
+          margin-right: 1.2rem;
+        }
+      `}
+      
+      
+      ${p.icon.rotation && css`
+  
+        svg {
+          transform: rotate(${p.icon.rotation}deg);
+        }
+      `}
     `}
   `}
 `;
 
 
 export const HelperText = (props: props) => {
-  const DEFAULT_HELPER_TEXT_ICON_HEIGHT = 1.5;
-
-  let icon;
-
-  if (props.icon && props.icon.svg) {
-    let iconHeight = props.icon.height || DEFAULT_HELPER_TEXT_ICON_HEIGHT;
-
-    icon = <Icon icon={ props.icon.svg } height={ iconHeight }/>;
-  }
+  const icon = props.icon && props.icon.svg ? <Icon icon={ props.icon.svg }/> : null;
 
   return (
     <Wrapper
@@ -85,7 +72,28 @@ export const HelperText = (props: props) => {
     >
       { props.icon && props.icon.position === 'left' && icon }
       <span>{ props.children }</span>
-      { props.icon && props.icon.position !== 'left' && icon }
+      { props.icon && props.icon.position === 'right' && icon }
     </Wrapper>
   );
+};
+
+
+HelperText.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
+  error: PropTypes.bool,
+  icon: PropTypes.shape({
+    svg: PropTypes.any.isRequired,
+    position: PropTypes.string,
+    rotation: PropTypes.number,
+  }),
+  children: PropTypes.string.isRequired,
+};
+
+HelperText.defaultProps = {
+  icon: {
+    position: 'right',
+    rotation: 0,
+  },
 };

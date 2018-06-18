@@ -63,12 +63,7 @@ stories
     };
 
     return (
-      <Button
-        tag={ tag }
-        type={ type }
-        theme={ theme }
-        icon={ icon }
-      >
+      <Button tag={ tag } type={ type } theme={ theme } icon={ icon }>
         { content }
       </Button>
     );

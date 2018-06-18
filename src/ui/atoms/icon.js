@@ -7,11 +7,14 @@ const Wrapper = styled.svg`
   display: inline-block;
   vertical-align: top;
 
-  ${p => p.svgWidth && p.svgHeight && css`
-    width: ${p.svgWidth / p.svgHeight}em;
-    height: 1em;
-    font-size: ${p.height || p.svgHeight / 10}rem; // p.svgHeight / 10 is transfer from PX into REM
-  `};
+  ${p => css`
+
+    ${p.svgWidth && p.svgHeight && css`
+      width: ${p.svgWidth / p.svgHeight}em;
+      height: 1em;
+      font-size: ${p.height || p.svgHeight / 10}rem; // p.svgHeight / 10 is transfer from PX into REM
+    `};
+  `}
 
   fill: currentColor;
 `;

@@ -68,6 +68,7 @@ Heading.propTypes = {
   tag: PropTypes.string,
   type: PropTypes.string,
   theme: PropTypes.string,
+  children: PropTypes.string.isRequired,
 };
 
 Heading.defaultProps = {

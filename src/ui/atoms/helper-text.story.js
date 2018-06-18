@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
@@ -30,7 +29,6 @@ stories
 
     const icon = {
       svg: warning,
-      height: number(`icon's height (rem)`, 1.6),
       position: select(`icon's position`, {
         left: 'left',
         right: 'right',

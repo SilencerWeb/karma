@@ -52,7 +52,7 @@ const WrapperAsButton = styled.button`
       background-color: transparent;
       
       ${p.theme === 'primary' && css`
-        color: ${color.secondary};
+        color: ${color.primary};
       `}
       
       ${p.theme === 'secondary' && css`
@@ -60,21 +60,25 @@ const WrapperAsButton = styled.button`
       `}
     `}
     
+    
     ${p.icon && css`
   
-      ${p.icon.position === 'left' ? css`
+      ${p.icon.position === 'left' && css`
         padding-left: 1.2rem;
         
         span {
           margin-left: 2rem;
         }
-      ` : css`
+      `}
+  
+      ${p.icon.position === 'right' && css`
         padding-right: 1.2rem;
         
         span {
           margin-right: 2rem;
         }
       `}
+      
       
       ${p.icon.rotation && css`
   

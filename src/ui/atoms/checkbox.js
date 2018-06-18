@@ -66,9 +66,12 @@ const Wrapper = styled.label`
     }
   }
   
-  ${p => p.disabled && css`
-    opacity: 0.5;
-    cursor: not-allowed;
+  ${p => css`
+  
+    ${p.disabled && css`
+      opacity: 0.5;
+      cursor: not-allowed;
+    `}
   `}
 `;
 
