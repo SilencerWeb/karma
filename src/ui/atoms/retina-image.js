@@ -19,6 +19,7 @@ export const RetinaImage = (props) => {
   );
 };
 
+
 RetinaImage.propTypes = {
   className: PropTypes.string,
   src: PropTypes.shape({

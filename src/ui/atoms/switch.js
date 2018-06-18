@@ -1,18 +1,8 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { color, transition } from 'ui/theme';
-
-
-type props = {
-  className?: string,
-  content: {
-    off: string,
-    on: string,
-  },
-  checked?: boolean,
-};
 
 
 const Track = styled.div`
@@ -72,9 +62,12 @@ const Wrapper = styled.label`
     }
   }
   
-  ${p => p.disabled && css`
-    opacity: 0.5;
-    cursor: not-allowed;
+  ${p => css`
+  
+    ${p.disabled && css`
+      opacity: 0.5;
+      cursor: not-allowed;
+    `}
   `}
 `;
 
@@ -91,4 +84,19 @@ export const Switch = (props: props) => {
       <span>{ props.content.on }</span>
     </Wrapper>
   );
+};
+
+
+Switch.propTypes = {
+  className: PropTypes.string,
+  content: {
+    off: PropTypes.string.isRequired,
+    on: PropTypes.string.isRequired,
+  },
+  checked: PropTypes.bool,
+  disabled: PropTypes.bool,
+};
+
+Switch.propTypes = {
+  disabled: false,
 };
