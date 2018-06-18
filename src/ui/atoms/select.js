@@ -1,34 +1,15 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { Creatable } from 'react-select/dist/react-select.es'; // such import because of flow
+import ReactSelect from 'react-select';
+
 import { Icon, Checkbox, RetinaImage } from 'ui/atoms';
 
 import { check, close } from 'ui/outlines';
 
 import { color, transition } from 'ui/theme';
-
-
-type props = {
-  className?: string,
-  placeholder?: string,
-  options: Array<{
-    label: string,
-    value: string,
-    isDisabled?: boolean,
-    avatar?: {
-      _1x: string,
-      _2x: string,
-    },
-  }>,
-  type: string,
-  theme: string,
-  disabled: boolean,
-  error: boolean,
-  fullWidth: boolean,
-};
 
 
 const Wrapper = styled.div`
@@ -210,72 +191,75 @@ const Wrapper = styled.div`
     }
   }
   
-  ${p => p.type === 'single' && css`
-
-    .react-select {
+  ${p => css`
   
-      &__option {
+    ${p.type === 'single' && css`
   
-        &--is-selected {
-          color: ${color.text.secondary};
-          background-color: ${color.primary};
-          transition: ${transition};
-        
-          &:hover {
+      .react-select {
+    
+        &__option {
+    
+          &--is-selected {
+            color: ${color.text.secondary};
             background-color: ${color.primary};
+            transition: ${transition};
+          
+            &:hover {
+              background-color: ${color.primary};
+            }
           }
         }
       }
-    }
-  `}
-  
-  ${p => (p.type !== 'single' || p.theme !== 'simple') && css`
-
-    .react-select {
-  
-      &__option {
-        padding-right: 1.2rem;
-        padding-left: 1.2rem;
-      }
-    }
-  `}
-  
-  ${p => p.disabled && css`
-    opacity: 0.5;
-    cursor: not-allowed;
+    `}
     
-    .react-select {
-
-      &__value-container {
-        margin-right: 0.8rem;
-      }
-    }
-  `}
+    ${(p.type !== 'single' || p.theme !== 'simple') && css` // passing elements: SingleSimple, MultiAvatar, MultiAvatar
   
-  ${p => p.error && !p.disabled && css`
+      .react-select {
     
-    .react-select {
-    
-      &__control {
-        border-bottom-color: #db4437;
-        
-        &:hover {
-          border-bottom-color: #db4437;
+        &__option {
+          padding-right: 1.2rem;
+          padding-left: 1.2rem;
         }
-        
-        &-is-focused {
+      }
+    `}
+    
+    ${p.disabled && css`
+      opacity: 0.5;
+      cursor: not-allowed;
+      
+      .react-select {
+  
+        &__value-container {
+          margin-right: 0.8rem;
+        }
+      }
+    `}
+    
+    ${p.error && !p.disabled && css`
+      
+      .react-select {
+      
+        &__control {
           border-bottom-color: #db4437;
           
           &:hover {
             border-bottom-color: #db4437;
           }
+          
+          &-is-focused {
+            border-bottom-color: #db4437;
+            
+            &:hover {
+              border-bottom-color: #db4437;
+            }
+          }
         }
       }
-    }
-  `}
-  
-  ${p => p.fullWidth && css`
-    max-width: initial;
+    `}
+    
+    ${p.fullWidth && css`
+      max-width: initial;
+    `}
   `}
 `;
 
@@ -313,17 +297,20 @@ const Avatar = styled.div`
     transition: ${transition};
   }
   
-  ${p => p.selected && p.type === 'multi' && css`
-
-    &:after {
-      opacity: 0.8;
-      visibility: visible;
-    }
-
-    svg {
-      opacity: 1;
-      visibility: visible;
-    }
+  ${p => css`
+  
+    ${p.selected && p.type === 'multi' && css`
+  
+      &:after {
+        opacity: 0.8;
+        visibility: visible;
+      }
+  
+      svg {
+        opacity: 1;
+        visibility: visible;
+      }
+    `}
   `}
 `;
 
@@ -357,9 +344,7 @@ const SingleSimpleOption = (props) => {
 
   return (
     <div className={ optionClassNames } { ...innerProps }>
-      <span>
-        { props.children }
-      </span>
+      <span>{ props.children }</span>
     </div>
   );
 };
@@ -380,9 +365,7 @@ const MultiSimpleOption = (props) => {
   return (
     <div className={ optionClassNames } { ...innerProps }>
       <Checkbox checked={ props.isSelected } readOnly/>
-      <span>
-        { props.children }
-      </span>
+      <span>{ props.children }</span>
     </div>
   );
 };
@@ -410,9 +393,7 @@ const SingleAvatarOption = (props) => {
       <Avatar>
         <RetinaImage src={ imageSources } alt={ props.children }/>
       </Avatar>
-      <span>
-        { props.children }
-      </span>
+      <span>{ props.children }</span>
     </div>
   );
 };
@@ -441,15 +422,13 @@ const MultiAvatarOption = (props) => {
         <RetinaImage src={ imageSources } alt={ props.children }/>
         <Icon icon={ check }/>
       </Avatar>
-      <span>
-        { props.children }
-      </span>
+      <span>{ props.children }</span>
     </div>
   );
 };
 
 
-export const Select = (props: props) => {
+export const Select = (props) => {
   const styles = {
     multiValue: () => ({}),
     multiValueLabel: () => ({}),
@@ -480,6 +459,7 @@ export const Select = (props: props) => {
 
   return (
     <Wrapper
+      id={ props.id }
       className={ props.className }
       type={ props.type }
       theme={ props.theme }
@@ -487,7 +467,7 @@ export const Select = (props: props) => {
       error={ props.error }
       fullWidth={ props.fullWidth }
     >
-      <Creatable
+      <ReactSelect
         classNamePrefix={ 'react-select' }
         placeholder={ props.placeholder }
         options={ props.options }
@@ -501,4 +481,37 @@ export const Select = (props: props) => {
       />
     </Wrapper>
   );
+};
+
+Select.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  placeholder: PropTypes.string,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+      isDisabled: PropTypes.bool,
+      avatar: {
+        _1x: PropTypes.string.isRequired,
+        _2x: PropTypes.string.isRequired,
+      },
+    }),
+  ).isRequired,
+  type: PropTypes.string,
+  theme: PropTypes.string,
+  disabled: PropTypes.bool,
+  error: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+};
+
+Select.defaultProps = {
+  options: {
+    isDisabled: false,
+  },
+  type: 'single',
+  theme: 'simple',
+  disabled: false,
+  error: false,
+  fullWidth: false,
 };

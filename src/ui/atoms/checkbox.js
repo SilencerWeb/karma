@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
@@ -94,10 +93,9 @@ Checkbox.propTypes = {
   className: PropTypes.string,
   checked: PropTypes.bool,
   disabled: PropTypes.bool,
-  children: PropTypes.string.isRequired,
+  children: PropTypes.string, // children isn't required because sometimes I need empty styled Checkbox
 };
 
 Checkbox.defaultProps = {
-  checked: false,
   disabled: false,
 };
