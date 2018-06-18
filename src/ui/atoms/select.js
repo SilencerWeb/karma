@@ -478,6 +478,7 @@ export const Select = (props) => {
         isMulti={ props.type === 'multi' }
         isSearchable={ false }
         isDisabled={ props.disabled }
+        onChange={ props.onChange }
       />
     </Wrapper>
   );
@@ -504,6 +505,7 @@ Select.propTypes = {
   disabled: PropTypes.bool,
   error: PropTypes.bool,
   fullWidth: PropTypes.bool,
+  onChange: PropTypes.bool,
 };
 
 Select.defaultProps = {

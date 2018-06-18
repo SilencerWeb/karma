@@ -1,80 +1,38 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Label, TextField, Select, HelperText } from 'ui/atoms';
 
 import { color } from 'ui/theme';
 
 
-type props = {
-  id?: string,
-  className?: string,
-  tag?: string,
-  placeholder?: string,
-  icon?: {
-    svg: any,
-    height?: number,
-    position?: string,
-    rotation?: number,
-  },
-  label?: string,
-  helperText?: {
-    content: string,
-    icon?: {
-      svg: any,
-      height?: number,
-      position?: string,
-      rotation?: number,
-    },
-  },
-  options: Array<{
-    label: string,
-    value: string,
-    isDisabled?: boolean,
-    avatar?: {
-      _1x: string,
-      _2x: string,
-    },
-  }>,
-  type: string,
-  theme: string,
-  limit?: number,
-  disabled?: boolean,
-  error?: boolean,
-  fullWidth?: boolean,
-};
-
-type state = {
-  value: string,
-};
-
-
 const Wrapper = styled.div`
   max-width: 20rem;
   
-  ${p => p.focused && css`
-  
-    ${Label} {
-      color: ${color.primary};
-    }
-  `}
-  
-  ${p => p.fullWidth && css`
-    max-width: initial;
+  ${p => css`
+
+    ${p.focused && css`
+    
+      ${Label} {
+        color: ${color.primary};
+      }
+    `}
+    
+    ${p.fullWidth && css`
+      max-width: initial;
+    `}
   `}
 `;
 
 
-export class FormField extends React.Component<props, state> {
+export class FormField extends React.Component {
   state = {
     value: '',
     focused: false,
   };
 
-  handleTextFieldChange = (e: SyntheticEvent<HTMLInputElement>) => {
-    (e.currentTarget: HTMLInputElement);
-
+  handleTextFieldChange = () => {
     const value = e.currentTarget.value;
 
     this.setState({
@@ -95,9 +53,8 @@ export class FormField extends React.Component<props, state> {
   };
 
   render() {
-    // so many conditions with this.props.limit because of flow
     const isLimited = this.props.tag === 'textarea' && this.props.limit && this.props.limit > 0;
-    const doesValuePassLimit = isLimited && this.props.limit && this.state.value.length <= this.props.limit;
+    const doesValuePassLimit = isLimited && this.state.value.length <= this.props.limit;
 
     let id = this.props.id || Math.random().toString(36).substr(2, 9);
 
@@ -169,3 +126,14 @@ export class FormField extends React.Component<props, state> {
     );
   }
 }
+
+
+FormField.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  fullWidth: PropTypes.bool,
+};
+
+FormField.defaultProps = {
+  fullWidth: false,
+};
