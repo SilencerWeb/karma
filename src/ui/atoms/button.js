@@ -32,40 +32,56 @@ const WrapperAsButton = styled.button`
     vertical-align: middle;
   }
 
-  ${p => p.type === 'raised' && css`
-    color: ${color.text.secondary};
-    background-color: ${p => p.theme === 'primary' ? color.primary : color.secondary};
-    border-radius: 0.4rem;
-    box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
-  `}
+  ${p => css`
 
-  ${p => p.type === 'flat' && css`
-    color: ${p => p.theme === 'primary' ? color.primary : color.secondary};
-    background-color: transparent;
-  `}
+    ${p.type === 'raised' && css`
+      color: ${color.text.secondary};
+      border-radius: 0.4rem;
+      box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
+      
+      ${p.theme === 'primary' && css`
+        background-color: ${color.primary};
+      `}
+      
+      ${p.theme === 'secondary' && css`
+        background-color: ${color.secondary};
+      `}
+    `}
   
-  ${p => p.icon && css`
-
-    ${p.icon.position === 'left' ? css`
-      padding-left: 1.2rem;
+    ${p.type === 'flat' && css`
+      background-color: transparent;
       
-      span {
-        margin-left: 2rem;
-      }
-    ` : css`
-      padding-right: 1.2rem;
+      ${p.theme === 'primary' && css`
+        color: ${color.secondary};
+      `}
       
-      span {
-        margin-right: 2rem;
-      }
+      ${p.theme === 'secondary' && css`
+        color: ${color.secondary};
+      `}
     `}
     
-    // p.icon.rotation > 0 is because of the bug with styled-components where if you pass 0 it doesn't go below this line
-    ${p.icon.rotation > 0 && css`
-
-      svg {
-        transform: rotate(${p.icon.rotation}deg);
-      }
+    ${p.icon && css`
+  
+      ${p.icon.position === 'left' ? css`
+        padding-left: 1.2rem;
+        
+        span {
+          margin-left: 2rem;
+        }
+      ` : css`
+        padding-right: 1.2rem;
+        
+        span {
+          margin-right: 2rem;
+        }
+      `}
+      
+      ${p.icon.rotation && css`
+  
+        svg {
+          transform: rotate(${p.icon.rotation}deg);
+        }
+      `}
     `}
   `}
 `;

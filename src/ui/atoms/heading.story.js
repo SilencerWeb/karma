@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
@@ -32,11 +31,7 @@ stories.add('default', () => {
   const content = text('content', `Hi, I'm heading`);
 
   return (
-    <Heading
-      tag={ tag }
-      type={ type }
-      theme={ theme }
-    >
+    <Heading tag={ tag } type={ type } theme={ theme }>
       { content }
     </Heading>
   );

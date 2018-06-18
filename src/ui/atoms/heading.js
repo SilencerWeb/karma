@@ -5,23 +5,34 @@ import { font, color } from 'ui/theme';
 
 
 export const Heading = styled.h1`
-  font-family: ${font.family.primary};
-  font-size: 5.2rem;
-  font-weight: 300;
-  color: ${color.text.primary};
   margin-top: 0;
   margin-bottom: 0;
   
-  ${p => p.type && p.type === 'title' && css`
-    font-family: ${font.family.secondary};
-    font-weight: 700;
-  `}
+  ${p => css`
   
-  ${p => p.theme && p.theme === 'white' && css`
-    color: ${color.text.secondary};
-  `}
-  
-  ${p => p.tag && css`
+    ${p.type === 'simple' && css`
+      font-family: ${font.family.primary};
+      font-weight: 300;
+    `}
+    
+    ${p.type === 'title' && css`
+      font-family: ${font.family.secondary};
+      font-weight: 700;
+    `}
+    
+    
+    ${p.theme === 'dark' && css`
+      color: ${color.text.primary};
+    `}
+    
+    ${p.theme === 'light' && css`
+      color: ${color.text.secondary};
+    `}
+    
+    
+    ${p.tag === 'h1' && css`
+      font-size: 5.2rem;
+    `}
 
     ${p.tag === 'h2' && css`
       font-size: 3.6rem;
@@ -41,10 +52,10 @@ export const Heading = styled.h1`
     
     ${p.tag === 'h6' && css`
       font-size: 1.2rem;
+      text-transform: uppercase;
       
-      ${p.type && p.type !== 'title' && css`
+      ${p.type !== 'title' && css`
         font-weight: 500;
-        text-transform: uppercase;
       `}
     `}
   `}
@@ -52,11 +63,15 @@ export const Heading = styled.h1`
 
 
 Heading.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
   tag: PropTypes.string,
-  type: PropTypes.string.isRequired,
-  theme: PropTypes.string.isRequired,
+  type: PropTypes.string,
+  theme: PropTypes.string,
 };
 
 Heading.defaultProps = {
   tag: 'h1',
+  type: 'simple',
+  theme: 'dark',
 };
