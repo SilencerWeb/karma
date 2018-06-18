@@ -57,7 +57,7 @@ const Wrapper = styled.div`
 `;
 
 
-export const HelperText = (props: props) => {
+export const HelperText = (props) => {
   const icon = props.icon && props.icon.svg ? <Icon icon={ props.icon.svg }/> : null;
 
   return (
@@ -81,13 +81,13 @@ export const HelperText = (props: props) => {
 HelperText.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
-  disabled: PropTypes.bool,
-  error: PropTypes.bool,
   icon: PropTypes.shape({
     svg: PropTypes.any.isRequired,
     position: PropTypes.string,
     rotation: PropTypes.number,
   }),
+  disabled: PropTypes.bool,
+  error: PropTypes.bool,
   children: PropTypes.string.isRequired,
 };
 
@@ -96,4 +96,6 @@ HelperText.defaultProps = {
     position: 'right',
     rotation: 0,
   },
+  disabled: false,
+  error: false,
 };

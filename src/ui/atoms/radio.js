@@ -1,16 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { color, transition } from 'ui/theme';
-
-
-type props = {
-  className?: string,
-  checked?: boolean,
-  disabled?: boolean,
-  children: string,
-};
 
 
 const Checkmark = styled.span`
@@ -74,14 +67,17 @@ const Wrapper = styled.label`
     }
   }
   
-  ${p => p.disabled && css`
-    opacity: 0.5;
-    cursor: not-allowed;
+  ${p => css`
+  
+    ${p.disabled && css`
+      opacity: 0.5;
+      cursor: not-allowed;
+    `}
   `}
 `;
 
 
-export const Radio = (props: props) => {
+export const Radio = (props) => {
   return (
     <Wrapper className={ props.className } disabled={ props.disabled }>
       <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
@@ -89,4 +85,18 @@ export const Radio = (props: props) => {
       <Text>{ props.children }</Text>
     </Wrapper>
   );
+};
+
+
+Radio.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  checked: PropTypes.bool,
+  disabled: PropTypes.bool,
+  children: PropTypes.string.isRequired,
+};
+
+Radio.defaultProps = {
+  checked: false,
+  disabled: false,
 };

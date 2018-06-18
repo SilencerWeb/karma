@@ -17,20 +17,25 @@ export const Label = styled.label`
     margin-bottom: 0;
   }
   
-  ${p => p.error && !p.disabled && css`
-    color: #db4437;
-  `}
+  ${p => css`
   
-  ${p => p.disabled && css`
-    opacity: 0.5;
+    ${p.error && !p.disabled && css`
+      color: #db4437;
+    `}
+    
+    ${p.disabled && css`
+      opacity: 0.5;
+    `}
   `}
 `;
 
 
 Label.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
   disabled: PropTypes.bool,
   error: PropTypes.bool,
-  children: PropTypes.string,
+  children: PropTypes.string.isRequired,
 };
 
 Label.defaultProps = {

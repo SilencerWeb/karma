@@ -96,3 +96,8 @@ Checkbox.propTypes = {
   disabled: PropTypes.bool,
   children: PropTypes.string.isRequired,
 };
+
+Checkbox.defaultProps = {
+  checked: false,
+  disabled: false,
+};
