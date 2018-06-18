@@ -1,28 +1,12 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Button, RetinaImage, Heading, Icon } from 'ui/atoms';
 
 import { shortLeftArrow, user } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
-
-
-type props = {
-  className?: string,
-  type: string,
-  avatar: {
-    _1x: string,
-    _2x: string,
-  },
-  name: string,
-  position: string,
-  karma: number,
-  description: string
-};
-
-type state = {};
 
 
 const Avatar = styled.div`
@@ -226,7 +210,7 @@ const Wrapper = styled.div`
 `;
 
 
-export class PersonCard extends React.Component<props, state> {
+export class PersonCard extends React.Component {
   state = {
     isCreating: this.props.create,
     name: {
@@ -400,3 +384,17 @@ export class PersonCard extends React.Component<props, state> {
     );
   }
 }
+
+
+PersonCard.propTypes = {
+  className: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  position: PropTypes.string.isRequired,
+  karma: PropTypes.number.isRequired,
+  description: PropTypes.string.isRequired,
+  create: PropTypes.bool,
+};
+
+PersonCard.defaultProps = {
+  create: false,
+};
