@@ -1,29 +1,10 @@
-// @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
 import { color, transition } from 'ui/theme';
-
-
-type props = {
-  id?: string,
-  className?: string,
-  tag?: string,
-  placeholder?: string,
-  value?: string,
-  icon?: {
-    svg: any,
-    height?: number,
-    position?: string,
-    rotation?: number,
-  },
-  disabled?: boolean,
-  error?: boolean,
-  fullWidth: boolean,
-  onChange: Function,
-};
 
 
 const Input = styled.input`
@@ -53,29 +34,32 @@ const Input = styled.input`
     color: #828282;
   }
   
-  ${p => p.error && !p.disabled && css`
-    border-bottom-color: #db4437;
+  ${p => css` 
   
-    &:hover {
+    ${p.error && !p.disabled && css`
       border-bottom-color: #db4437;
-    }
     
-    &:focus {
-      border-bottom-color: #db4437;
-    }
-  `}
-  
-  ${p => p.disabled && css`
-    opacity: 0.5;
-    cursor: not-allowed;
-  
-    &:hover {
-      border-bottom-color: #bdbdbd;
-    }
+      &:hover {
+        border-bottom-color: #db4437;
+      }
+      
+      &:focus {
+        border-bottom-color: #db4437;
+      }
+    `}
     
-    &:focus {
-      border-bottom-color: #bdbdbd;
-    }
+    ${p.disabled && css`
+      opacity: 0.5;
+      cursor: not-allowed;
+    
+      &:hover {
+        border-bottom-color: #bdbdbd;
+      }
+      
+      &:focus {
+        border-bottom-color: #bdbdbd;
+      }
+    `}
   `}
 `;
 
@@ -92,68 +76,67 @@ const Wrapper = styled.div`
     margin-bottom: 0;
   }
 
-  ${p => p.icon && css`
+  ${p => css`
 
-    svg {
-      position: absolute;
-      top: calc(50% - 0.45rem);
-      transform: translateY(-50%);
-      transition: ${transition};
-    }
-
-    ${p.icon.position === 'left' ? css`
-
-      ${Input} {
-        padding-left: 2.4rem;
-      }
-      
+    ${p.icon && css`
+  
       svg {
-        left: 0;
+        position: absolute;
+        top: calc(50% - 0.45rem);
+        font-size: 1.6rem;
+        transform: translateY(-50%);
+        transition: ${transition};
       }
-    ` : css`
-
-      ${Input} {
-        padding-right: 2.4rem;
-      }
+  
+  
+      ${p.icon.position === 'left' && css`
+  
+        ${Input} {
+          padding-left: 2.4rem;
+        }
+        
+        svg {
+          left: 0;
+        }
+      `}
+  
+      ${p.icon.position === 'right' && css`
+  
+        ${Input} {
+          padding-right: 2.4rem;
+        }
+        
+        svg {
+          right: 0;
+        }
+      `}
       
+      
+      ${p.icon.rotation && css`
+  
+        svg {
+          transform: translateY(-50%) rotate(${p.icon.rotation}deg);
+        }    
+      `}
+    `}
+    
+    ${p.disabled && css`
+  
       svg {
-        right: 0;
+        opacity: 0.5;
+        cursor: not-allowed;
       }
     `}
     
-    // p.icon.rotation > 0 is because of the bug with styled-components where if you pass 0 it doesn't go below this line
-    ${p.icon.rotation > 0 && css`
-
-      svg {
-        transform: translateY(-50%) rotate(${p.icon.rotation}deg);
-      }    
+    ${p.fullWidth && css`
+      max-width: initial;
     `}
-  `}
-  
-  ${p => p.disabled && css`
-
-    svg {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  `}
-  
-  ${p => p.fullWidth && css`
-    max-width: initial;
   `}
 `;
 
 
-export const TextField = (props: props) => {
-  const DEFAULT_HELPER_TEXT_ICON_HEIGHT = 1.6;
-
-  let icon;
-
-  if (props.icon && props.icon.svg) {
-    let iconHeight = props.icon.height || DEFAULT_HELPER_TEXT_ICON_HEIGHT;
-
-    icon = <Icon icon={ props.icon.svg } height={ iconHeight }/>;
-  }
+export const TextField = (props) => {
+  const icon = props.icon && props.icon.svg ? <Icon icon={ props.icon.svg }/> : null;
 
   const Field = props.tag && props.tag === 'textarea' ? Textarea : Input;
 
@@ -178,7 +161,38 @@ export const TextField = (props: props) => {
         onFocus={ props.onFocus }
         onBlur={ props.onBlur }
       />
-      { props.icon && props.icon.position !== 'left' && icon /* Default icon position */ }
+      { props.icon && props.icon.position === 'right' && icon }
     </Wrapper>
   );
+};
+
+
+TextField.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  tag: PropTypes.string,
+  placeholder: PropTypes.string,
+  value: PropTypes.string,
+  icon: {
+    svg: PropTypes.any.isRequired,
+    position: PropTypes.string,
+    rotation: PropTypes.number,
+  },
+  disabled: PropTypes.bool,
+  error: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+  onChange: PropTypes.func,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+};
+
+TextField.propTypes = {
+  tag: 'input',
+  icon: {
+    position: 'right',
+    rotation: 0,
+  },
+  disabled: false,
+  error: false,
+  fullWidth: false,
 };

@@ -72,7 +72,7 @@ const Wrapper = styled.label`
 `;
 
 
-export const Switch = (props: props) => {
+export const Switch = (props) => {
   return (
     <Wrapper className={ props.className } disabled={ props.disabled }>
       <span>{ props.content.off }</span>
