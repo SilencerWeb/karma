@@ -20,7 +20,7 @@ type props = {
     isDisabled?: boolean,
     avatar?: {
       _1x: string,
-      _2x?: string,
+      _2x: string,
     },
   }>,
   type: string,

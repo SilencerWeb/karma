@@ -7,19 +7,19 @@ import { FormField } from './';
 
 import { warning } from 'ui/outlines';
 
-import avatar_1x from 'assets/images/avatars/avatar.png';
-import avatar2_1x from 'assets/images/avatars/avatar2.png';
-import avatar3_1x from 'assets/images/avatars/avatar3.png';
-import avatar4_1x from 'assets/images/avatars/avatar4.png';
-import avatar5_1x from 'assets/images/avatars/avatar5.png';
-import avatar6_1x from 'assets/images/avatars/avatar6.png';
+import avatar_1x from 'assets/images/avatars/small/avatar.png';
+import avatar2_1x from 'assets/images/avatars/small/avatar2.png';
+import avatar3_1x from 'assets/images/avatars/small/avatar3.png';
+import avatar4_1x from 'assets/images/avatars/small/avatar4.png';
+import avatar5_1x from 'assets/images/avatars/small/avatar5.png';
+import avatar6_1x from 'assets/images/avatars/small/avatar6.png';
 
-import avatar_2x from 'assets/images/avatars/avatar@2x.png';
-import avatar2_2x from 'assets/images/avatars/avatar2@2x.png';
-import avatar3_2x from 'assets/images/avatars/avatar3@2x.png';
-import avatar4_2x from 'assets/images/avatars/avatar4@2x.png';
-import avatar5_2x from 'assets/images/avatars/avatar5@2x.png';
-import avatar6_2x from 'assets/images/avatars/avatar6@2x.png';
+import avatar_2x from 'assets/images/avatars/small/avatar@2x.png';
+import avatar2_2x from 'assets/images/avatars/small/avatar2@2x.png';
+import avatar3_2x from 'assets/images/avatars/small/avatar3@2x.png';
+import avatar4_2x from 'assets/images/avatars/small/avatar4@2x.png';
+import avatar5_2x from 'assets/images/avatars/small/avatar5@2x.png';
+import avatar6_2x from 'assets/images/avatars/small/avatar6@2x.png';
 
 
 const textFieldStories = storiesOf('molecules/FormField/TextField', module);

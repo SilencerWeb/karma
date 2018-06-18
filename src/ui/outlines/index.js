@@ -4,5 +4,6 @@ export { default as pencil } from './pencil.svg';
 export { default as search } from './search.svg';
 export { default as warning } from './warning.svg';
 export { default as check } from './check.svg';
-export { default as dropDownArrow } from './drop-down-arrow.svg';
 export { default as close } from './close.svg';
+export { default as plus } from './plus.svg';
+export { default as user } from './user.svg';

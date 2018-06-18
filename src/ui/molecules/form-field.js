@@ -28,6 +28,17 @@ type props = {
       rotation?: number,
     },
   },
+  options: Array<{
+    label: string,
+    value: string,
+    isDisabled?: boolean,
+    avatar?: {
+      _1x: string,
+      _2x: string,
+    },
+  }>,
+  type: string,
+  theme: string,
   limit?: number,
   disabled?: boolean,
   error?: boolean,
