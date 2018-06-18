@@ -73,7 +73,7 @@ const WrapperAsButton = styled.button`
 const WrapperAsLink = WrapperAsButton.withComponent('a');
 
 
-export const Button = (props: props) => {
+export const Button = (props) => {
   const Wrapper = props.tag && props.tag === 'a' ? WrapperAsLink : WrapperAsButton;
 
   const icon = props.icon && props.icon.svg ? <Icon icon={ props.icon.svg }/> : null;

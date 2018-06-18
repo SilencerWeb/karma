@@ -1,20 +1,13 @@
 // @flow
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
 import { check } from 'ui/outlines';
 
 import { color, transition } from 'ui/theme';
-
-
-type props = {
-  className?: string,
-  checked?: boolean,
-  disabled?: boolean,
-  children: string,
-};
 
 
 const Checkmark = styled.span`
@@ -80,9 +73,9 @@ const Wrapper = styled.label`
 `;
 
 
-export const Checkbox = (props: props) => {
+export const Checkbox = (props) => {
   return (
-    <Wrapper className={ props.className } disabled={ props.disabled }>
+    <Wrapper id={ props.id } className={ props.className } disabled={ props.disabled }>
       <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
       <Checkmark>
         <Icon icon={ check }/>
@@ -90,4 +83,13 @@ export const Checkbox = (props: props) => {
       <Text>{ props.children }</Text>
     </Wrapper>
   );
+};
+
+
+Checkbox.propTypes = {
+  id: PropTypes.string,
+  className: PropTypes.string,
+  checked: PropTypes.bool,
+  disabled: PropTypes.bool,
+  children: PropTypes.string.isRequired,
 };
