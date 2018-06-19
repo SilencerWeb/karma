@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
-import { transition } from 'ui/theme';
+import { color, transition } from 'ui/theme';
 
 
 const Wrapper = styled.div`
@@ -15,10 +15,6 @@ const Wrapper = styled.div`
   color: #828282;
   transition: color ${transition}, opacity ${transition};
   
-  svg {
-    font-size: 1.5rem;
-  }
-  
   ${p => css`
   
     ${p.disabled && css`
@@ -26,10 +22,14 @@ const Wrapper = styled.div`
     `}
     
     ${p.error && !p.disabled && css`
-      color: #db4437;
+      color: ${color.error};
     `}
   
     ${p.icon && css`
+
+      svg {
+        font-size: 1.5rem;
+      }
   
       ${p.icon.position === 'left' && css`
         
@@ -46,7 +46,7 @@ const Wrapper = styled.div`
       `}
       
       
-      ${p.icon.rotation && css`
+      ${p.icon.rotation && p.icon.rotation > 0 && css`
   
         svg {
           transform: rotate(${p.icon.rotation}deg);
@@ -79,11 +79,10 @@ export const HelperText = (props) => {
 
 
 HelperText.propTypes = {
-  id: PropTypes.string,
   className: PropTypes.string,
   icon: PropTypes.shape({
     svg: PropTypes.any.isRequired,
-    position: PropTypes.string,
+    position: PropTypes.string.isRequired,
     rotation: PropTypes.number,
   }),
   disabled: PropTypes.bool,
@@ -92,10 +91,6 @@ HelperText.propTypes = {
 };
 
 HelperText.defaultProps = {
-  icon: {
-    position: 'right',
-    rotation: 0,
-  },
   disabled: false,
   error: false,
 };

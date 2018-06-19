@@ -9,6 +9,8 @@ const stories = storiesOf('atoms/Heading', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {
+  const content = text('content', `Hi, I'm heading`);
+
   const tag = select('tag', {
     h1: 'h1',
     h2: 'h2',
@@ -27,9 +29,7 @@ stories.add('default', () => {
     dark: 'dark',
     light: 'light',
   }, 'dark');
-
-  const content = text('content', `Hi, I'm heading`);
-
+  
   return (
     <Heading tag={ tag } type={ type } theme={ theme }>
       { content }

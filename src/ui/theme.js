@@ -10,6 +10,7 @@ export const font = {
 export const color = {
   primary: '#00b5ff',
   secondary: '#a24bff',
+  error: '#db4437',
   text: {
     primary: '#3c4858',
     secondary: '#ffffff',

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { color, transition } from 'ui/theme';
 
 
-const Checkmark = styled.span`
+const CheckMark = styled.span`
   position: absolute;
   top: 50%;
   left: 0;
@@ -55,7 +55,7 @@ const Wrapper = styled.label`
     
     &:checked {
       
-      ~ ${Checkmark} {
+      ~ ${CheckMark} {
         border-color: ${color.primary};
         
         &:after {
@@ -80,7 +80,7 @@ export const Radio = (props) => {
   return (
     <Wrapper className={ props.className } disabled={ props.disabled }>
       <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
-      <Checkmark/>
+      <CheckMark/>
       <Text>{ props.children }</Text>
     </Wrapper>
   );
@@ -92,9 +92,9 @@ Radio.propTypes = {
   className: PropTypes.string,
   checked: PropTypes.bool,
   disabled: PropTypes.bool,
-  children: PropTypes.string.isRequired,
+  children: PropTypes.string,
 };
 
 Radio.defaultProps = {
-  checked: false,
+  disabled: false,
 };

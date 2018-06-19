@@ -43,8 +43,8 @@ textFieldStories
 
     return (
       <FormField
-        placeholder={ placeholder }
         tag={ tag }
+        placeholder={ placeholder }
         label={ label }
         disabled={ disabled }
         error={ error }
@@ -64,7 +64,6 @@ textFieldStories
       content: text('helper text content', `Hi! I'm helper text`),
       icon: {
         svg: warning,
-        height: number(`helper text icon's height (rem)`, 1.5),
         position: select(`helper text icon's position`, {
           left: 'left',
           right: 'right',
@@ -102,8 +101,10 @@ textFieldStories
     return (
       <FormField
         tag={ 'textarea' }
+        textField={ {
+          limit: limit,
+        } }
         label={ 'Textarea with limited symbols length' }
-        limit={ limit }
         disabled={ disabled }
         error={ error }
         fullWidth={ fullWidth }
@@ -192,9 +193,11 @@ selectStories
       <FormField
         placeholder={ placeholder }
         tag={ 'select' }
-        options={ options }
-        type={ type }
-        theme={ theme }
+        select={ {
+          options: options,
+          type: type,
+          theme: theme,
+        } }
         label={ label }
         disabled={ disabled }
         error={ error }
@@ -221,7 +224,6 @@ selectStories
       content: text('helper text content', `Hi! I'm helper text`),
       icon: {
         svg: warning,
-        height: number(`helper text icon's height (rem)`, 1.5),
         position: select(`helper text icon's position`, {
           left: 'left',
           right: 'right',
@@ -290,11 +292,13 @@ selectStories
 
     return (
       <FormField
-        placeholder={ placeholder }
         tag={ 'select' }
-        options={ options }
-        type={ type }
-        theme={ theme }
+        placeholder={ placeholder }
+        select={ {
+          options: options,
+          type: type,
+          theme: theme,
+        } }
         label={ label }
         helperText={ helperText }
         disabled={ disabled }

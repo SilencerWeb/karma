@@ -89,14 +89,14 @@ export const Switch = (props) => {
 
 Switch.propTypes = {
   className: PropTypes.string,
-  content: {
+  content: PropTypes.shape({
     off: PropTypes.string.isRequired,
     on: PropTypes.string.isRequired,
-  },
+  }),
   checked: PropTypes.bool,
   disabled: PropTypes.bool,
 };
 
-Switch.propTypes = {
+Switch.defaultProps = {
   disabled: false,
 };

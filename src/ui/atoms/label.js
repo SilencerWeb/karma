@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
-import { transition } from 'ui/theme';
+import { color, transition } from 'ui/theme';
 
 
 export const Label = styled.label`
@@ -18,13 +18,13 @@ export const Label = styled.label`
   }
   
   ${p => css`
-  
-    ${p.error && !p.disabled && css`
-      color: #db4437;
-    `}
     
     ${p.disabled && css`
       opacity: 0.5;
+    `}
+  
+    ${p.error && !p.disabled && css`
+      color: ${color.error};
     `}
   `}
 `;

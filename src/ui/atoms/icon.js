@@ -37,8 +37,3 @@ Icon.propTypes = {
   icon: PropTypes.any.isRequired,
   height: PropTypes.number,
 };
-
-Icon.defaultProps = {
-  className: null,
-  height: null,
-};

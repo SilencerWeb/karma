@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   
   ${p => css`
 
-    ${p.focused && css`
+    ${p.focused && !p.error && css`
     
       ${Label} {
         color: ${color.primary};
@@ -32,9 +32,15 @@ export class FormField extends React.Component {
     focused: false,
   };
 
-  handleTextFieldChange = () => {
+  handleTextFieldChange = (e) => {
     const value = e.currentTarget.value;
 
+    this.setState({
+      value: value,
+    });
+  };
+
+  handleSelectChange = ({ value }) => {
     this.setState({
       value: value,
     });
@@ -53,8 +59,8 @@ export class FormField extends React.Component {
   };
 
   render() {
-    const isLimited = this.props.tag === 'textarea' && this.props.limit && this.props.limit > 0;
-    const doesValuePassLimit = isLimited && this.state.value.length <= this.props.limit;
+    const isLimited = this.props.tag === 'textarea' && this.props.textField.limit && this.props.textField.limit > 0;
+    const doesValuePassLimit = isLimited && this.state.value.length <= this.props.textField.limit;
 
     let id = this.props.id || Math.random().toString(36).substr(2, 9);
 
@@ -62,6 +68,7 @@ export class FormField extends React.Component {
       <Wrapper
         className={ this.props.className }
         focused={ this.state.focused }
+        error={ this.props.error || isLimited && !doesValuePassLimit }
         fullWidth={ this.props.fullWidth }
       >
         {
@@ -69,7 +76,7 @@ export class FormField extends React.Component {
           <Label
             htmlFor={ id }
             disabled={ this.props.disabled }
-            error={ this.props.error }
+            error={ this.props.error || isLimited && !doesValuePassLimit }
           >
             { this.props.label }
           </Label>
@@ -80,13 +87,13 @@ export class FormField extends React.Component {
             <Select
               id={ id }
               placeholder={ this.props.placeholder }
-              options={ this.props.options }
-              type={ this.props.type }
-              theme={ this.props.theme }
+              options={ this.props.select.options }
+              type={ this.props.select.type }
+              theme={ this.props.select.theme }
               disabled={ this.props.disabled }
               error={ this.props.error }
               fullWidth={ this.props.fullWidth }
-              onChange={ this.handleTextFieldChange }
+              onChange={ this.handleSelectChange }
             />
             :
             <TextField
@@ -94,7 +101,7 @@ export class FormField extends React.Component {
               tag={ this.props.tag }
               placeholder={ this.props.placeholder }
               value={ this.state.value }
-              icon={ this.props.icon }
+              icon={ this.props.textField && this.props.textField.icon }
               disabled={ this.props.disabled }
               error={ this.props.error || isLimited && !doesValuePassLimit }
               fullWidth={ this.props.fullWidth }
@@ -108,12 +115,12 @@ export class FormField extends React.Component {
           isLimited ?
             <HelperText
               disabled={ this.props.disabled }
-              error={ this.props.error }
+              error={ this.props.error || isLimited && !doesValuePassLimit }
             >
-              { this.state.value.length }/{ this.props.limit }
+              { this.state.value.length }/{ this.props.textField.limit }
             </HelperText>
             :
-            this.props.helperText &&
+            this.props.helperText && this.props.helperText.content &&
             <HelperText
               icon={ this.props.helperText.icon }
               disabled={ this.props.disabled }
@@ -131,9 +138,48 @@ export class FormField extends React.Component {
 FormField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
+  tag: PropTypes.string,
+  placeholder: PropTypes.string,
+  select: PropTypes.shape({
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired,
+        isDisabled: PropTypes.bool,
+        avatar: {
+          _1x: PropTypes.string.isRequired,
+          _2x: PropTypes.string.isRequired,
+        },
+      }),
+    ).isRequired,
+    type: PropTypes.string,
+    theme: PropTypes.string,
+  }),
+  textField: PropTypes.shape({
+    icon: PropTypes.shape({
+      svg: PropTypes.any.isRequired,
+      position: PropTypes.string.isRequired,
+      rotation: PropTypes.number,
+    }),
+    limit: PropTypes.number,
+  }),
+  label: PropTypes.string,
+  helperText: PropTypes.shape({
+    content: PropTypes.string.isRequired,
+    icon: PropTypes.shape({
+      svg: PropTypes.any.isRequired,
+      position: PropTypes.string.isRequired,
+      rotation: PropTypes.number,
+    }),
+  }),
+  disabled: PropTypes.bool,
+  error: PropTypes.bool,
   fullWidth: PropTypes.bool,
 };
 
 FormField.defaultProps = {
+  tag: 'input',
+  disabled: false,
+  error: false,
   fullWidth: false,
 };

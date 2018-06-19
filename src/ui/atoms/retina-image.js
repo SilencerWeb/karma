@@ -13,7 +13,7 @@ export const RetinaImage = (props) => {
     <img
       className={ props.className }
       src={ props.src._1x }
-      srcSet={ props.src._2x && `${props.src._2x} 2x` }
+      srcSet={ `${props.src._2x} 2x` }
       alt={ props.alt }
     />
   );

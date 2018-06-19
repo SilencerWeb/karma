@@ -34,20 +34,8 @@ const Input = styled.input`
     color: #828282;
   }
   
-  ${p => css` 
-  
-    ${p.error && !p.disabled && css`
-      border-bottom-color: #db4437;
-    
-      &:hover {
-        border-bottom-color: #db4437;
-      }
-      
-      &:focus {
-        border-bottom-color: #db4437;
-      }
-    `}
-    
+  ${p => css`     
+
     ${p.disabled && css`
       opacity: 0.5;
       cursor: not-allowed;
@@ -58,6 +46,18 @@ const Input = styled.input`
       
       &:focus {
         border-bottom-color: #bdbdbd;
+      }
+    `}
+  
+    ${p.error && !p.disabled && css`
+      border-bottom-color: ${color.error};
+    
+      &:hover {
+        border-bottom-color: ${color.error};
+      }
+      
+      &:focus {
+        border-bottom-color: ${color.error};
       }
     `}
   `}
@@ -112,7 +112,7 @@ const Wrapper = styled.div`
       `}
       
       
-      ${p.icon.rotation && css`
+      ${p.icon.rotation && p.icon.rotation > 0 && css`
   
         svg {
           transform: translateY(-50%) rotate(${p.icon.rotation}deg);
@@ -129,7 +129,7 @@ const Wrapper = styled.div`
     `}
     
     ${p.fullWidth && css`
-      max-width: initial;
+      max-width: 100%;
     `}
   `}
 `;
@@ -173,11 +173,11 @@ TextField.propTypes = {
   tag: PropTypes.string,
   placeholder: PropTypes.string,
   value: PropTypes.string,
-  icon: {
+  icon: PropTypes.shape({
     svg: PropTypes.any.isRequired,
-    position: PropTypes.string,
+    position: PropTypes.string.isRequired,
     rotation: PropTypes.number,
-  },
+  }),
   disabled: PropTypes.bool,
   error: PropTypes.bool,
   fullWidth: PropTypes.bool,
@@ -186,12 +186,8 @@ TextField.propTypes = {
   onBlur: PropTypes.func,
 };
 
-TextField.propTypes = {
+TextField.defaultProps = {
   tag: 'input',
-  icon: {
-    position: 'right',
-    rotation: 0,
-  },
   disabled: false,
   error: false,
   fullWidth: false,

@@ -26,11 +26,6 @@ const WrapperAsButton = styled.button`
   span {
     vertical-align: middle;
   }
-  
-  svg {
-    font-size: 1.6rem;
-    vertical-align: middle;
-  }
 
   ${p => css`
 
@@ -60,8 +55,13 @@ const WrapperAsButton = styled.button`
       `}
     `}
     
-    
     ${p.icon && css`
+
+      svg {
+        font-size: 1.6rem;
+        vertical-align: middle;
+      }
+  
   
       ${p.icon.position === 'left' && css`
         padding-left: 1.2rem;
@@ -80,7 +80,7 @@ const WrapperAsButton = styled.button`
       `}
       
       
-      ${p.icon.rotation && css`
+      ${p.icon.rotation && p.icon.rotation > 0 && css`
   
         svg {
           transform: rotate(${p.icon.rotation}deg);
@@ -100,7 +100,6 @@ export const Button = (props) => {
 
   return (
     <Wrapper
-      id={ props.id }
       className={ props.className }
       type={ props.type }
       theme={ props.theme }
@@ -122,27 +121,25 @@ export const Button = (props) => {
 
 
 Button.propTypes = {
-  id: PropTypes.string,
   className: PropTypes.string,
   tag: PropTypes.string,
   type: PropTypes.string,
   theme: PropTypes.string,
   icon: PropTypes.shape({
     svg: PropTypes.any.isRequired,
-    position: PropTypes.string,
+    position: PropTypes.string.isRequired,
     rotation: PropTypes.number,
   }),
   attributes: PropTypes.object,
   onClick: PropTypes.func,
-  children: PropTypes.string.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.element,
+  ]).isRequired,
 };
 
 Button.defaultProps = {
   tag: 'button',
   type: 'raised',
   theme: 'primary',
-  svg: {
-    position: 'right',
-    rotation: 0,
-  },
 };

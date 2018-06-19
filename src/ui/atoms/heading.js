@@ -28,7 +28,7 @@ export const Heading = styled.h1`
     ${p.theme === 'light' && css`
       color: ${color.text.secondary};
     `}
-    
+
     
     ${p.tag === 'h1' && css`
       font-size: 5.2rem;
@@ -54,7 +54,7 @@ export const Heading = styled.h1`
       font-size: 1.2rem;
       text-transform: uppercase;
       
-      ${p.type !== 'title' && css`
+      ${p.type === 'simple' && css`
         font-weight: 500;
       `}
     `}
@@ -63,12 +63,11 @@ export const Heading = styled.h1`
 
 
 Heading.propTypes = {
-  id: PropTypes.string,
   className: PropTypes.string,
   tag: PropTypes.string,
   type: PropTypes.string,
   theme: PropTypes.string,
-  children: PropTypes.string.isRequired,
+  children: PropTypes.string, // children isn't required because sometimes I need empty Checkbox
 };
 
 Heading.defaultProps = {

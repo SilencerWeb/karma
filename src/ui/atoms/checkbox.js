@@ -9,7 +9,7 @@ import { check } from 'ui/outlines';
 import { color, transition } from 'ui/theme';
 
 
-const Checkmark = styled.span`
+const CheckMark = styled.span`
   position: absolute;
   top: 50%;
   left: 0;
@@ -53,7 +53,7 @@ const Wrapper = styled.label`
     
     &:checked {
       
-      ~ ${Checkmark} {
+      ~ ${CheckMark} {
         background-color: ${color.primary};
         border-color: ${color.primary};
         
@@ -77,11 +77,11 @@ const Wrapper = styled.label`
 
 export const Checkbox = (props) => {
   return (
-    <Wrapper id={ props.id } className={ props.className } disabled={ props.disabled }>
+    <Wrapper className={ props.className } disabled={ props.disabled }>
       <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
-      <Checkmark>
+      <CheckMark>
         <Icon icon={ check }/>
-      </Checkmark>
+      </CheckMark>
       <Text>{ props.children }</Text>
     </Wrapper>
   );
@@ -89,11 +89,10 @@ export const Checkbox = (props) => {
 
 
 Checkbox.propTypes = {
-  id: PropTypes.string,
   className: PropTypes.string,
   checked: PropTypes.bool,
   disabled: PropTypes.bool,
-  children: PropTypes.string, // children isn't required because sometimes I need empty styled Checkbox
+  children: PropTypes.string, // children isn't required because sometimes I need empty Checkbox
 };
 
 Checkbox.defaultProps = {

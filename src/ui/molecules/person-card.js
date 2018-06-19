@@ -36,17 +36,20 @@ const Name = Heading.extend`
   outline: none;
   transition: ${transition};
   
-  ${p => p.creating && !p.edited && css`
-    opacity: 0.5;
-  `}
-  
-  ${p => p.creating && p.edited && css`
-    display: none;
-  `}
-  
-  ${p => p.invalid && css`
-    color: #db4437;
-    opacity: 1;
+  ${p => css`
+
+    ${p.creating && !p.edited && css`
+      opacity: 0.5;
+    `}
+    
+    ${p.creating && p.edited && css`
+      display: none;
+    `}
+    
+    ${p.invalid && css`
+      color: ${color.error};
+      opacity: 1;
+    `}
   `}
 `.withComponent('h2');
 
@@ -60,14 +63,17 @@ const EditableName = Name.extend`
   opacity: 0;
   visibility: hidden;
   
-  ${p => p.creating && css`
-    opacity: 1;
-    visibility: visible;
-  `}
-  
-  ${p => p.creating && p.edited && css`
-    position: static;
-    display: block;
+  ${p => css`
+
+    ${p.creating && css`
+      opacity: 1;
+      visibility: visible;
+    `}
+    
+    ${p.creating && p.edited && css`
+      position: static;
+      display: block;
+    `}
   `}
 `;
 
@@ -81,17 +87,20 @@ const Position = styled.span`
   outline: none;
   transition: ${transition};
   
-  ${p => p.creating && !p.edited && css`
-    opacity: 0.5;
-  `}
-  
-  ${p => p.creating && p.edited && css`
-    display: none;
-  `}
-  
-  ${p => p.invalid && css`
-    color: #db4437;
-    opacity: 1;
+  ${p => css`
+
+    ${p.creating && !p.edited && css`
+      opacity: 0.5;
+    `}
+    
+    ${p.creating && p.edited && css`
+      display: none;
+    `}
+    
+    ${p.invalid && css`
+      color: ${color.error};
+      opacity: 1;
+    `}
   `}
 `;
 
@@ -106,13 +115,16 @@ const EditablePosition = styled(Position)`
   visibility: hidden;
   
   ${p => p.creating && css`
-    opacity: 1;
-    visibility: visible;
-  `}
-  
-  ${p => p.creating && p.edited && css`
-    position: static;
-    display: block;
+
+    ${p.creating && css`
+      opacity: 1;
+      visibility: visible;
+    `}
+    
+    ${p.creating && p.edited && css`
+      position: static;
+      display: block;
+    `}
   `}
 `;
 
@@ -121,16 +133,19 @@ const Karma = styled.span`
   font-size: 2.5rem;
   margin-bottom: 1.2rem;
   
-  ${p => p.status === 'positive' && css`
-    color: #27ae60;
-  `}
-  
-  ${p => p.status === 'neutral' && css`
-    color: #bdbdbd;
-  `}
-  
-  ${p => p.status === 'negative' && css`
-    color: #db4437;
+  ${p => css`
+
+    ${p.status === 'positive' && css`
+      color: #27ae60;
+    `}
+    
+    ${p.status === 'neutral' && css`
+      color: #bdbdbd;
+    `}
+    
+    ${p.status === 'negative' && css`
+      color: ${color.error};
+    `}
   `}
 `;
 
@@ -142,17 +157,20 @@ const Description = styled.p`
   outline: none;
   transition: ${transition};
   
-  ${p => p.creating && !p.edited && css`
-    opacity: 0.5;
-  `}
-  
-  ${p => p.creating && p.edited && css`
-    display: none;
-  `}
-  
-  ${p => p.invalid && css`
-    color: #db4437;
-    opacity: 1;
+  ${p => css`
+
+    ${p.creating && !p.edited && css`
+      opacity: 0.5;
+    `}
+    
+    ${p.creating && p.edited && css`
+      display: none;
+    `}
+    
+    ${p.invalid && css`
+      color: ${color.error};
+      opacity: 1;
+    `}
   `}
 `;
 
@@ -166,14 +184,17 @@ const EditableDescription = styled(Description)`
   opacity: 0;
   visibility: hidden;
   
-  ${p => p.creating && css`
-    opacity: 1;
-    visibility: visible;
-  `}
-  
-  ${p => p.creating && p.edited && css`
-    position: static;
-    display: block;
+  ${p => css`
+
+    ${p.creating && css`
+      opacity: 1;
+      visibility: visible;
+    `}
+    
+    ${p.creating && p.edited && css`
+      position: static;
+      display: block;
+    `}
   `}
 `;
 
@@ -372,7 +393,14 @@ export class PersonCard extends React.Component {
         <Footer>
           {
             !this.state.isCreating ?
-              <Button icon={ { svg: shortLeftArrow, rotation: 180, } }>More</Button>
+              <Button icon={ {
+                svg: shortLeftArrow,
+                position: 'right',
+                rotation: 180,
+              } }
+              >
+                More
+              </Button>
               :
               <React.Fragment>
                 <Button type={ 'flat' } onClick={ this.props.onCancel }>Cancel</Button>

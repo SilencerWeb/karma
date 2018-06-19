@@ -36,7 +36,6 @@ const Wrapper = styled.div`
       padding-left: 0;
       transition: ${transition};
       
-      
       &:hover {
         border-bottom-color: #828282;
       }
@@ -240,17 +239,17 @@ const Wrapper = styled.div`
       .react-select {
       
         &__control {
-          border-bottom-color: #db4437;
+          border-bottom-color: ${color.error};
           
           &:hover {
-            border-bottom-color: #db4437;
+            border-bottom-color: ${color.error};
           }
           
           &-is-focused {
-            border-bottom-color: #db4437;
+            border-bottom-color: ${color.error};
             
             &:hover {
-              border-bottom-color: #db4437;
+              border-bottom-color: ${color.error};
             }
           }
         }
@@ -364,7 +363,7 @@ const MultiSimpleOption = (props) => {
 
   return (
     <div className={ optionClassNames } { ...innerProps }>
-      <Checkbox checked={ props.isSelected } readOnly/>
+      <Checkbox checked={ props.isSelected }/>
       <span>{ props.children }</span>
     </div>
   );
@@ -459,7 +458,6 @@ export const Select = (props) => {
 
   return (
     <Wrapper
-      id={ props.id }
       className={ props.className }
       type={ props.type }
       theme={ props.theme }
@@ -468,6 +466,7 @@ export const Select = (props) => {
       fullWidth={ props.fullWidth }
     >
       <ReactSelect
+        id={ props.id }
         classNamePrefix={ 'react-select' }
         placeholder={ props.placeholder }
         options={ props.options }
@@ -505,13 +504,10 @@ Select.propTypes = {
   disabled: PropTypes.bool,
   error: PropTypes.bool,
   fullWidth: PropTypes.bool,
-  onChange: PropTypes.bool,
+  onChange: PropTypes.func,
 };
 
 Select.defaultProps = {
-  options: {
-    isDisabled: false,
-  },
   type: 'single',
   theme: 'simple',
   disabled: false,

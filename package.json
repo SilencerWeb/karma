@@ -59,14 +59,15 @@
   "scripts": {
     "dev:storybook": "start-storybook -p 3001 -c .storybook",
     "dev:webpack": "node scripts/start.js",
-    "dev": "flow && concurrently 'yarn dev:storybook' 'yarn dev:webpack'",
+    "dev": "concurrently 'yarn dev:storybook' 'yarn dev:webpack'",
     "build:storybook": "build-storybook -c .storybook -o build/storybook",
-    "build": "flow && node scripts/build.js",
-    "deploy": "yarn build && yarn gh-pages",
-    "deploy:with-storybook": "yarn build && yarn build:storybook && yarn gh-pages",
+    "build": "node scripts/build.js",
+    "deploy:storybook": "yarn build:storybook && yarn gh-pages",
+    "deploy:build": "yarn build && yarn gh-pages",
+    "deploy": "yarn build && yarn build:storybook && yarn gh-pages",
     "test": "node scripts/test.js --env=jsdom",
     "gh-pages": "gh-pages -d build",
-    "precommit": "flow && lint-staged"
+    "precommit": "lint-staged"
   },
   "lint-staged": {
     "src/**/*.js": []
