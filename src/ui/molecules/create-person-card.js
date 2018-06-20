@@ -48,9 +48,12 @@ export class CreatePersonCard extends React.Component {
     });
   };
 
-  handleSaveClick = () => {
-    // eslint-disable-next-line
-    console.log('saved!');
+  handleSaveClick = (person) => {
+    this.props.onSave(person);
+
+    this.setState({
+      isCreating: false,
+    });
   };
 
   render() {
@@ -84,4 +87,5 @@ export class CreatePersonCard extends React.Component {
 
 CreatePersonCard.propTypes = {
   className: PropTypes.string,
+  onSave: PropTypes.func.isRequired,
 };

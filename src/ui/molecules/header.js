@@ -2,6 +2,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import { Link } from 'react-router-dom';
+
 import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
 
 import avatar_1x from 'assets/images/avatars/large/avatar.png';
@@ -47,11 +49,13 @@ export const Header = (props: props) => {
     <Wrapper className={ props.className }>
       <Container>
         <ContainerSide>
-          <Logo/>
+          <Link to={ '/' }>
+            <Logo/>
+          </Link>
         </ContainerSide>
         <ContainerSide>
           <Avatar>
-            <RetinaImage src={ avatarSources }/>
+            <RetinaImage src={ avatarSources } alt={ '' }/>
           </Avatar>
           <Button>Add an action</Button>
         </ContainerSide>

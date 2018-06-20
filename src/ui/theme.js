@@ -68,4 +68,8 @@ export const globalStyles = css`
     color: ${color.text.primary};
     overflow-x: hidden;
   }
+  
+  a {
+    text-decoration: none;
+  }
 `;

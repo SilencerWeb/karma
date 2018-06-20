@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   width: 4rem;
   height: 4rem;
   line-height: 1;
+  text-decoration: none;
   color: ${color.text.secondary};
   background-image: linear-gradient(to top, #d500f9, #ff1744);
   border-radius: 50%;

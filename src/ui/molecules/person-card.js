@@ -201,6 +201,13 @@ const EditableDescription = styled(Description)`
 const ContentEditableWrapper = styled.div`
   position: relative;
   width: 100%;
+  
+  ${p => css`
+    
+    ${p.fullHeight && css`
+      flex-grow: 1;
+    `}
+  `}
 `;
 
 const Footer = styled.div`
@@ -221,6 +228,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
   background-color: #ffffff;
   border-radius: 0.4rem;
   box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.24), 0 -0.8rem 1.6rem rgba(176, 190, 197, 0.24);
@@ -251,7 +259,7 @@ export class PersonCard extends React.Component {
     },
   };
 
-  handleSaveClick = (e, callback) => {
+  handleSaveClick = (e, onSave) => {
     const state = this.state;
 
     const fields = ['name', 'position', 'description'];
@@ -265,11 +273,20 @@ export class PersonCard extends React.Component {
     });
 
     if (invalidFields.length === 0) {
+      const person = {
+        id: 10,
+        avatar: null,
+        name: state.name.content,
+        position: state.position.content,
+        karma: 0,
+        description: state.description.content,
+      };
+
+      onSave(person);
+
       this.setState({
         isCreating: false,
       });
-
-      callback();
     } else {
       invalidFields.forEach((invalidField) => {
         state[invalidField].isInvalid = true;
@@ -317,7 +334,7 @@ export class PersonCard extends React.Component {
     return (
       <Wrapper className={ this.props.className }>
         {
-          !this.props.create ?
+          !this.props.create && this.props.avatar ?
             <Avatar>
               <RetinaImage
                 src={ {
@@ -373,7 +390,7 @@ export class PersonCard extends React.Component {
 
         <Karma status={ karmaStatus }>{ karma }</Karma>
 
-        <ContentEditableWrapper>
+        <ContentEditableWrapper fullHeight>
           <Description
             creating={ this.state.isCreating }
             edited={ this.state.description.isEdited }
@@ -416,15 +433,15 @@ export class PersonCard extends React.Component {
 
 PersonCard.propTypes = {
   className: PropTypes.string,
+  avatar: PropTypes.shape({
+    _1x: PropTypes.string.isRequired,
+    _2x: PropTypes.string.isRequired,
+  }),
   name: PropTypes.string.isRequired,
   position: PropTypes.string.isRequired,
   karma: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
   create: PropTypes.bool,
-  avatar: {
-    _1x: PropTypes.string.isRequired,
-    _2x: PropTypes.string.isRequired,
-  },
   onCancel: PropTypes.func,
   onSave: PropTypes.func,
 };
