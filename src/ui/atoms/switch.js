@@ -77,7 +77,7 @@ export const Switch = (props) => {
     <Wrapper className={ props.className } disabled={ props.disabled }>
       <span>{ props.content.off }</span>
       <IconWrapper>
-        <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
+        <input type={ 'checkbox' } checked={ props.checked } disabled={ props.disabled }/>
         <Track/>
         <Thumb/>
       </IconWrapper>

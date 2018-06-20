@@ -78,7 +78,7 @@ const Wrapper = styled.label`
 export const Checkbox = (props) => {
   return (
     <Wrapper className={ props.className } disabled={ props.disabled }>
-      <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
+      <input type={ 'checkbox' } checked={ props.checked } disabled={ props.disabled }/>
       <CheckMark>
         <Icon icon={ check }/>
       </CheckMark>
@@ -92,7 +92,7 @@ Checkbox.propTypes = {
   className: PropTypes.string,
   checked: PropTypes.bool,
   disabled: PropTypes.bool,
-  children: PropTypes.string, // children isn't required because sometimes I need empty Checkbox
+  children: PropTypes.string, // Children isn't required because sometimes I need empty Checkbox
 };
 
 Checkbox.defaultProps = {

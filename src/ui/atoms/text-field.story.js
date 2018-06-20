@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { TextField } from './';
+import { TextField } from '.';
 
 import { pencil } from 'ui/outlines';
 
@@ -12,7 +12,7 @@ stories.addDecorator(withKnobs);
 
 stories
   .add('default', () => {
-    const placeholder = text('placeholder', `Hi! I'm text field`);
+    const placeholder = text('placeholder', 'Hi! I\'m text field');
 
     const disabled = boolean('disabled', false);
 
@@ -30,15 +30,15 @@ stories
     );
   })
   .add('iconic', () => {
-    const placeholder = text('placeholder', `Hi! I'm text field`);
+    const placeholder = text('placeholder', 'Hi! I\'m text field');
 
     const icon = {
       svg: pencil,
-      position: select(`icon's position`, {
+      position: select('icon\'s position', {
         left: 'left',
         right: 'right',
       }, 'right'),
-      rotation: number(`icon's rotation (deg)`, 0),
+      rotation: number('icon\'s rotation (deg)', 0),
     };
 
     const disabled = boolean('disabled', false);

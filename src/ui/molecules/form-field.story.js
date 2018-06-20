@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { FormField } from './';
+import { FormField } from '.';
 
 import { warning } from 'ui/outlines';
 
@@ -26,9 +26,9 @@ textFieldStories.addDecorator(withKnobs);
 
 textFieldStories
   .add('default', () => {
-    const label = text('label', `Hi! I'm label`);
+    const label = text('label', 'Hi! I\'m label');
 
-    const placeholder = text('placeholder', `Hi! I'm input`);
+    const placeholder = text('placeholder', 'Hi! I\'m input');
 
     const tag = select('tag', {
       input: 'input',
@@ -53,7 +53,7 @@ textFieldStories
     );
   })
   .add('with helper text', () => {
-    const label = text('label', `Hi! I'm label`);
+    const label = text('label', 'Hi! I\'m label');
 
     const tag = select('tag', {
       input: 'input',
@@ -61,14 +61,14 @@ textFieldStories
     }, 'input');
 
     const helperText = {
-      content: text('helper text content', `Hi! I'm helper text`),
+      content: text('helper text content', 'Hi! I\'m helper text'),
       icon: {
         svg: warning,
-        position: select(`helper text icon's position`, {
+        position: select('helper text icon\'s position', {
           left: 'left',
           right: 'right',
         }, 'right'),
-        rotation: number(`helper text icon's rotation (deg)`, 0),
+        rotation: number('helper text icon\'s rotation (deg)', 0),
       },
     };
 
@@ -117,9 +117,9 @@ selectStories.addDecorator(withKnobs);
 
 selectStories
   .add('default', () => {
-    const label = text('label', `Hi! I'm label`);
+    const label = text('label', 'Hi! I\'m label');
 
-    const placeholder = text('placeholder', `Choose a person`);
+    const placeholder = text('placeholder', 'Choose a person');
 
     const type = select('type', {
       single: 'single',
@@ -206,9 +206,9 @@ selectStories
     );
   })
   .add('with helper text', () => {
-    const label = text('label', `Hi! I'm label`);
+    const label = text('label', 'Hi! I\'m label');
 
-    const placeholder = text('placeholder', `Choose a person`);
+    const placeholder = text('placeholder', 'Choose a person');
 
     const type = select('type', {
       single: 'single',
@@ -221,14 +221,14 @@ selectStories
     }, 'simple');
 
     const helperText = {
-      content: text('helper text content', `Hi! I'm helper text`),
+      content: text('helper text content', 'Hi! I\'m helper text'),
       icon: {
         svg: warning,
-        position: select(`helper text icon's position`, {
+        position: select('helper text icon\'s position', {
           left: 'left',
           right: 'right',
         }, 'right'),
-        rotation: number(`helper text icon's rotation (deg)`, 0),
+        rotation: number('helper text icon\'s rotation (deg)', 0),
       },
     };
 

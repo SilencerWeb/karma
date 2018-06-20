@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { Select } from './';
+import { Select } from '.';
 
 import avatar_1x from 'assets/images/avatars/small/avatar.png';
 import avatar2_1x from 'assets/images/avatars/small/avatar2.png';
@@ -23,7 +23,7 @@ const stories = storiesOf('atoms/Select', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {
-  const placeholder = text('placeholder', `Choose a person`);
+  const placeholder = text('placeholder', 'Choose a person');
 
   const type = select('type', {
     single: 'single',

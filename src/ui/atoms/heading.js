@@ -67,7 +67,7 @@ Heading.propTypes = {
   tag: PropTypes.string,
   type: PropTypes.string,
   theme: PropTypes.string,
-  children: PropTypes.string, // children isn't required because sometimes I need empty Checkbox
+  children: PropTypes.string, // Children isn't required because sometimes I need empty Checkbox
 };
 
 Heading.defaultProps = {

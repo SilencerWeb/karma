@@ -30,6 +30,8 @@
     "eslint": "4.19.1",
     "eslint-loader": "2.0.0",
     "eslint-plugin-flowtype": "2.49.3",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-react": "^7.9.1",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.11",
     "fs-extra": "6.0.1",
@@ -65,12 +67,15 @@
     "deploy:storybook": "yarn build:storybook && yarn gh-pages",
     "deploy:build": "yarn build && yarn gh-pages",
     "deploy": "yarn build && yarn build:storybook && yarn gh-pages",
+    "lint": "yarn eslint src",
+    "lint:fix": "yarn eslint src --fix",
     "test": "node scripts/test.js --env=jsdom",
-    "gh-pages": "gh-pages -d build",
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "src/**/*.js": []
+    "src/**/*.js": [
+      "eslint"
+    ]
   },
   "jest": {
     "collectCoverageFrom": [

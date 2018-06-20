@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { Button } from './';
+import { Button } from '.';
 
 import { shortLeftArrow } from 'ui/outlines';
 
@@ -12,7 +12,7 @@ stories.addDecorator(withKnobs);
 
 stories
   .add('default', () => {
-    const content = text('content', `Hi, I'm button`);
+    const content = text('content', 'Hi, I\'m button');
 
     const tag = select('tag', {
       button: 'button',
@@ -36,7 +36,7 @@ stories
     );
   })
   .add('iconic', () => {
-    const content = text('content', `Hi, I'm button`);
+    const content = text('content', 'Hi, I\'m button');
 
     const tag = select('tag', {
       button: 'button',
@@ -55,11 +55,11 @@ stories
 
     const icon = {
       svg: shortLeftArrow,
-      position: select(`icon's position`, {
+      position: select('icon\'s position', {
         left: 'left',
         right: 'right',
       }, 'right'),
-      rotation: number(`icon's rotation (deg)`, 0),
+      rotation: number('icon\'s rotation (deg)', 0),
     };
 
     return (

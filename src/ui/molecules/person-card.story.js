@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { PersonCard } from './';
+import { PersonCard } from '.';
 
 import avatar_1x from 'assets/images/avatars/large/avatar.png';
 import avatar_2x from 'assets/images/avatars/large/avatar@2x.png';
@@ -24,7 +24,7 @@ stories
 
     const karma = number('karma', 10);
 
-    const description = text('description', `Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.`);
+    const description = text('description', 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.');
 
     return (
       <PersonCard
@@ -41,7 +41,7 @@ stories
 
     const position = text('position', 'Position');
 
-    const description = text('description', `Enter description`);
+    const description = text('description', 'Enter description');
 
     return (
       <PersonCard
@@ -50,7 +50,9 @@ stories
         karma={ 0 }
         description={ description }
         create
+        // eslint-disable-next-line
         onCancel={ () => console.log('canceled') }
+        // eslint-disable-next-line
         onSave={ () => console.log('saved') }
       />
     );

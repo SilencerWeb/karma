@@ -79,7 +79,7 @@ const Wrapper = styled.label`
 export const Radio = (props) => {
   return (
     <Wrapper className={ props.className } disabled={ props.disabled }>
-      <input type="checkbox" checked={ props.checked } disabled={ props.disabled }/>
+      <input type={ 'checkbox' } checked={ props.checked } disabled={ props.disabled }/>
       <CheckMark/>
       <Text>{ props.children }</Text>
     </Wrapper>
@@ -88,7 +88,6 @@ export const Radio = (props) => {
 
 
 Radio.propTypes = {
-  id: PropTypes.string,
   className: PropTypes.string,
   checked: PropTypes.bool,
   disabled: PropTypes.bool,

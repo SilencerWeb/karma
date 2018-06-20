@@ -421,6 +421,12 @@ PersonCard.propTypes = {
   karma: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
   create: PropTypes.bool,
+  avatar: {
+    _1x: PropTypes.string.isRequired,
+    _2x: PropTypes.string.isRequired,
+  },
+  onCancel: PropTypes.func,
+  onSave: PropTypes.func,
 };
 
 PersonCard.defaultProps = {

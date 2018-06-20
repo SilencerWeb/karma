@@ -328,6 +328,12 @@ const ClearIndicator = (props) => {
   );
 };
 
+ClearIndicator.propTypes = {
+  innerProps: PropTypes.object,
+  selectProps: PropTypes.object,
+};
+
+
 const SingleSimpleOption = (props) => {
   const { innerProps } = props;
 
@@ -337,8 +343,8 @@ const SingleSimpleOption = (props) => {
 
   const optionClassNames = classNames(
     className,
-    { [selectedClassName]: props.isSelected, },
-    { [disabledClassName]: props.isDisabled, },
+    { [selectedClassName]: props.isSelected },
+    { [disabledClassName]: props.isDisabled },
   );
 
   return (
@@ -348,38 +354,52 @@ const SingleSimpleOption = (props) => {
   );
 };
 
-const MultiSimpleOption = (props) => {
-  const { innerProps } = props;
+SingleSimpleOption.propTypes = {
+  innerProps: PropTypes.object,
+  selectProps: PropTypes.object,
+  isSelected: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  children: PropTypes.string,
+};
 
+
+const MultiSimpleOption = (props) => {
   const className = `${props.selectProps.classNamePrefix}__option`;
   const selectedClassName = `${props.selectProps.classNamePrefix}__option--is-selected`;
   const disabledClassName = `${props.selectProps.classNamePrefix}__option--is-disabled`;
 
   const optionClassNames = classNames(
     className,
-    { [selectedClassName]: props.isSelected, },
-    { [disabledClassName]: props.isDisabled, },
+    { [selectedClassName]: props.isSelected },
+    { [disabledClassName]: props.isDisabled },
   );
 
   return (
-    <div className={ optionClassNames } { ...innerProps }>
+    <div className={ optionClassNames } { ...props.innerProps }>
       <Checkbox checked={ props.isSelected }/>
       <span>{ props.children }</span>
     </div>
   );
 };
 
-const SingleAvatarOption = (props) => {
-  const { innerProps } = props;
+MultiSimpleOption.propTypes = {
+  innerProps: PropTypes.object,
+  selectProps: PropTypes.object,
+  isSelected: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  children: PropTypes.string,
+};
 
+
+const SingleAvatarOption = (props) => {
   const className = `${props.selectProps.classNamePrefix}__option`;
   const selectedClassName = `${props.selectProps.classNamePrefix}__option--is-selected`;
   const disabledClassName = `${props.selectProps.classNamePrefix}__option--is-disabled`;
 
   const optionClassNames = classNames(
     className,
-    { [selectedClassName]: props.isSelected, },
-    { [disabledClassName]: props.isDisabled, },
+    { [selectedClassName]: props.isSelected },
+    { [disabledClassName]: props.isDisabled },
   );
 
   const imageSources = {
@@ -388,7 +408,7 @@ const SingleAvatarOption = (props) => {
   };
 
   return (
-    <div className={ optionClassNames } { ...innerProps }>
+    <div className={ optionClassNames } { ...props.innerProps }>
       <Avatar>
         <RetinaImage src={ imageSources } alt={ props.children }/>
       </Avatar>
@@ -396,6 +416,21 @@ const SingleAvatarOption = (props) => {
     </div>
   );
 };
+
+SingleAvatarOption.propTypes = {
+  innerProps: PropTypes.object,
+  selectProps: PropTypes.object,
+  data: PropTypes.shape({
+    avatar: PropTypes.shape({
+      _1x: PropTypes.string.isRequired,
+      _2x: PropTypes.string.isRequired,
+    }),
+  }),
+  isSelected: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  children: PropTypes.string,
+};
+
 
 const MultiAvatarOption = (props) => {
   const { innerProps } = props;
@@ -406,8 +441,8 @@ const MultiAvatarOption = (props) => {
 
   const optionClassNames = classNames(
     className,
-    { [selectedClassName]: props.isSelected, },
-    { [disabledClassName]: props.isDisabled, },
+    { [selectedClassName]: props.isSelected },
+    { [disabledClassName]: props.isDisabled },
   );
 
   const imageSources = {
@@ -424,6 +459,20 @@ const MultiAvatarOption = (props) => {
       <span>{ props.children }</span>
     </div>
   );
+};
+
+MultiAvatarOption.propTypes = {
+  innerProps: PropTypes.object,
+  selectProps: PropTypes.object,
+  data: PropTypes.shape({
+    avatar: PropTypes.shape({
+      _1x: PropTypes.string.isRequired,
+      _2x: PropTypes.string.isRequired,
+    }),
+  }),
+  isSelected: PropTypes.bool,
+  isDisabled: PropTypes.bool,
+  children: PropTypes.string,
 };
 
 

@@ -150,7 +150,7 @@ FormField.propTypes = {
           _1x: PropTypes.string.isRequired,
           _2x: PropTypes.string.isRequired,
         },
-      }),
+      })
     ).isRequired,
     type: PropTypes.string,
     theme: PropTypes.string,
