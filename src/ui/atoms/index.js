@@ -9,3 +9,5 @@ export { Radio } from './radio';
 export { Switch } from './switch';
 export { Select } from './select';
 export { RetinaImage } from './retina-image';
+export { Logo } from './logo';
+export { Container } from './container';
