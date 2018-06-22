@@ -22,7 +22,6 @@ module.exports = {
     'array-bracket-spacing': [2, 'never'],
     'block-spacing': [2, 'always'],
     'brace-style': [2, '1tbs', { 'allowSingleLine': true }],
-    'capitalized-comments': 2,
     'comma-dangle': [2, 'always-multiline', {
       'arrays': 'always',
       'objects': 'always',

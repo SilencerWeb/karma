@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { injectGlobal } from 'styled-components';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 
 import { globalStyles } from 'ui/theme';
 
@@ -14,8 +14,8 @@ injectGlobal`${normalize} ${globalStyles}`;
 
 ReactDOM.render(
   <div>
-    <BrowserRouter>
+    <HashRouter>
       <Routes/>
-    </BrowserRouter>
+    </HashRouter>
   </div>,
   document.getElementById('root'));

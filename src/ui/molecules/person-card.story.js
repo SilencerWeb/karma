@@ -4,8 +4,8 @@ import { withKnobs, text, boolean, number, object, array, select } from '@storyb
 
 import { PersonCard } from '.';
 
-import avatar_1x from 'assets/images/avatars/large/avatar.png';
-import avatar_2x from 'assets/images/avatars/large/avatar@2x.png';
+import avatar_1x from 'assets/images/avatars/md/avatar.png';
+import avatar_2x from 'assets/images/avatars/md/avatar@2x.png';
 
 
 const stories = storiesOf('molecules/PersonCard', module);
@@ -51,9 +51,9 @@ stories
         description={ description }
         create
         // eslint-disable-next-line
-        onCancel={ () => console.log('canceled') }
+        onCancelButtonClick={ () => console.log('canceled') }
         // eslint-disable-next-line
-        onSave={ () => console.log('saved') }
+        onSaveButtonClick={ () => console.log('saved') }
       />
     );
   });

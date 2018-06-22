@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
-import { color } from 'ui/theme';
+import { color, transition } from 'ui/theme';
 
 
 const WrapperAsButton = styled.button`
@@ -22,6 +22,7 @@ const WrapperAsButton = styled.button`
   padding-left: 2rem;
   outline: none;
   cursor: pointer;
+  transition: ${transition};
   
   span {
     vertical-align: middle;

@@ -1,6 +1,7 @@
 {
   "name": "react-atomic-boilerplate",
   "version": "0.1.0",
+  "homepage": "https://silencerweb.github.io/karma",
   "dependencies": {
     "classnames": "^2.2.6",
     "normalize.css": "^8.0.0",
@@ -59,14 +60,15 @@
     "whatwg-fetch": "2.0.4"
   },
   "scripts": {
-    "dev:storybook": "start-storybook -p 3001 -c .storybook",
     "dev:webpack": "node scripts/start.js",
-    "dev": "concurrently 'yarn dev:storybook' 'yarn dev:webpack'",
+    "dev:storybook": "start-storybook -p 3001 -c .storybook",
+    "dev": "concurrently 'yarn dev:webpack' 'yarn dev:storybook'",
+    "build:webpack": "node scripts/build.js",
     "build:storybook": "build-storybook -c .storybook -o build/storybook",
-    "build": "node scripts/build.js",
+    "build": "yarn build:webpack && yarn build:storybook",
+    "deploy:webpack": "yarn build:webpack && yarn gh-pages -d build",
     "deploy:storybook": "yarn build:storybook && yarn gh-pages -d build",
-    "deploy:build": "yarn build && yarn gh-pages -d build",
-    "deploy": "yarn build && yarn build:storybook && yarn gh-pages -d build",
+    "deploy": "yarn build && yarn gh-pages -d build",
     "lint": "yarn eslint src",
     "lint:fix": "yarn eslint src --fix",
     "test": "node scripts/test.js --env=jsdom",

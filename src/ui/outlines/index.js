@@ -7,3 +7,4 @@ export { default as check } from './check.svg';
 export { default as close } from './close.svg';
 export { default as plus } from './plus.svg';
 export { default as user } from './user.svg';
+export { default as handsUpHuman } from './human_hands-up.svg';

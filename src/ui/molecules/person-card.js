@@ -10,23 +10,29 @@ import { font, color, transition } from 'ui/theme';
 
 
 const Avatar = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 15rem;
   height: 15rem;
   border-radius: 50%;
-  background-color: ${color.primary};
   margin-bottom: 0.8rem;
 
   img {
     max-width: 100%;
   }
+  
+  ${p => css`
+    
+    ${p.new && css`
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: ${color.primary};
 
-  svg {
-    font-size: 4.6rem;
-    color: #ffffff;
-  }
+      svg {
+        font-size: 4.6rem;
+        color: #ffffff;
+      }
+    `}
+  `}
 `;
 
 const Name = Heading.extend`
@@ -81,6 +87,7 @@ const Position = styled.span`
   display: block;
   width: 100%;
   font-family: ${font.family.secondary};
+  font-size: 1.6rem;
   font-weight: 700;
   text-align: center;
   color: #828282;
@@ -259,7 +266,7 @@ export class PersonCard extends React.Component {
     },
   };
 
-  handleSaveClick = (e, onSave) => {
+  handleSaveClick = (e) => {
     const state = this.state;
 
     const fields = ['name', 'position', 'description'];
@@ -282,7 +289,7 @@ export class PersonCard extends React.Component {
         description: state.description.content,
       };
 
-      onSave(person);
+      this.props.onSaveButtonClick(person);
 
       this.setState({
         isCreating: false,
@@ -420,8 +427,8 @@ export class PersonCard extends React.Component {
               </Button>
               :
               <React.Fragment>
-                <Button type={ 'flat' } onClick={ this.props.onCancel }>Cancel</Button>
-                <Button onClick={ (e) => this.handleSaveClick(e, this.props.onSave) }>Save</Button>
+                <Button type={ 'flat' } onClick={ this.props.onCancelButtonClick }>Cancel</Button>
+                <Button onClick={ this.handleSaveClick }>Save</Button>
               </React.Fragment>
           }
         </Footer>
@@ -442,8 +449,8 @@ PersonCard.propTypes = {
   karma: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
   create: PropTypes.bool,
-  onCancel: PropTypes.func,
-  onSave: PropTypes.func,
+  onCancelButtonClick: PropTypes.func,
+  onSaveButtonClick: PropTypes.func,
 };
 
 PersonCard.defaultProps = {

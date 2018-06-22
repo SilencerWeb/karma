@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 
 import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
 
-import avatar_1x from 'assets/images/avatars/large/avatar.png';
-import avatar_2x from 'assets/images/avatars/large/avatar@2x.png';
+import avatar_1x from 'assets/images/avatars/sm/avatar.png';
+import avatar_2x from 'assets/images/avatars/sm/avatar@2x.png';
 
 
 const Avatar = styled.div`

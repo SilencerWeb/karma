@@ -34,7 +34,7 @@ export const PersonCardList = (props) => {
           </PersonCardWrapper>
         );
       }) }
-      <CreatePersonCard onSave={ props.onSave }/>
+      <CreatePersonCard onSaveButtonClick={ props.onSaveButtonClick }/>
     </Wrapper>
   );
 };
@@ -55,5 +55,5 @@ PersonCardList.propTypes = {
       description: PropTypes.string.isRequired,
     }),
   ),
-  onSave: PropTypes.func.isRequired,
+  onSaveButtonClick: PropTypes.func.isRequired,
 };

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Icon } from 'ui/atoms';
 
-import { PersonCard } from 'ui/molecules';
+import { ActionCard } from 'ui/molecules';
 
 import { plus } from 'ui/outlines';
 
@@ -31,7 +31,7 @@ const Wrapper = styled.div`
 `;
 
 
-export class CreatePersonCard extends React.Component {
+export class CreateActionCard extends React.Component {
   state = {
     isCreating: false,
   };
@@ -57,8 +57,8 @@ export class CreatePersonCard extends React.Component {
   };
 
   render() {
-    const name = 'John Doe';
-    const position = 'Buddy';
+    const title = 'Action title';
+    const date = '12.05.2018';
     const description = 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
 
     return (
@@ -69,11 +69,12 @@ export class CreatePersonCard extends React.Component {
               <Icon icon={ plus }/>
             </Wrapper>
             :
-            <PersonCard
-              name={ name }
-              position={ position }
-              karma={ 0 }
+            <ActionCard
+              title={ title }
+              date={ date }
               description={ description }
+              karma={ 'neutral' }
+              executors={ 'left' }
               create
               onCancelButtonClick={ this.handleCancelButtonClick }
               onSaveButtonClick={ this.handleSaveButtonClick }
@@ -85,7 +86,7 @@ export class CreatePersonCard extends React.Component {
 }
 
 
-CreatePersonCard.propTypes = {
+CreateActionCard.propTypes = {
   className: PropTypes.string,
   onSaveButtonClick: PropTypes.func.isRequired,
 };

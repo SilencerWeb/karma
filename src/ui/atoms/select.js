@@ -450,6 +450,8 @@ const MultiAvatarOption = (props) => {
     _2x: props.data.avatar._2x,
   };
 
+  console.log(props);
+
   return (
     <div className={ optionClassNames } { ...innerProps }>
       <Avatar type={ 'multi' } selected={ props.isSelected }>
@@ -526,6 +528,7 @@ export const Select = (props) => {
         isMulti={ props.type === 'multi' }
         isSearchable={ false }
         isDisabled={ props.disabled }
+        menuIsOpen={ props.menuIsOpen }
         onChange={ props.onChange }
       />
     </Wrapper>
@@ -542,10 +545,11 @@ Select.propTypes = {
       label: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired,
       isDisabled: PropTypes.bool,
-      avatar: {
+      isSelected: PropTypes.bool,
+      avatar: PropTypes.shape({
         _1x: PropTypes.string.isRequired,
         _2x: PropTypes.string.isRequired,
-      },
+      }),
     }),
   ).isRequired,
   type: PropTypes.string,
@@ -553,6 +557,7 @@ Select.propTypes = {
   disabled: PropTypes.bool,
   error: PropTypes.bool,
   fullWidth: PropTypes.bool,
+  menuIsOpen: PropTypes.bool,
   onChange: PropTypes.func,
 };
 

@@ -62,7 +62,7 @@ export const globalStyles = css`
     position: relative;
     min-width: 32rem;
     font-family: ${font.family.primary};
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 300;
     line-height: 1.5;
     color: ${color.text.primary};

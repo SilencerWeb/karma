@@ -4,3 +4,6 @@ export { CreatePersonCard } from './create-person-card';
 export { Header } from './header';
 export { Footer } from './footer';
 export { PersonCardList } from './person-card-list';
+export { ActionCard } from './action-card';
+export { CreateActionCard } from './create-action-card';
+export { OutsideAlerter } from './outside-alerter';

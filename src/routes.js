@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { FeedPage } from 'features/feed/page';
+import { FeedPage } from 'features/feed';
 
 
 export const Routes = () => (

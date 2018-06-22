@@ -6,8 +6,8 @@ import { PersonCardList } from 'ui/molecules';
 
 import { CommonTemplate } from 'ui/templates';
 
-import avatar_1x from 'assets/images/avatars/large/avatar.png';
-import avatar_2x from 'assets/images/avatars/large/avatar@2x.png';
+import avatar_1x from 'assets/images/avatars/md/avatar.png';
+import avatar_2x from 'assets/images/avatars/md/avatar@2x.png';
 
 
 export class FeedPage extends React.Component {
@@ -94,7 +94,7 @@ export class FeedPage extends React.Component {
 
     return (
       <CommonTemplate>
-        <PersonCardList persons={ this.state.persons } onSave={ this.handleSaveClick }/>
+        <PersonCardList persons={ this.state.persons } onSaveButtonClick={ this.handleSaveClick }/>
       </CommonTemplate>
     );
   }
