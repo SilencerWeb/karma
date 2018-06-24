@@ -7,3 +7,4 @@ export { PersonCardList } from './person-card-list';
 export { ActionCard } from './action-card';
 export { CreateActionCard } from './create-action-card';
 export { OutsideAlerter } from './outside-alerter';
+export { ActionCardList } from './action-card-list';

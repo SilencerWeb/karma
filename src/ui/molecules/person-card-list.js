@@ -34,6 +34,7 @@ export const PersonCardList = (props) => {
           </PersonCardWrapper>
         );
       }) }
+      
       <CreatePersonCard onSaveButtonClick={ props.onSaveButtonClick }/>
     </Wrapper>
   );
@@ -54,6 +55,6 @@ PersonCardList.propTypes = {
       karma: PropTypes.number.isRequired,
       description: PropTypes.string.isRequired,
     }),
-  ),
+  ).isRequired,
   onSaveButtonClick: PropTypes.func.isRequired,
 };

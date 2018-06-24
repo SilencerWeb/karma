@@ -82,19 +82,22 @@ export class FeedPage extends React.Component {
     ],
   };
 
-  handleSaveClick = (person) => {
-    const state = this.state;
+  handleSaveButtonClick = (person) => {
 
-    state.persons.push(person);
+    this.setState((prevState) => {
+      const state = { ...prevState };
 
-    this.setState(state);
+      state.persons.push(person);
+
+      return state;
+    });
   };
 
   render() {
 
     return (
       <CommonTemplate>
-        <PersonCardList persons={ this.state.persons } onSaveButtonClick={ this.handleSaveClick }/>
+        <PersonCardList persons={ this.state.persons } onSaveButtonClick={ this.handleSaveButtonClick }/>
       </CommonTemplate>
     );
   }

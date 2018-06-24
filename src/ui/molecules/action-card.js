@@ -262,6 +262,24 @@ const Select = styled.select`
   opacity: 0;
 `;
 
+const ExecutorsArrow = styled(Icon)`
+  font-size: 2.4rem;
+  margin-right: 0.8rem;
+  margin-left: 0.8rem;
+
+  ${p => css`
+  
+    ${p.executors === 'left' && css`
+      color: ${color.primary};
+      transform: rotate(180deg);
+    `}
+    
+    ${p.executors === 'right' && css`
+      color: ${color.secondary};
+    `}
+  `}
+`;
+
 const HeaderLeftSide = styled.div`
   display: flex;
   flex-direction: column;
@@ -299,25 +317,6 @@ const Footer = styled.div`
   align-items: center;
 `;
 
-const ExecutorsArrow = styled(Icon)`
-  font-size: 2.4rem;
-  margin-right: 0.8rem;
-  margin-left: 0.8rem;
-
-  ${p => css`
-  
-    ${p.executors === 'left' && css`
-      color: ${color.primary};
-      transform: rotate(180deg);
-    `}
-    
-    ${p.executors === 'right' && css`
-      color: ${color.secondary};
-    `}
-  `}
-`;
-
-
 const Border = styled.div`
   position: absolute;
   top: 0;
@@ -347,6 +346,10 @@ const Border = styled.div`
 
 const Wrapper = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 26.2rem;
+  height: 100%;
   background-color: #ffffff;
   border-radius: 0.4rem;
   box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.24), 0 -0.8rem 1.6rem rgba(176, 190, 197, 0.24);
@@ -581,11 +584,16 @@ export class ActionCard extends React.Component {
         }
       });
 
-      if (invalidFields.length === 0) {
+      const isValid = invalidFields.length === 0 &&
+        state.karma !== 'neutral' &&
+        state.executors &&
+        state.members.left.length > 0 && state.members.right.length > 0;
+
+      if (isValid) {
         const person = {
           id: 10,
-          name: state.title.content,
-          position: state.date.content,
+          title: state.title.content,
+          date: state.date.content,
           description: state.description.content,
           karma: state.karma,
           executors: state.executors,
@@ -670,13 +678,14 @@ export class ActionCard extends React.Component {
           </HeaderLeftSide>
 
           {
-            this.state.karma === 'negative' && this.state.executors === 'right' &&
+            !this.state.isCreating && this.state.karma === 'negative' && this.state.executors === 'right' &&
             <div>
               <Button
                 icon={ {
                   svg: handsUpHuman,
                   position: 'right',
                 } }
+                onClick={ this.props.onForgiveButtonClick }
               >
                 Forgive
               </Button>
@@ -684,7 +693,7 @@ export class ActionCard extends React.Component {
           }
         </Header>
 
-        <ContentEditableWrapper>
+        <ContentEditableWrapper fullHeight>
           <Description
             creating={ this.state.isCreating }
             edited={ this.state.description.isEdited }
@@ -712,7 +721,7 @@ export class ActionCard extends React.Component {
                     this.state.members && this.state.members.left && this.state.members.left.map((member, i) => {
                       return (
                         <Avatar key={ i }>
-                          <RetinaImage src={ member.avatar }/>
+                          <RetinaImage src={ member.avatar } alt={ '' }/>
                         </Avatar>
                       );
                     })
@@ -849,6 +858,7 @@ ActionCard.propTypes = {
   executors: PropTypes.string,
   members: PropTypes.object,
   create: PropTypes.bool,
+  onForgiveButtonClick: PropTypes.func,
   onEditButtonClick: PropTypes.func,
   onMoreButtonClick: PropTypes.func,
   onCancelButtonClick: PropTypes.func,

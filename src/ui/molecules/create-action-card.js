@@ -15,6 +15,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 26.2rem;
   background-color: #ffffff;
   border-radius: 0.4rem;
   box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.24), 0 -0.8rem 1.6rem rgba(176, 190, 197, 0.24);
@@ -34,6 +35,15 @@ const Wrapper = styled.div`
 export class CreateActionCard extends React.Component {
   state = {
     isCreating: false,
+  };
+
+  static getDerivedStateFromProps = (props, state) => {
+
+    if (props.isCreating) {
+      state.isCreating = props.isCreating;
+    }
+
+    return state;
   };
 
   handleWrapperClick = () => {
@@ -87,5 +97,6 @@ export class CreateActionCard extends React.Component {
 
 CreateActionCard.propTypes = {
   className: PropTypes.string,
+  isCreating: PropTypes.bool,
   onSaveButtonClick: PropTypes.func.isRequired,
 };

@@ -5,6 +5,7 @@ import { font, color } from 'ui/theme';
 
 
 export const Heading = styled.h1`
+  line-height: 1.2;
   margin-top: 0;
   margin-bottom: 0;
   
