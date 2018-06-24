@@ -74,7 +74,6 @@ export class CreateActionCard extends React.Component {
               date={ date }
               description={ description }
               karma={ 'neutral' }
-              executors={ 'left' }
               create
               onCancelButtonClick={ this.handleCancelButtonClick }
               onSaveButtonClick={ this.handleSaveButtonClick }

@@ -375,9 +375,12 @@ export class ActionCard extends React.Component {
       isEdited: false,
       isInvalid: false,
     },
-    karma: this.props.karma,
-    executors: this.props.executors,
-    members: this.props.members,
+    karma: this.props.karma || 'neutral',
+    executors: this.props.executors || 'left',
+    members: this.props.members || {
+      left: [],
+      right: [],
+    },
     persons: [
       {
         id: 0,
@@ -843,7 +846,7 @@ ActionCard.propTypes = {
   date: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   karma: PropTypes.string.isRequired,
-  executors: PropTypes.string.isRequired,
+  executors: PropTypes.string,
   members: PropTypes.object,
   create: PropTypes.bool,
   onEditButtonClick: PropTypes.func,

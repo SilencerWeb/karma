@@ -14,7 +14,13 @@ const RootDecorator = styled.div`
   padding: 30px;
 `;
 
-addDecorator((fn) => <RootDecorator>{ fn() }</RootDecorator>);
+addDecorator((fn) => {
+  return (
+    <RootDecorator>
+      { fn() }
+    </RootDecorator>
+  );
+});
 
 configure(() => {
   const req = require.context('../src/', true, /\.story\.js$/);

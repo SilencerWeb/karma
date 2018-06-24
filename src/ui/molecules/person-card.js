@@ -266,43 +266,6 @@ export class PersonCard extends React.Component {
     },
   };
 
-  handleSaveClick = (e) => {
-    const state = this.state;
-
-    const fields = ['name', 'position', 'description'];
-
-    const invalidFields = [];
-
-    fields.forEach((field) => {
-      if (state[field].content.length === 0) {
-        invalidFields.push(field);
-      }
-    });
-
-    if (invalidFields.length === 0) {
-      const person = {
-        id: 10,
-        avatar: null,
-        name: state.name.content,
-        position: state.position.content,
-        karma: 0,
-        description: state.description.content,
-      };
-
-      this.props.onSaveButtonClick(person);
-
-      this.setState({
-        isCreating: false,
-      });
-    } else {
-      invalidFields.forEach((invalidField) => {
-        state[invalidField].isInvalid = true;
-      });
-
-      this.setState(state);
-    }
-  };
-
   handleInput = (e, element) => {
     const target = e.currentTarget;
 
@@ -322,6 +285,44 @@ export class PersonCard extends React.Component {
         document.execCommand('insertHTML', false, '<br><br>');
       }
     }
+  };
+
+  handleSaveButtonClick = (e) => {
+
+    this.setState((prevState) => {
+      const state = { ...prevState };
+
+      const fields = ['name', 'position', 'description'];
+
+      const invalidFields = [];
+
+      fields.forEach((field) => {
+        if (state[field].content.length === 0) {
+          invalidFields.push(field);
+        }
+      });
+
+      if (invalidFields.length === 0) {
+        const person = {
+          id: 10,
+          avatar: null,
+          name: state.name.content,
+          position: state.position.content,
+          karma: 0,
+          description: state.description.content,
+        };
+
+        this.props.onSaveButtonClick(person);
+
+        state.isCreating = false;
+      } else {
+        invalidFields.forEach((invalidField) => {
+          state[invalidField].isInvalid = true;
+        });
+      }
+
+      return state;
+    });
   };
 
   render() {
@@ -428,7 +429,7 @@ export class PersonCard extends React.Component {
               :
               <React.Fragment>
                 <Button type={ 'flat' } onClick={ this.props.onCancelButtonClick }>Cancel</Button>
-                <Button onClick={ this.handleSaveClick }>Save</Button>
+                <Button onClick={ this.handleSaveButtonClick }>Save</Button>
               </React.Fragment>
           }
         </Footer>
