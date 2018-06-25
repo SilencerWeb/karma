@@ -1,7 +1,6 @@
 {
   "name": "react-atomic-boilerplate",
   "version": "0.1.0",
-  "homepage": "https://silencerweb.github.io/karma",
   "dependencies": {
     "classnames": "^2.2.6",
     "normalize.css": "^8.0.0",

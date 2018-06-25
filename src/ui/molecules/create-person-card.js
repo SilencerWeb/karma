@@ -43,6 +43,8 @@ export class CreatePersonCard extends React.Component {
   };
 
   handleCancelButtonClick = () => {
+    this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+
     this.setState({
       isCreating: false,
     });
@@ -87,5 +89,6 @@ export class CreatePersonCard extends React.Component {
 
 CreatePersonCard.propTypes = {
   className: PropTypes.string,
+  onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func.isRequired,
 };

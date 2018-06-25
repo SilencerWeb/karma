@@ -2,6 +2,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import { Link } from 'react-router-dom';
+
 import { Button, RetinaImage, Heading, Icon } from 'ui/atoms';
 
 import { shortLeftArrow, user } from 'ui/outlines';
@@ -418,14 +420,16 @@ export class PersonCard extends React.Component {
         <Footer>
           {
             !this.state.isCreating ?
-              <Button icon={ {
-                svg: shortLeftArrow,
-                position: 'right',
-                rotation: 180,
-              } }
-              >
-                More
-              </Button>
+              <Link to={ '/person' }>
+                <Button icon={ {
+                  svg: shortLeftArrow,
+                  position: 'right',
+                  rotation: 180,
+                } }
+                >
+                  More
+                </Button>
+              </Link>
               :
               <React.Fragment>
                 <Button type={ 'flat' } onClick={ this.props.onCancelButtonClick }>Cancel</Button>

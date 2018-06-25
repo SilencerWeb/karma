@@ -36,7 +36,11 @@ export const ActionCardList = (props) => {
         );
       }) }
 
-      <CreateActionCard isCreating={ props.isActionCreating } onSaveButtonClick={ props.onSaveButtonClick }/>
+      <CreateActionCard
+        isCreating={ props.isActionCreating }
+        onCancelButtonClick={ props.onCancelButtonClick }
+        onSaveButtonClick={ props.onSaveButtonClick }
+      />
     </Wrapper>
   );
 };
@@ -55,5 +59,6 @@ ActionCardList.propTypes = {
     }),
   ).isRequired,
   isActionCreating: PropTypes.bool,
+  onCancelButtonClick: PropTypes.func.isRequired,
   onSaveButtonClick: PropTypes.func.isRequired,
 };

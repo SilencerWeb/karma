@@ -150,6 +150,11 @@ export class PersonPage extends React.Component {
     this.setState({ isActionCreating: true });
   };
 
+  handleCancelButtonClick = () => {
+
+    this.setState({ isActionCreating: false });
+  };
+
   handleSaveButtonClick = (action) => {
 
     this.setState((prevState) => {
@@ -213,6 +218,7 @@ export class PersonPage extends React.Component {
           <ActionCardList
             actions={ this.state.actions }
             isActionCreating={ this.state.isActionCreating }
+            onCancelButtonClick={ this.handleCancelButtonClick }
             onSaveButtonClick={ this.handleSaveButtonClick }
           />
         </Actions>
