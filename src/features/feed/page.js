@@ -1,103 +1,40 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { ApolloConsumer, Query, Mutation } from 'react-apollo';
 
 import { PersonCardList } from 'ui/molecules';
 
 import { CommonTemplate } from 'ui/templates';
 
-import avatar_1x from 'assets/images/avatars/md/avatar.png';
-import avatar_2x from 'assets/images/avatars/md/avatar@2x.png';
+import { PERSONS } from 'graphql/queries/person';
+import { CREATE_PERSON } from 'graphql/mutations/person';
 
 
 export class FeedPage extends React.Component {
-  state = {
-    persons: [
-      {
-        id: 0,
-        avatar: {
-          _1x: avatar_1x,
-          _2x: avatar_2x,
-        },
-        name: 'Alex Walker',
-        position: 'Best friend',
-        karma: 10,
-        description: 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
-      },
-      {
-        id: 1,
-        avatar: {
-          _1x: avatar_1x,
-          _2x: avatar_2x,
-        },
-        name: 'Alex Walker 2',
-        position: 'Best friend',
-        karma: 0,
-        description: 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
-      },
-      {
-        id: 2,
-        avatar: {
-          _1x: avatar_1x,
-          _2x: avatar_2x,
-        },
-        name: 'Alex Walker 3',
-        position: 'Best friend',
-        karma: -10,
-        description: 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
-      },
-      {
-        id: 3,
-        avatar: {
-          _1x: avatar_1x,
-          _2x: avatar_2x,
-        },
-        name: 'Alex Walker 4',
-        position: 'Best friend',
-        karma: 10,
-        description: 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
-      },
-      {
-        id: 4,
-        avatar: {
-          _1x: avatar_1x,
-          _2x: avatar_2x,
-        },
-        name: 'Alex Walker 5',
-        position: 'Best friend',
-        karma: 0,
-        description: 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
-      },
-      {
-        id: 5,
-        avatar: {
-          _1x: avatar_1x,
-          _2x: avatar_2x,
-        },
-        name: 'Alex Walker 6',
-        position: 'Best friend',
-        karma: -10,
-        description: 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
-      },
-    ],
-  };
-
-  handleSaveButtonClick = (person) => {
-
-    this.setState((prevState) => {
-      const state = { ...prevState };
-
-      state.persons.push(person);
-
-      return state;
-    });
-  };
+  state = {};
 
   render() {
 
     return (
       <CommonTemplate>
-        <PersonCardList persons={ this.state.persons } onSaveButtonClick={ this.handleSaveButtonClick }/>
+        <ApolloConsumer>
+          { () => (
+            <Query query={ PERSONS }>
+              { ({ error, loading, data }) => {
+                if (error) {
+                  return <p>Error :( { error.message }</p>;
+                } else if (loading) {
+                  return <p>Loading...</p>;
+                }
+
+                return (
+                  <PersonCardList persons={ data.persons }/>
+                );
+              } }
+            </Query>
+          ) }
+        </ApolloConsumer>
       </CommonTemplate>
     );
   }

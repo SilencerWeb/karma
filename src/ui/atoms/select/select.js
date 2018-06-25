@@ -450,8 +450,6 @@ const MultiAvatarOption = (props) => {
     _2x: props.data.avatar._2x,
   };
 
-  console.log(props);
-
   return (
     <div className={ optionClassNames } { ...innerProps }>
       <Avatar type={ 'multi' } selected={ props.isSelected }>

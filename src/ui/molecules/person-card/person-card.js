@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-
 import { Link } from 'react-router-dom';
 
 import { Button, RetinaImage, Heading, Icon } from 'ui/atoms';
@@ -237,6 +236,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 58.5rem;
   height: 100%;
   background-color: #ffffff;
   border-radius: 0.4rem;
@@ -289,7 +289,7 @@ export class PersonCard extends React.Component {
     }
   };
 
-  handleSaveButtonClick = (e) => {
+  handleSaveButtonClick = () => {
 
     this.setState((prevState) => {
       const state = { ...prevState };
@@ -306,11 +306,8 @@ export class PersonCard extends React.Component {
 
       if (invalidFields.length === 0) {
         const person = {
-          id: 10,
-          avatar: null,
           name: state.name.content,
           position: state.position.content,
-          karma: 0,
           description: state.description.content,
         };
 

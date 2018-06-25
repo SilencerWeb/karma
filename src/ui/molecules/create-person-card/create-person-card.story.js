@@ -2,14 +2,14 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { CreateActionCard } from '.';
+import { CreatePersonCard } from '.';
 
 
-const stories = storiesOf('molecules/CreateActionCard', module);
+const stories = storiesOf('molecules/CreatePersonCard', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {
   return (
-    <CreateActionCard onSaveButtonClick={ () => console.log('saved!') }/>
+    <CreatePersonCard/>
   );
 });

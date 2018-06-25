@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-
 import { Link } from 'react-router-dom';
 
 import { Logo, Button, RetinaImage, Container } from 'ui/atoms';

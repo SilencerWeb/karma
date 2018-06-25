@@ -2,14 +2,15 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { CreatePersonCard } from '.';
+import { CreateActionCard } from '.';
 
 
-const stories = storiesOf('molecules/CreatePersonCard', module);
+const stories = storiesOf('molecules/CreateActionCard', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {
   return (
-    <CreatePersonCard onSaveButtonClick={ () => console.log('saved!') }/>
+    // eslint-disable-next-line
+    <CreateActionCard onSaveButtonClick={ () => console.log('saved!') }/>
   );
 });

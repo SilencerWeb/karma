@@ -37,15 +37,6 @@ export class CreateActionCard extends React.Component {
     isCreating: false,
   };
 
-  static getDerivedStateFromProps = (props, state) => {
-
-    if (props.isCreating) {
-      state.isCreating = props.isCreating;
-    }
-
-    return state;
-  };
-
   handleWrapperClick = () => {
     this.setState({
       isCreating: true,
@@ -64,6 +55,15 @@ export class CreateActionCard extends React.Component {
     this.setState({
       isCreating: false,
     });
+  };
+
+  static getDerivedStateFromProps = (props, state) => {
+
+    if (props.isCreating) {
+      state.isCreating = props.isCreating;
+    }
+
+    return state;
   };
 
   render() {

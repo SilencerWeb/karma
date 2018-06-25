@@ -14,7 +14,6 @@ const Wrapper = styled.div`
   grid-template-rows: auto;
   grid-column-gap: 1.6rem;
   grid-row-gap: 2rem;
-  grid-auto-rows: 1fr;
 `;
 
 
@@ -35,7 +34,7 @@ export const PersonCardList = (props) => {
         );
       }) }
       
-      <CreatePersonCard onSaveButtonClick={ props.onSaveButtonClick }/>
+      <CreatePersonCard/>
     </Wrapper>
   );
 };
@@ -45,7 +44,7 @@ PersonCardList.propTypes = {
   className: PropTypes.string,
   persons: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.string.isRequired,
       avatar: PropTypes.shape({
         _1x: PropTypes.string.isRequired,
         _2x: PropTypes.string.isRequired,
@@ -56,5 +55,4 @@ PersonCardList.propTypes = {
       description: PropTypes.string.isRequired,
     }),
   ).isRequired,
-  onSaveButtonClick: PropTypes.func.isRequired,
 };
