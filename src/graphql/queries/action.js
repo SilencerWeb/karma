@@ -1,13 +1,14 @@
 import gql from 'graphql-tag';
 
-export const GET_PERSONS = gql`
+export const GET_ACTIONS = gql`
   {
-    persons {
+    actions {
       id
-      name
-      position
+      title
+      date
       description
       karma
+      executors
     }
   }
 `;

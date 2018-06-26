@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { ApolloConsumer, Mutation } from 'react-apollo';
 
 import { Icon } from 'ui/atoms';
 
@@ -9,6 +10,9 @@ import { ActionCard } from 'ui/molecules';
 import { plus } from 'ui/outlines';
 
 import { color } from 'ui/theme';
+
+import { GET_ACTIONS } from 'graphql/queries/action';
+import { CREATE_ACTION } from 'graphql/mutations/action';
 
 
 const Wrapper = styled.div`
@@ -44,13 +48,7 @@ export class CreateActionCard extends React.Component {
   };
 
   handleCancelButtonClick = () => {
-    this.setState({
-      isCreating: false,
-    });
-  };
-
-  handleSaveButtonClick = (person) => {
-    this.props.onSaveButtonClick(person);
+    this.props.onCancelButtonClick && this.props.onCancelButtonClick();
 
     this.setState({
       isCreating: false,
@@ -79,15 +77,42 @@ export class CreateActionCard extends React.Component {
               <Icon icon={ plus }/>
             </Wrapper>
             :
-            <ActionCard
-              title={ title }
-              date={ date }
-              description={ description }
-              karma={ 'neutral' }
-              create
-              onCancelButtonClick={ this.handleCancelButtonClick }
-              onSaveButtonClick={ this.handleSaveButtonClick }
-            />
+            <ApolloConsumer>
+              { () => (
+                <Mutation mutation={ CREATE_ACTION }>
+                  { (createAction) => (
+                    <ActionCard
+                      title={ title }
+                      date={ date }
+                      description={ description }
+                      karma={ 'neutral' }
+                      executors={ 'left' }
+                      create
+                      onCancelButtonClick={ this.handleCancelButtonClick }
+                      onSaveButtonClick={ (action) => {
+                        createAction({
+                          variables: {
+                            title: action.title,
+                            date: action.date,
+                            description: action.description,
+                            karma: action.karma,
+                            executors: action.executors,
+                            authorId: 'cjiv3d6im1s550a277cq0iqza',
+                          },
+                          refetchQueries: [{ query: GET_ACTIONS }],
+                        });
+
+                        this.props.onSaveButtonClick && this.props.onSaveButtonClick();
+
+                        this.setState({
+                          isCreating: false,
+                        });
+                      } }
+                    />
+                  ) }
+                </Mutation>
+              ) }
+            </ApolloConsumer>
         }
       </React.Fragment>
     );
@@ -98,5 +123,6 @@ export class CreateActionCard extends React.Component {
 CreateActionCard.propTypes = {
   className: PropTypes.string,
   isCreating: PropTypes.bool,
-  onSaveButtonClick: PropTypes.func.isRequired,
+  onCancelButtonClick: PropTypes.func,
+  onSaveButtonClick: PropTypes.func,
 };

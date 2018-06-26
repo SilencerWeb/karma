@@ -11,7 +11,7 @@ import { plus } from 'ui/outlines';
 
 import { color } from 'ui/theme';
 
-import { PERSONS } from 'graphql/queries/person';
+import { GET_PERSONS } from 'graphql/queries/person';
 import { CREATE_PERSON } from 'graphql/mutations/person';
 
 
@@ -82,10 +82,11 @@ export class CreatePersonCard extends React.Component {
                           variables: {
                             name: person.name,
                             position: person.position,
-                            description: person.position,
+                            description: person.description,
                             karma: 0,
+                            authorId: 'cjiv3d6im1s550a277cq0iqza',
                           },
-                          refetchQueries: [{ query: PERSONS }],
+                          refetchQueries: [{ query: GET_PERSONS }],
                         });
 
                         this.setState({

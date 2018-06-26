@@ -378,12 +378,9 @@ export class ActionCard extends React.Component {
       isEdited: false,
       isInvalid: false,
     },
-    karma: this.props.karma || 'neutral',
-    executors: this.props.executors || 'left',
-    members: this.props.members || {
-      left: [],
-      right: [],
-    },
+    karma: this.props.karma,
+    executors: this.props.executors,
+    members: this.props.members,
     persons: [
       {
         id: 0,
@@ -591,7 +588,6 @@ export class ActionCard extends React.Component {
 
       if (isValid) {
         const person = {
-          id: 10,
           title: state.title.content,
           date: state.date.content,
           description: state.description.content,

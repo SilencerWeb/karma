@@ -10,7 +10,6 @@ stories.addDecorator(withKnobs);
 
 stories.add('default', () => {
   return (
-    // eslint-disable-next-line
-    <CreateActionCard onSaveButtonClick={ () => console.log('saved!') }/>
+    <CreateActionCard/>
   );
 });

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { ApolloConsumer, Query, Mutation } from 'react-apollo';
+import { ApolloConsumer, Query } from 'react-apollo';
 
 import { PersonCardList } from 'ui/molecules';
 
 import { CommonTemplate } from 'ui/templates';
 
-import { PERSONS } from 'graphql/queries/person';
-import { CREATE_PERSON } from 'graphql/mutations/person';
+import { GET_PERSONS } from 'graphql/queries/person';
 
 
 export class FeedPage extends React.Component {
@@ -20,7 +19,7 @@ export class FeedPage extends React.Component {
       <CommonTemplate>
         <ApolloConsumer>
           { () => (
-            <Query query={ PERSONS }>
+            <Query query={ GET_PERSONS }>
               { ({ error, loading, data }) => {
                 if (error) {
                   return <p>Error :( { error.message }</p>;

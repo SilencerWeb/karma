@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { ApolloConsumer, Query } from 'react-apollo';
 
 import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
 
@@ -10,11 +11,7 @@ import { CommonTemplate } from 'ui/templates';
 
 import { pencil } from 'ui/outlines';
 
-import avatar_1x from 'assets/images/avatars/sm/avatar.png';
-import avatar_2x from 'assets/images/avatars/sm/avatar@2x.png';
-
-import avatar2_1x from 'assets/images/avatars/sm/avatar2.png';
-import avatar2_2x from 'assets/images/avatars/sm/avatar2@2x.png';
+import { GET_ACTIONS } from 'graphql/queries/action';
 
 import avatar3_1x from 'assets/images/avatars/lg/avatar.png';
 import avatar3_2x from 'assets/images/avatars/lg/avatar@2x.png';
@@ -109,62 +106,24 @@ const Actions = styled.div`
 
 export class PersonPage extends React.Component {
   state = {
-    actions: [
-      {
-        id: 0,
-        title: 'Action name',
-        date: '12.05.2018',
-        description: 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
-        karma: 'positive',
-        executors: 'left',
-        members: {
-          left: [
-            {
-              avatar: {
-                _1x: avatar_1x,
-                _2x: avatar_2x,
-              },
-            },
-            {
-              avatar: {
-                _1x: avatar_1x,
-                _2x: avatar_2x,
-              },
-            },
-          ],
-          right: [
-            {
-              avatar: {
-                _1x: avatar2_1x,
-                _2x: avatar2_2x,
-              },
-            },
-          ],
-        },
-      },
-    ],
     isActionCreating: false,
   };
 
   handleAddActionButtonClick = () => {
-    this.setState({ isActionCreating: true });
+    this.setState({
+      isActionCreating: true,
+    });
   };
 
   handleCancelButtonClick = () => {
-
-    this.setState({ isActionCreating: false });
+    this.setState({
+      isActionCreating: false,
+    });
   };
 
-  handleSaveButtonClick = (action) => {
-
-    this.setState((prevState) => {
-      const state = { ...prevState };
-
-      state.actions.push(action);
-
-      state.isActionCreating = false;
-
-      return state;
+  handleSaveButtonClick = () => {
+    this.setState({
+      isActionCreating: false,
     });
   };
 
@@ -215,12 +174,29 @@ export class PersonPage extends React.Component {
             <Button onClick={ this.handleAddActionButtonClick }>Add an action</Button>
           </ActionsHeader>
 
-          <ActionCardList
-            actions={ this.state.actions }
-            isActionCreating={ this.state.isActionCreating }
-            onCancelButtonClick={ this.handleCancelButtonClick }
-            onSaveButtonClick={ this.handleSaveButtonClick }
-          />
+
+          <ApolloConsumer>
+            { () => (
+              <Query query={ GET_ACTIONS }>
+                { ({ error, loading, data }) => {
+                  if (error) {
+                    return <p>Error :( { error.message }</p>;
+                  } else if (loading) {
+                    return <p>Loading...</p>;
+                  }
+
+                  return (
+                    <ActionCardList
+                      actions={ data.actions }
+                      isActionCreating={ this.state.isActionCreating }
+                      onCancelButtonClick={ this.handleCancelButtonClick }
+                      onSaveButtonClick={ this.handleSaveButtonClick }
+                    />
+                  );
+                } }
+              </Query>
+            ) }
+          </ApolloConsumer>
         </Actions>
       </CommonTemplate>
     );

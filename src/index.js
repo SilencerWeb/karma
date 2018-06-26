@@ -16,7 +16,7 @@ injectGlobal`${normalize} ${globalStyles}`;
 
 
 const client = new ApolloClient({
-  uri: 'https://eu1.prisma.sh/silencerweb-d7143d/karma-api/develop',
+  uri: 'https://karma-api.herokuapp.com/',
 });
 
 ReactDOM.render(
