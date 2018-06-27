@@ -23,10 +23,10 @@
   "devDependencies": {
     "@storybook/addon-knobs": "^3.4.7",
     "@storybook/react": "^3.4.7",
-    "autoprefixer": "8.6.3",
+    "autoprefixer": "8.6.4",
     "babel-core": "6.26.3",
-    "babel-eslint": "8.2.3",
-    "babel-jest": "23.0.1",
+    "babel-eslint": "8.2.5",
+    "babel-jest": "23.2.0",
     "babel-loader": "7.1.4",
     "babel-preset-react-app": "^3.1.1",
     "babel-runtime": "6.26.0",
@@ -34,8 +34,8 @@
     "chalk": "2.4.1",
     "concurrently": "^3.6.0",
     "css-loader": "0.28.11",
-    "dotenv-expand": "4.2.0",
-    "eslint": "4.19.1",
+    "dotenv-expand": "^4.2.0",
+    "eslint": "5.0.1",
     "eslint-loader": "2.0.0",
     "eslint-plugin-flowtype": "2.49.3",
     "eslint-plugin-import": "^2.12.0",
@@ -46,7 +46,7 @@
     "gh-pages": "^1.2.0",
     "html-webpack-plugin": "3.2.0",
     "husky": "0.15.0-rc.13",
-    "jest": "23.1.0",
+    "jest": "23.2.0",
     "lint-staged": "^7.2.0",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.3.1",
@@ -70,11 +70,7 @@
     "dev:webpack": "node scripts/start.js",
     "dev:storybook": "start-storybook -p 3001 -c .storybook",
     "dev": "concurrently 'yarn dev:webpack' 'yarn dev:storybook'",
-    "build:webpack": "node scripts/build.js",
-    "build:storybook": "build-storybook -c .storybook -o build/storybook",
-    "build": "yarn build:webpack && yarn build:storybook",
-    "deploy:webpack": "yarn build:webpack && yarn gh-pages -d build",
-    "deploy:storybook": "yarn build:storybook && yarn gh-pages -d build",
+    "build": "node scripts/build.js",
     "deploy": "yarn build && yarn gh-pages -d build",
     "lint": "yarn eslint src",
     "lint:fix": "yarn eslint src --fix",
@@ -83,7 +79,8 @@
   },
   "lint-staged": {
     "src/**/*.js": [
-      "eslint"
+      "yarn lint:fix",
+      "git add ."
     ]
   },
   "jest": {

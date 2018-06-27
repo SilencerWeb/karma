@@ -14,6 +14,8 @@ import { Routes } from 'routes';
 
 import { AUTH_TOKEN } from 'constants.js';
 
+import { config } from 'config';
+
 import normalize from 'normalize.css/normalize.css';
 
 
@@ -21,7 +23,7 @@ injectGlobal`${normalize} ${globalStyles}`;
 
 
 const httpLink = createHttpLink({
-  uri: 'https://karma-api.herokuapp.com/',
+  uri: config.PRISMA_ENDPOINT,
 });
 
 const authLink = setContext((_, { headers }) => {

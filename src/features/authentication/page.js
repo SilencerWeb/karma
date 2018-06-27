@@ -73,7 +73,7 @@ export class AuthenticationPage extends React.Component {
         <AppConsumer>
           { (context) => (
             <ApolloConsumer>
-              { () => (
+              { (client) => (
                 <React.Fragment>
                   {
                     this.state.type === 'signup' ?
@@ -104,6 +104,8 @@ export class AuthenticationPage extends React.Component {
                                     name: values.name,
                                   },
                                 }).then((response) => {
+                                  client.cache.reset();
+
                                   const token = response.data.signup.token;
 
                                   localStorage.setItem(AUTH_TOKEN, token);
@@ -219,6 +221,8 @@ export class AuthenticationPage extends React.Component {
                                     password: values.password,
                                   },
                                 }).then((response) => {
+                                  client.cache.reset();
+
                                   const token = response.data.login.token;
 
                                   localStorage.setItem(AUTH_TOKEN, token);

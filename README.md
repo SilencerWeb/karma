@@ -1,5 +1,3 @@
 # Karma
 
-[Demo](https://silencerweb.github.io/karma/)
-
-[Storybook](https://silencerweb.github.io/karma/storybook/)
+[Demo](https://happy-nobel-f46e23.netlify.com/)
