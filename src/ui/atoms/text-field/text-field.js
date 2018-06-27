@@ -69,7 +69,6 @@ const Textarea = Input.withComponent('textarea').extend`
 
 const Wrapper = styled.div`
   position: relative;
-  max-width: 20rem;
   margin-bottom: 0.4rem;
   
   &:last-child {
@@ -127,10 +126,6 @@ const Wrapper = styled.div`
         cursor: not-allowed;
       }
     `}
-    
-    ${p.fullWidth && css`
-      max-width: 100%;
-    `}
   `}
 `;
 
@@ -148,13 +143,14 @@ export const TextField = (props) => {
         rotation: props.icon.rotation,
       } }
       disabled={ props.disabled }
-      fullWidth={ props.fullWidth }
     >
       { props.icon && props.icon.position === 'left' && icon }
       <Field
         id={ props.id }
-        placeholder={ props.placeholder }
+        name={ props.name }
+        type={ props.type }
         value={ props.value }
+        placeholder={ props.placeholder }
         disabled={ props.disabled }
         error={ props.error }
         onChange={ props.onChange }
@@ -171,8 +167,10 @@ TextField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   tag: PropTypes.string,
-  placeholder: PropTypes.string,
+  name: PropTypes.string,
+  type: PropTypes.string,
   value: PropTypes.string,
+  placeholder: PropTypes.string,
   icon: PropTypes.shape({
     svg: PropTypes.any.isRequired,
     position: PropTypes.string.isRequired,
@@ -180,7 +178,6 @@ TextField.propTypes = {
   }),
   disabled: PropTypes.bool,
   error: PropTypes.bool,
-  fullWidth: PropTypes.bool,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
@@ -190,5 +187,4 @@ TextField.defaultProps = {
   tag: 'input',
   disabled: false,
   error: false,
-  fullWidth: false,
 };

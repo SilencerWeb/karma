@@ -13,7 +13,6 @@ import { color, transition } from 'ui/theme';
 
 
 const Wrapper = styled.div`
-  max-width: 20rem;
   margin-bottom: 0.4rem;
   transition: ${transition};
   
@@ -254,10 +253,6 @@ const Wrapper = styled.div`
           }
         }
       }
-    `}
-    
-    ${p.fullWidth && css`
-      max-width: initial;
     `}
   `}
 `;
@@ -512,7 +507,6 @@ export const Select = (props) => {
       theme={ props.theme }
       disabled={ props.disabled }
       error={ props.error }
-      fullWidth={ props.fullWidth }
     >
       <ReactSelect
         id={ props.id }
@@ -554,7 +548,6 @@ Select.propTypes = {
   theme: PropTypes.string,
   disabled: PropTypes.bool,
   error: PropTypes.bool,
-  fullWidth: PropTypes.bool,
   menuIsOpen: PropTypes.bool,
   onChange: PropTypes.func,
 };
@@ -564,5 +557,4 @@ Select.defaultProps = {
   theme: 'simple',
   disabled: false,
   error: false,
-  fullWidth: false,
 };

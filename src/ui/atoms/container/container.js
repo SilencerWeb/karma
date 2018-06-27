@@ -6,6 +6,7 @@ import { media } from 'ui/mixins';
 
 export const Container = styled.div`
   max-width: 114rem;
+  width: 100%;
   margin-right: auto;
   margin-left: auto;
   

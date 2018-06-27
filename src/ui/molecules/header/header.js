@@ -19,9 +19,19 @@ const Avatar = styled.div`
   }
 `;
 
-const ContainerSide = styled.div`
+const ContainerRightSide = styled.div`
   display: flex;
   align-items: center;
+  
+  a {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 0.8rem;
+    
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 `;
 
 const Wrapper = styled.header`
@@ -47,17 +57,36 @@ export const Header = (props: props) => {
   return (
     <Wrapper className={ props.className }>
       <Container>
-        <ContainerSide>
+        <div>
           <Link to={ '/' }>
             <Logo/>
           </Link>
-        </ContainerSide>
-        <ContainerSide>
-          <Avatar>
-            <RetinaImage src={ avatarSources } alt={ '' }/>
-          </Avatar>
-          <Button>Add an action</Button>
-        </ContainerSide>
+        </div>
+        <ContainerRightSide>
+          {
+            props.isLoggedIn ?
+              <React.Fragment>
+                <Avatar>
+                  <RetinaImage src={ avatarSources } alt={ '' }/>
+                </Avatar>
+                <Button>Add an action</Button>
+              </React.Fragment>
+              :
+              <React.Fragment>
+                <Link to={ '/signup' }>
+                  <Button>
+                    Register
+                  </Button>
+                </Link>
+                
+                <Link to={ '/login' }>
+                  <Button>
+                    Login
+                  </Button>
+                </Link>
+              </React.Fragment>
+          }
+        </ContainerRightSide>
       </Container>
     </Wrapper>
   );
@@ -66,4 +95,5 @@ export const Header = (props: props) => {
 
 Header.propTypes = {
   className: PropTypes.string,
+  isLoggedIn: PropTypes.bool,
 };

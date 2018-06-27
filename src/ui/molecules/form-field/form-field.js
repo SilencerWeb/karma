@@ -8,7 +8,6 @@ import { color } from 'ui/theme';
 
 
 const Wrapper = styled.div`
-  max-width: 20rem;
   
   ${p => css`
 
@@ -17,10 +16,6 @@ const Wrapper = styled.div`
       ${Label} {
         color: ${color.primary};
       }
-    `}
-    
-    ${p.fullWidth && css`
-      max-width: initial;
     `}
   `}
 `;
@@ -69,7 +64,6 @@ export class FormField extends React.Component {
         className={ this.props.className }
         focused={ this.state.focused }
         error={ this.props.error || isLimited && !doesValuePassLimit }
-        fullWidth={ this.props.fullWidth }
       >
         {
           this.props.label &&
@@ -92,20 +86,19 @@ export class FormField extends React.Component {
               theme={ this.props.select.theme }
               disabled={ this.props.disabled }
               error={ this.props.error }
-              fullWidth={ this.props.fullWidth }
               onChange={ this.handleSelectChange }
             />
             :
             <TextField
-              id={ id }
               tag={ this.props.tag }
+              name={ this.props.textField && this.props.textField.name }
+              type={ this.props.textField && this.props.textField.type }
+              value={ this.props.textField && this.props.textField.value }
               placeholder={ this.props.placeholder }
-              value={ this.state.value }
               icon={ this.props.textField && this.props.textField.icon }
               disabled={ this.props.disabled }
               error={ this.props.error || isLimited && !doesValuePassLimit }
-              fullWidth={ this.props.fullWidth }
-              onChange={ this.handleTextFieldChange }
+              onChange={ this.props.onChange }
               onFocus={ this.handleTextFieldFocus }
               onBlur={ this.handleTextFieldBlur }
             />
@@ -150,12 +143,15 @@ FormField.propTypes = {
           _1x: PropTypes.string.isRequired,
           _2x: PropTypes.string.isRequired,
         },
-      })
+      }),
     ).isRequired,
     type: PropTypes.string,
     theme: PropTypes.string,
   }),
   textField: PropTypes.shape({
+    name: PropTypes.string,
+    type: PropTypes.string,
+    value: PropTypes.string,
     icon: PropTypes.shape({
       svg: PropTypes.any.isRequired,
       position: PropTypes.string.isRequired,
@@ -174,12 +170,11 @@ FormField.propTypes = {
   }),
   disabled: PropTypes.bool,
   error: PropTypes.bool,
-  fullWidth: PropTypes.bool,
+  onChange: PropTypes.func,
 };
 
 FormField.defaultProps = {
   tag: 'input',
   disabled: false,
   error: false,
-  fullWidth: false,
 };

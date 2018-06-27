@@ -7,9 +7,19 @@ import { Container } from 'ui/atoms';
 import { Header, Footer } from 'ui/molecules';
 
 
+const ContainerInner = styled.div`
+  width: 100%;
+`;
+
 const Wrapper = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 
   > ${Container} {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
     padding-top: 2rem;
     padding-bottom: 6rem;
   }
@@ -21,7 +31,9 @@ export const CommonTemplate = (props) => {
     <Wrapper>
       <Header/>
       <Container>
-        { props.children }
+        <ContainerInner>
+          { props.children }
+        </ContainerInner>
       </Container>
       <Footer/>
     </Wrapper>
