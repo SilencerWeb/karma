@@ -83,8 +83,6 @@ export class CreatePersonCard extends React.Component {
                             name: person.name,
                             position: person.position,
                             description: person.description,
-                            karma: 0,
-                            authorId: 'cjiv3d6im1s550a277cq0iqza',
                           },
                           refetchQueries: [{ query: GET_PERSONS }],
                         });

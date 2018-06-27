@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
+
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import { AppConsumer } from './index';
@@ -7,6 +8,7 @@ import { AppConsumer } from './index';
 import { FeedPage } from 'features/feed';
 import { PersonPage } from 'features/person';
 import { AuthenticationPage } from 'features/authentication';
+
 
 const ProtectedRoute = ({ component: Component, ...rest }) => (
   <AppConsumer>
@@ -18,10 +20,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => (
     ) }
   </AppConsumer>
 );
-
-ProtectedRoute.propTypes = {
-  component: PropTypes.element,
-};
 
 
 export const Routes = () => (

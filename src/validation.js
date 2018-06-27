@@ -1,3 +1,5 @@
+/* eslint-disable func-names */
+
 import * as Yup from 'yup';
 
 export const email = Yup.string()
@@ -13,7 +15,7 @@ export const confirmPassword = Yup.string()
   .test(
     'match',
     'Passwords must match',
-    (currentPassword) => {
+    function (currentPassword) {
       return currentPassword === this.options.parent.password;
     },
   )

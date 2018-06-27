@@ -1,15 +1,20 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import * as Yup from 'yup';
 import { ApolloConsumer, Mutation } from 'react-apollo';
 import { Formik } from 'formik';
+
+import { AppConsumer } from 'index';
 
 import { Button } from 'ui/atoms';
 
 import { FormField } from 'ui/molecules';
 
 import { CommonTemplate } from 'ui/templates';
+
+import { AUTH_TOKEN } from 'constants.js';
 
 import * as validation from 'validation';
 
@@ -41,6 +46,7 @@ export class AuthenticationPage extends React.Component {
     type: 'signup',
     validateOnBlur: false,
     validateOnChange: false,
+    shouldRedirectToMainPage: false,
   };
 
   handleSubmitButtonClick = () => {
@@ -62,193 +68,218 @@ export class AuthenticationPage extends React.Component {
   render() {
     return (
       <CommonTemplate>
-        <ApolloConsumer>
-          { () => (
-            <React.Fragment>
-              {
-                this.state.type === 'signup' ?
-                  <Mutation mutation={ SIGNUP }>
-                    { (signup, { loading, error, data }) => (
-                      <React.Fragment>
-                        { loading && <p>Loading...</p> }
-                        { error && <p>Error :( { error.message }</p> }
+        { this.state.shouldRedirectToMainPage && <Redirect to={ '/' }/> }
 
-                        <Formik
-                          validationSchema={
-                            Yup.object().shape({
-                              email: validation.email,
-                              name: Yup.string(),
-                              nickname: Yup.string().required('Nickname is required'),
-                              password: validation.password,
-                              confirmPassword: validation.confirmPassword,
-                            })
-                          }
-                          validateOnBlur={ this.state.validateOnBlur }
-                          validateOnChange={ this.state.validateOnChange }
-                          onSubmit={ (values) => {
-                            signup({
-                              variables: {
-                                email: values.email,
-                                password: values.password,
-                                nickname: values.nickname,
-                                name: values.name,
-                              },
-                            });
-                          } }
-                          render={
-                            ({
-                               values,
-                               errors,
-                               handleChange,
-                               handleSubmit,
-                             }) => (
-                               <Form onSubmit={ handleSubmit } noValidate>
-                                 <StyledFormField
-                                  textField={ {
-                                    name: 'email',
-                                  } }
-                                  placeholder={ 'Email' }
-                                  value={ values.email }
-                                  error={ !!errors.email }
-                                  helperText={ !!errors.email && {
-                                    content: errors.email,
-                                  } }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  textField={ {
-                                    name: 'nickname',
-                                  } }
-                                  placeholder={ 'Nickname' }
-                                  value={ values.nickname }
-                                  error={ !!errors.nickname }
-                                  helperText={ !!errors.nickname && {
-                                    content: errors.nickname,
-                                  } }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  textField={ {
-                                    name: 'name',
-                                  } }
-                                  placeholder={ 'Name' }
-                                  value={ values.name }
-                                  error={ !!errors.name }
-                                  helperText={ !!errors.name && {
-                                    content: errors.name,
-                                  } }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  textField={ {
-                                    name: 'password',
-                                    type: 'password',
-                                  } }
-                                  placeholder={ 'Password' }
-                                  value={ values.password }
-                                  error={ !!errors.password }
-                                  helperText={ !!errors.password && {
-                                    content: errors.password,
-                                  } }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  name={ 'confirmPassword' }
-                                  textField={ {
-                                    name: 'confirmPassword',
-                                    type: 'password',
-                                  } }
-                                  placeholder={ 'Confirm password' }
-                                  value={ values.confirmPassword }
-                                  error={ !!errors.confirmPassword }
-                                  helperText={ !!errors.confirmPassword && {
-                                    content: errors.confirmPassword,
-                                  } }
-                                  onChange={ handleChange }
-                                 />
+        <AppConsumer>
+          { (context) => (
+            <ApolloConsumer>
+              { () => (
+                <React.Fragment>
+                  {
+                    this.state.type === 'signup' ?
+                      <Mutation mutation={ SIGNUP }>
+                        { (signup, { loading, error, data }) => (
+                          <React.Fragment>
+                            { loading && <p>Loading...</p> }
+                            { error && <p>Error :( { error.message }</p> }
 
-                                 <FormFooter>
-                                   <Button onClick={ this.handleSubmitButtonClick }>Submit</Button>
-                                 </FormFooter>
-                               </Form>
-                            )
-                          }
-                        />
-                      </React.Fragment>
-                    ) }
-                  </Mutation>
-                  :
-                  <Mutation mutation={ LOGIN }>
-                    { (login, { loading, error, data }) => (
-                      <React.Fragment>
-                        { loading && <p>Loading...</p> }
-                        { error && <p>Error :( { error.message }</p> }
+                            <Formik
+                              validationSchema={
+                                Yup.object().shape({
+                                  email: validation.email,
+                                  nickname: Yup.string().required('Nickname is required'),
+                                  name: Yup.string(),
+                                  password: validation.password,
+                                  confirmPassword: validation.confirmPassword,
+                                })
+                              }
+                              validateOnBlur={ this.state.validateOnBlur }
+                              validateOnChange={ this.state.validateOnChange }
+                              onSubmit={ (values) => {
+                                signup({
+                                  variables: {
+                                    email: values.email,
+                                    password: values.password,
+                                    nickname: values.nickname,
+                                    name: values.name,
+                                  },
+                                }).then((response) => {
+                                  const token = response.data.signup.token;
 
-                        <Formik
-                          validationSchema={
-                            Yup.object().shape({
-                              login: Yup.string().required('Login is required'),
-                              password: validation.password,
-                            })
-                          }
-                          validateOnBlur={ this.state.validateOnBlur }
-                          validateOnChange={ this.state.validateOnChange }
-                          onSubmit={ (values) => {
-                            login({
-                              variables: {
-                                login: values.login,
-                                password: values.password,
-                              },
-                            });
-                          } }
-                          render={
-                            ({
-                               values,
-                               errors,
-                               handleChange,
-                               handleSubmit,
-                             }) => (
-                               <Form onSubmit={ handleSubmit } noValidate>
-                                 <StyledFormField
-                                  textField={ {
-                                    name: 'login',
-                                  } }
-                                  placeholder={ 'Email or nickname' }
-                                  value={ values.login }
-                                  error={ !!errors.login }
-                                  helperText={ !!errors.login && {
-                                    content: errors.login,
-                                  } }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  textField={ {
-                                    name: 'password',
-                                    type: 'password',
-                                  } }
-                                  placeholder={ 'Password' }
-                                  value={ values.password }
-                                  error={ !!errors.password }
-                                  helperText={ !!errors.password && {
-                                    content: errors.password,
-                                  } }
-                                  onChange={ handleChange }
-                                 />
+                                  localStorage.setItem(AUTH_TOKEN, token);
 
-                                 <FormFooter>
-                                   <Button onClick={ this.handleSubmitButtonClick }>Submit</Button>
-                                 </FormFooter>
-                               </Form>
-                            )
-                          }
-                        />
-                      </React.Fragment>
-                    ) }
-                  </Mutation>
-              }
-            </React.Fragment>
+                                  context.toggleLoggedIn();
+
+                                  this.setState({
+                                    shouldRedirectToMainPage: true,
+                                  });
+                                });
+                              } }
+                              render={
+                                ({
+                                   values,
+                                   errors,
+                                   handleChange,
+                                   handleSubmit,
+                                 }) => (
+                                   <Form onSubmit={ handleSubmit } noValidate>
+                                     <StyledFormField
+                                      textField={ {
+                                        name: 'email',
+                                      } }
+                                      placeholder={ 'Email *' }
+                                      value={ values.email }
+                                      error={ !!errors.email }
+                                      helperText={ !!errors.email ? {
+                                        content: errors.email,
+                                      } : null }
+                                      onChange={ handleChange }
+                                     />
+                                     <StyledFormField
+                                      textField={ {
+                                        name: 'nickname',
+                                      } }
+                                      placeholder={ 'Nickname *' }
+                                      value={ values.nickname }
+                                      error={ !!errors.nickname }
+                                      helperText={ !!errors.nickname ? {
+                                        content: errors.nickname,
+                                      } : null }
+                                      onChange={ handleChange }
+                                     />
+                                     <StyledFormField
+                                      textField={ {
+                                        name: 'name',
+                                      } }
+                                      placeholder={ 'Name' }
+                                      value={ values.name }
+                                      error={ !!errors.name }
+                                      helperText={ !!errors.name ? {
+                                        content: errors.name,
+                                      } : null }
+                                      onChange={ handleChange }
+                                     />
+                                     <StyledFormField
+                                      textField={ {
+                                        name: 'password',
+                                        type: 'password',
+                                      } }
+                                      placeholder={ 'Password *' }
+                                      value={ values.password }
+                                      error={ !!errors.password }
+                                      helperText={ !!errors.password ? {
+                                        content: errors.password,
+                                      } : null }
+                                      onChange={ handleChange }
+                                     />
+                                     <StyledFormField
+                                      textField={ {
+                                        name: 'confirmPassword',
+                                        type: 'password',
+                                      } }
+                                      placeholder={ 'Confirm password *' }
+                                      value={ values.confirmPassword }
+                                      error={ !!errors.confirmPassword }
+                                      helperText={ !!errors.confirmPassword ? {
+                                        content: errors.confirmPassword,
+                                      } : null }
+                                      onChange={ handleChange }
+                                     />
+
+                                     <FormFooter>
+                                       <Button onClick={ this.handleSubmitButtonClick }>Submit</Button>
+                                     </FormFooter>
+                                   </Form>
+                                )
+                              }
+                            />
+                          </React.Fragment>
+                        ) }
+                      </Mutation>
+                      :
+                      <Mutation mutation={ LOGIN }>
+                        { (login, { loading, error, data }) => (
+                          <React.Fragment>
+                            { loading && <p>Loading...</p> }
+                            { error && <p>Error :( { error.message }</p> }
+
+                            <Formik
+                              validationSchema={
+                                Yup.object().shape({
+                                  login: Yup.string().required('Login is required'),
+                                  password: validation.password,
+                                })
+                              }
+                              validateOnBlur={ this.state.validateOnBlur }
+                              validateOnChange={ this.state.validateOnChange }
+                              onSubmit={ (values) => {
+                                login({
+                                  variables: {
+                                    login: values.login,
+                                    password: values.password,
+                                  },
+                                }).then((response) => {
+                                  const token = response.data.login.token;
+
+                                  localStorage.setItem(AUTH_TOKEN, token);
+
+                                  context.toggleLoggedIn();
+
+                                  this.setState({
+                                    shouldRedirectToMainPage: true,
+                                  });
+                                });
+                              } }
+                              render={
+                                ({
+                                   values,
+                                   errors,
+                                   handleChange,
+                                   handleSubmit,
+                                 }) => (
+                                   <Form onSubmit={ handleSubmit } noValidate>
+                                     <StyledFormField
+                                      textField={ {
+                                        name: 'login',
+                                      } }
+                                      placeholder={ 'Email or nickname' }
+                                      value={ values.login }
+                                      error={ !!errors.login }
+                                      helperText={ !!errors.login ? {
+                                        content: errors.login,
+                                      } : null }
+                                      onChange={ handleChange }
+                                     />
+                                     <StyledFormField
+                                      textField={ {
+                                        name: 'password',
+                                        type: 'password',
+                                      } }
+                                      placeholder={ 'Password' }
+                                      value={ values.password }
+                                      error={ !!errors.password }
+                                      helperText={ !!errors.password ? {
+                                        content: errors.password,
+                                      } : null }
+                                      onChange={ handleChange }
+                                     />
+
+                                     <FormFooter>
+                                       <Button onClick={ this.handleSubmitButtonClick }>Submit</Button>
+                                     </FormFooter>
+                                   </Form>
+                                )
+                              }
+                            />
+                          </React.Fragment>
+                        ) }
+                      </Mutation>
+                  }
+                </React.Fragment>
+              ) }
+            </ApolloConsumer>
           ) }
-        </ApolloConsumer>
+        </AppConsumer>
       </CommonTemplate>
     );
   }

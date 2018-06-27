@@ -3,7 +3,11 @@ import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+import { AppConsumer } from 'index';
+
 import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
+
+import { AUTH_TOKEN } from 'constants.js';
 
 import avatar_1x from 'assets/images/avatars/sm/avatar.png';
 import avatar_2x from 'assets/images/avatars/sm/avatar@2x.png';
@@ -54,40 +58,53 @@ export const Header = (props: props) => {
     _2x: avatar_2x,
   };
 
+  const handleLogoutButtonClick = (context) => {
+    localStorage.removeItem(AUTH_TOKEN);
+
+    context.toggleLoggedIn();
+  };
+
   return (
     <Wrapper className={ props.className }>
-      <Container>
-        <div>
-          <Link to={ '/' }>
-            <Logo/>
-          </Link>
-        </div>
-        <ContainerRightSide>
-          {
-            props.isLoggedIn ?
-              <React.Fragment>
-                <Avatar>
-                  <RetinaImage src={ avatarSources } alt={ '' }/>
-                </Avatar>
-                <Button>Add an action</Button>
-              </React.Fragment>
-              :
-              <React.Fragment>
-                <Link to={ '/signup' }>
-                  <Button>
-                    Register
-                  </Button>
-                </Link>
-                
-                <Link to={ '/login' }>
-                  <Button>
-                    Login
-                  </Button>
-                </Link>
-              </React.Fragment>
-          }
-        </ContainerRightSide>
-      </Container>
+      <AppConsumer>
+        { (context) => (
+          <Container>
+            <div>
+              <Link to={ '/' }>
+                <Logo/>
+              </Link>
+            </div>
+            <ContainerRightSide>
+              {
+                context.isLoggedIn ?
+                  <React.Fragment>
+                    <Button onClick={ () => handleLogoutButtonClick(context) }>
+                      Logout
+                    </Button>
+                    <Avatar>
+                      <RetinaImage src={ avatarSources } alt={ '' }/>
+                    </Avatar>
+                    <Button>Add an action</Button>
+                  </React.Fragment>
+                  :
+                  <React.Fragment>
+                    <Link to={ '/signup' }>
+                      <Button>
+                        Register
+                      </Button>
+                    </Link>
+
+                    <Link to={ '/login' }>
+                      <Button>
+                        Login
+                      </Button>
+                    </Link>
+                  </React.Fragment>
+              }
+            </ContainerRightSide>
+          </Container>
+        ) }
+      </AppConsumer>
     </Wrapper>
   );
 };
@@ -95,5 +112,4 @@ export const Header = (props: props) => {
 
 Header.propTypes = {
   className: PropTypes.string,
-  isLoggedIn: PropTypes.bool,
 };

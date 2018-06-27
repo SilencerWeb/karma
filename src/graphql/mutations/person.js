@@ -5,13 +5,11 @@ export const CREATE_PERSON = gql`
     $name: String!, 
     $position: String!, 
     $description: String 
-    $karma: Int!, 
   ) {
     createPerson(
       name: $name,
       position: $position,
       description: $description,
-      karma: $karma,
     ) {
       id
       name

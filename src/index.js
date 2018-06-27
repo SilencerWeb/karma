@@ -3,11 +3,16 @@ import * as ReactDOM from 'react-dom';
 import { injectGlobal } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
-import ApolloClient from 'apollo-boost';
+import { ApolloClient } from 'apollo-client';
+import { createHttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import { globalStyles } from 'ui/theme';
 
-import { Routes } from './routes';
+import { Routes } from 'routes';
+
+import { AUTH_TOKEN } from 'constants.js';
 
 import normalize from 'normalize.css/normalize.css';
 
@@ -15,8 +20,24 @@ import normalize from 'normalize.css/normalize.css';
 injectGlobal`${normalize} ${globalStyles}`;
 
 
-const client = new ApolloClient({
+const httpLink = createHttpLink({
   uri: 'https://karma-api.herokuapp.com/',
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem(AUTH_TOKEN);
+
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
 });
 
 
@@ -41,6 +62,16 @@ class App extends React.Component {
         isLoggedIn: !prevState.isLoggedIn,
       };
     });
+  };
+
+  componentDidMount = () => {
+    const token = localStorage.getItem(AUTH_TOKEN);
+
+    if (token) {
+      this.setState({
+        isLoggedIn: true,
+      });
+    }
   };
 
   render() {
