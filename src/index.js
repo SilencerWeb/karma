@@ -19,11 +19,47 @@ const client = new ApolloClient({
   uri: 'https://karma-api.herokuapp.com/',
 });
 
-ReactDOM.render(
-  <ApolloProvider client={ client }>
-    <BrowserRouter>
-      <Routes/>
-    </BrowserRouter>
-  </ApolloProvider>,
-  document.getElementById('root'),
-);
+
+const AppContext = React.createContext({
+  isLoggedIn: false,
+  toggleLoggedIn: () => {
+  },
+});
+
+export const AppConsumer = AppContext.Consumer;
+
+
+class App extends React.Component {
+  state = {
+    isLoggedIn: false,
+  };
+
+  toggleLoggedIn = () => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        isLoggedIn: !prevState.isLoggedIn,
+      };
+    });
+  };
+
+  render() {
+    const appProviderValue = {
+      isLoggedIn: this.state.isLoggedIn,
+      toggleLoggedIn: this.toggleLoggedIn,
+    };
+
+    return (
+      <ApolloProvider client={ client }>
+        <BrowserRouter>
+          <AppContext.Provider value={ appProviderValue }>
+            <Routes/>
+          </AppContext.Provider>
+        </BrowserRouter>
+      </ApolloProvider>
+    );
+  }
+}
+
+
+ReactDOM.render(<App/>, document.getElementById('root'), );
