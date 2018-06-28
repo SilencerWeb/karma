@@ -66,9 +66,10 @@
     "whatwg-fetch": "2.0.4"
   },
   "scripts": {
-    "dev:webpack": "node scripts/start.js",
-    "dev:storybook": "start-storybook -p 3001 -c .storybook",
-    "dev": "concurrently 'yarn dev:webpack' 'yarn dev:storybook'",
+    "start:local": "REACT_APP_NODE_ENV=local node scripts/start.js",
+    "start": "yarn start",
+    "storybook": "start-storybook -p 3001 -c .storybook",
+    "dev": "concurrently 'yarn start' 'yarn storybook'",
     "build": "node scripts/build.js",
     "lint": "yarn eslint src",
     "lint:fix": "yarn eslint src --fix",

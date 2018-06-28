@@ -82,6 +82,10 @@ class App extends React.Component {
       toggleLoggedIn: this.toggleLoggedIn,
     };
 
+    
+    // eslint-disable-next-line no-console
+    console.log(config);
+
     return (
       <ApolloProvider client={ client }>
         <BrowserRouter>
