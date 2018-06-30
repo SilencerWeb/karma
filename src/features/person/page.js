@@ -139,14 +139,14 @@ export class PersonPage extends React.Component {
                 <Query query={ GET_PERSON } variables={ { id: this.props.match.params.id } }>
                   { ({ error, loading, data }) => {
                     if (error) {
-                      return <p>Error :( { error.message }</p>;
+                      return <div>query GET_PERSONS got error: ${ error.message }</div>;
                     } else if (loading) {
-                      return <p>Loading...</p>;
+                      return <div>query GET_PERSONS is loading...</div>;
                     }
 
-                    const { person } = data;
-
-                    this.setState({ person: person });
+                    if (data.person) {
+                      this.setState({ person: data.person });
+                    }
 
                     return null;
                   }
@@ -201,19 +201,23 @@ export class PersonPage extends React.Component {
                 <Query query={ GET_ACTIONS }>
                   { ({ error, loading, data }) => {
                     if (error) {
-                      return <p>Error :( { error.message }</p>;
+                      return <div>query GET_ACTIONS got error: ${ error.message }</div>;
                     } else if (loading) {
-                      return <p>Loading...</p>;
+                      return <div>query GET_ACTIONS is loading...</div>;
                     }
 
-                    return (
-                      <ActionCardList
-                        actions={ data.actions }
-                        isActionCreating={ this.state.isActionCreating }
-                        onCancelButtonClick={ this.handleCancelButtonClick }
-                        onSaveButtonClick={ this.handleSaveButtonClick }
-                      />
-                    );
+                    if (data.actions) {
+                      return (
+                        <ActionCardList
+                          actions={ data.actions }
+                          isActionCreating={ this.state.isActionCreating }
+                          onCancelButtonClick={ this.handleCancelButtonClick }
+                          onSaveButtonClick={ this.handleSaveButtonClick }
+                        />
+                      );
+                    }
+
+                    return null;
                   } }
                 </Query>
               </Actions>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { ApolloConsumer, Query } from 'react-apollo';
+import { Query, Subscription } from 'react-apollo';
 
 import { AppConsumer } from 'index';
 
@@ -10,13 +10,13 @@ import { PersonCardList } from 'ui/molecules';
 import { CommonTemplate } from 'ui/templates';
 
 import { GET_PERSONS } from 'graphql/queries/person';
+import { PERSON_SUBSCRIPTION } from 'graphql/subscriptions/person';
 
 
 export class FeedPage extends React.Component {
   state = {};
 
   render() {
-
     return (
       <CommonTemplate>
         <AppConsumer>
@@ -25,25 +25,45 @@ export class FeedPage extends React.Component {
               <React.Fragment>
                 <PersonCardList/>
 
+                <Subscription subscription={ PERSON_SUBSCRIPTION }>
+                  { ({ error, data }) => {
+                    if (error) {
+                      return <div>subscription PERSON_SUBSCRIPTION got error: ${ error.message }</div>;
+                    }
+
+                    if (data && data.personUpdate && data.personUpdate.node) {
+                      const personUpdate = data.personUpdate.node;
+
+                      const isNewPerson = context.persons.every((person) => {
+                        return person.id !== personUpdate.id;
+                      });
+
+                      if (isNewPerson) {
+                        context.addPerson(personUpdate);
+                      }
+                    }
+
+                    return null;
+                  } }
+                </Subscription>
+
                 {
                   !context.persons.length &&
-                  <ApolloConsumer>
-                    { () => (
-                      <Query query={ GET_PERSONS }>
-                        { ({ error, loading, data }) => {
-                          if (error) {
-                            return <p>Error :( { error.message }</p>;
-                          } else if (loading) {
-                            return <p>Loading...</p>;
-                          }
+                  <Query query={ GET_PERSONS }>
+                    { ({ error, loading, data }) => {
+                      if (error) {
+                        return <div>query GET_PERSONS got error: ${ error.message }</div>;
+                      } else if (loading) {
+                        return <div>query GET_PERSONS is loading...</div>;
+                      }
 
-                          context.updatePersons(data.persons);
+                      if (data && data.persons && data.persons.length) {
+                        context.updatePersons(data.persons);
+                      }
 
-                          return null;
-                        } }
-                      </Query>
-                    ) }
-                  </ApolloConsumer>
+                      return null;
+                    } }
+                  </Query>
                 }
               </React.Fragment>
               :

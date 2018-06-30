@@ -61,7 +61,7 @@ export const Header = (props: props) => {
   const handleLogoutButtonClick = (context) => {
     localStorage.removeItem(AUTH_TOKEN);
 
-    context.toggleLoggedIn();
+    context.logout();
   };
 
   return (

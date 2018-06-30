@@ -71,9 +71,11 @@ const client = new ApolloClient({
 
 const AppContext = React.createContext({
   isLoggedIn: false,
-  toggleLoggedIn: null,
+  login: null,
+  logout: null,
   persons: [],
   updatePersons: null,
+  addPerson: null,
 });
 
 export const AppConsumer = AppContext.Consumer;
@@ -85,13 +87,17 @@ class App extends React.Component {
     persons: [],
   };
 
-  toggleLoggedIn = () => {
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        isLoggedIn: !prevState.isLoggedIn,
-      };
+  login = () => {
+    this.setState({ isLoggedIn: true });
+  };
+
+  logout = () => {
+    this.setState({
+      isLoggedIn: false,
+      persons: [],
     });
+
+    client.cache.reset();
   };
 
   updatePersons = (persons) => {
@@ -99,6 +105,15 @@ class App extends React.Component {
       return {
         ...prevState,
         persons: persons,
+      };
+    });
+  };
+
+  addPerson = (person) => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        persons: [...prevState.persons, person],
       };
     });
   };
@@ -116,13 +131,15 @@ class App extends React.Component {
   render() {
     const appProviderValue = {
       isLoggedIn: this.state.isLoggedIn,
-      toggleLoggedIn: this.toggleLoggedIn,
+      login: this.login,
+      logout: this.logout,
       persons: this.state.persons,
       updatePersons: this.updatePersons,
+      addPerson: this.addPerson,
     };
 
     // eslint-disable-next-line no-console
-    console.log(config);
+    console.log('app re-rendered again :((');
 
     return (
       <ApolloProvider client={ client }>
