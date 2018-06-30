@@ -45,7 +45,7 @@ const middlewareAuthLink = new ApolloLink((operation, forward) => {
 const httpLinkWithAuthToken = middlewareAuthLink.concat(httpLink);
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${config.PRISMA_ENDPOINT}`,
+  uri: env === 'local' ? `ws://${config.PRISMA_ENDPOINT}` : `wss://${config.PRISMA_ENDPOINT}`,
   options: {
     reconnect: true,
     connectionParams: {
