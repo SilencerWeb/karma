@@ -23,7 +23,13 @@ export const CREATE_ACTION = gql`
       description
       karma
       executors
-      members
+      members {
+        person {
+          id
+          name
+        }
+        side
+      }
     }
   }
 `;

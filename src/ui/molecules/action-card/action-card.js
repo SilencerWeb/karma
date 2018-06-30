@@ -2,6 +2,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import { AppConsumer } from 'index';
+
 import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
 
 // import { OutsideAlerter } from 'ui/molecules';
@@ -11,18 +13,8 @@ import { handsUpHuman, longLeftArrow, plus } from 'ui/outlines';
 import { color, transition } from 'ui/theme';
 
 import avatar_1x from 'assets/images/avatars/xs/avatar.png';
-import avatar2_1x from 'assets/images/avatars/xs/avatar2.png';
-import avatar3_1x from 'assets/images/avatars/xs/avatar3.png';
-import avatar4_1x from 'assets/images/avatars/xs/avatar4.png';
-import avatar5_1x from 'assets/images/avatars/xs/avatar5.png';
-import avatar6_1x from 'assets/images/avatars/xs/avatar6.png';
 
 import avatar_2x from 'assets/images/avatars/xs/avatar@2x.png';
-import avatar2_2x from 'assets/images/avatars/xs/avatar2@2x.png';
-import avatar3_2x from 'assets/images/avatars/xs/avatar3@2x.png';
-import avatar4_2x from 'assets/images/avatars/xs/avatar4@2x.png';
-import avatar5_2x from 'assets/images/avatars/xs/avatar5@2x.png';
-import avatar6_2x from 'assets/images/avatars/xs/avatar6@2x.png';
 
 
 const Title = Heading.extend`
@@ -359,7 +351,6 @@ const Wrapper = styled.div`
   padding-left: calc(1.6rem + 0.8rem);
 `;
 
-
 export class ActionCard extends React.Component {
   state = {
     isCreating: this.props.create,
@@ -381,70 +372,22 @@ export class ActionCard extends React.Component {
     karma: this.props.karma,
     executors: this.props.executors,
     members: this.props.members,
-    persons: [
-      {
-        id: 0,
-        avatar: {
-          _1x: avatar_1x,
-          _2x: avatar_2x,
-        },
-        name: 'Neil Roberts',
-        isSelected: false,
-        side: null,
-      },
-      {
-        id: 1,
-        avatar: {
-          _1x: avatar2_1x,
-          _2x: avatar2_2x,
-        },
-        name: 'Ray Clarke',
-        isSelected: false,
-        side: null,
-      },
-      {
-        id: 2,
-        avatar: {
-          _1x: avatar3_1x,
-          _2x: avatar3_2x,
-        },
-        name: 'Theresa Mason',
-        isSelected: false,
-        side: null,
-      },
-      {
-        id: 3,
-        avatar: {
-          _1x: avatar4_1x,
-          _2x: avatar4_2x,
-        },
-        name: 'Samantha Kennedy',
-        isSelected: false,
-        side: null,
-      },
-      {
-        id: 4,
-        avatar: {
-          _1x: avatar5_1x,
-          _2x: avatar5_2x,
-        },
-        name: 'Alice Kelly',
-        isSelected: false,
-        side: null,
-      },
-      {
-        id: 5,
-        avatar: {
-          _1x: avatar6_1x,
-          _2x: avatar6_2x,
-        },
-        name: 'Liam Hughes',
-        isSelected: false,
-        side: null,
-      },
-    ],
+    persons: [],
     // isLeftSelectOpened: false,
     // isRightSelectOpened: false,
+  };
+
+  generatePersonsForSelect = (persons) => {
+    const generatedPersons = persons.map((person) => {
+      return {
+        id: person.id,
+        name: person.name,
+        isSelected: false,
+        side: null,
+      };
+    });
+
+    this.setState({ persons: generatedPersons });
   };
 
   handleInput = (e, element) => {
@@ -520,21 +463,19 @@ export class ActionCard extends React.Component {
     this.setState((prevState) => {
       const state = { ...prevState };
 
-      if (!state.members) state.members = {
-        left: [],
-        right: [],
-      };
+      if (!state.members) state.members = [];
 
       const newMember = state.persons.find((person) => {
-        return person.name === value;
+        return person.id === value;
       });
 
-      state.members[side].push({
-        avatar: newMember.avatar,
+      state.members.push({
+        personId: newMember.id,
+        side: side,
       });
 
       state.persons = state.persons.map((person) => {
-        if (value === person.name) {
+        if (value === person.id) {
           person.isSelected = true;
           person.side = side;
         }
@@ -584,7 +525,7 @@ export class ActionCard extends React.Component {
       const isValid = invalidFields.length === 0 &&
         state.karma !== 'neutral' &&
         state.executors &&
-        state.members.left.length > 0 && state.members.right.length > 0;
+        state.members.length > 0;
 
       if (isValid) {
         const person = {
@@ -614,7 +555,7 @@ export class ActionCard extends React.Component {
       return !person.isSelected && person.side !== 'right';
     }).map((person) => {
       return (
-        <option value={ person.name } key={ person.id }>
+        <option value={ person.id } key={ person.id }>
           { person.name }
         </option>
       );
@@ -624,222 +565,235 @@ export class ActionCard extends React.Component {
       return !person.isSelected && person.side !== 'left';
     }).map((person) => {
       return (
-        <option value={ person.name } key={ person.id }>
+        <option value={ person.id } key={ person.id }>
           { person.name }
         </option>
       );
     });
 
     return (
-      <Wrapper className={ this.props.className }>
-        <Header>
-          <HeaderLeftSide>
-            <ContentEditableWrapper>
-              <Title
-                tag={ 'h3' }
-                creating={ this.state.isCreating }
-                edited={ this.state.title.isEdited }
-                invalid={ this.state.title.isInvalid }
-              >
-                { this.state.title.content.length > 0 ? this.state.title.content : this.props.title }
-              </Title>
-
-              <EditableTitle
-                tag={ 'h3' }
-                creating={ this.state.isCreating }
-                edited={ this.state.title.isEdited }
-                contentEditable={ this.state.isCreating }
-                onInput={ (e) => this.handleInput(e, 'title') }
-                onKeyPress={ (e) => this.handleKeyPress(e, false) }
-              />
-            </ContentEditableWrapper>
-
-            <ContentEditableWrapper>
-              <Date
-                creating={ this.state.isCreating }
-                edited={ this.state.date.isEdited }
-                invalid={ this.state.date.isInvalid }
-              >
-                { this.state.date.content.length > 0 ? this.state.date.content : this.props.date }
-              </Date>
-
-              <EditableDate
-                creating={ this.state.isCreating }
-                edited={ this.state.date.isEdited }
-                contentEditable={ this.state.isCreating }
-                onInput={ (e) => this.handleInput(e, 'date') }
-                onKeyPress={ (e) => this.handleKeyPress(e, false) }
-              />
-            </ContentEditableWrapper>
-          </HeaderLeftSide>
-
-          {
-            !this.state.isCreating && this.state.karma === 'negative' && this.state.executors === 'right' &&
-            <div>
-              <Button
-                icon={ {
-                  svg: handsUpHuman,
-                  position: 'right',
-                } }
-                onClick={ this.props.onForgiveButtonClick }
-              >
-                Forgive
-              </Button>
-            </div>
-          }
-        </Header>
-
-        <ContentEditableWrapper fullHeight>
-          <Description
-            creating={ this.state.isCreating }
-            edited={ this.state.description.isEdited }
-            invalid={ this.state.description.isInvalid }
-          >
-            { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
-          </Description>
-
-          <EditableDescription
-            creating={ this.state.isCreating }
-            edited={ this.state.description.isEdited }
-            contentEditable={ this.state.isCreating }
-            onInput={ (e) => this.handleInput(e, 'description') }
-            onKeyPress={ (e) => this.handleKeyPress(e, false) }
-          />
-        </ContentEditableWrapper>
-
-        <Footer>
-          <FooterLeftSide>
+      <AppConsumer>
+        { (context) => (
+          <Wrapper className={ this.props.className }>
             {
-              (this.state.members || this.state.isCreating) &&
-              <React.Fragment>
-                <Members>
-                  {
-                    this.state.members && this.state.members.left && this.state.members.left.map((member, i) => {
-                      return (
-                        <Avatar key={ i }>
-                          <RetinaImage src={ member.avatar } alt={ '' }/>
-                        </Avatar>
-                      );
-                    })
-                  }
+              this.props.create && !this.state.persons.length && context.persons &&
+              this.generatePersonsForSelect(context.persons)
+            }
 
-                  {
-                    this.state.isCreating && leftSelectOptions.length > 0 &&
-                    <React.Fragment>
-                      <Avatar
-                        new
-                        // white={ this.state.isLeftSelectOpened }
-                        // onClick={ () => this.toggleSelect('left') }
-                      >
-                        <Icon icon={ plus }/>
+            <Header>
+              <HeaderLeftSide>
+                <ContentEditableWrapper>
+                  <Title
+                    tag={ 'h3' }
+                    creating={ this.state.isCreating }
+                    edited={ this.state.title.isEdited }
+                    invalid={ this.state.title.isInvalid }
+                  >
+                    { this.state.title.content.length > 0 ? this.state.title.content : this.props.title }
+                  </Title>
 
-                        <Select onChange={ (e) => this.handleSelectChange(e, 'left') }>{ leftSelectOptions }</Select>
-                      </Avatar>
+                  <EditableTitle
+                    tag={ 'h3' }
+                    creating={ this.state.isCreating }
+                    edited={ this.state.title.isEdited }
+                    contentEditable={ this.state.isCreating }
+                    onInput={ (e) => this.handleInput(e, 'title') }
+                    onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                  />
+                </ContentEditableWrapper>
+
+                <ContentEditableWrapper>
+                  <Date
+                    creating={ this.state.isCreating }
+                    edited={ this.state.date.isEdited }
+                    invalid={ this.state.date.isInvalid }
+                  >
+                    { this.state.date.content.length > 0 ? this.state.date.content : this.props.date }
+                  </Date>
+
+                  <EditableDate
+                    creating={ this.state.isCreating }
+                    edited={ this.state.date.isEdited }
+                    contentEditable={ this.state.isCreating }
+                    onInput={ (e) => this.handleInput(e, 'date') }
+                    onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                  />
+                </ContentEditableWrapper>
+              </HeaderLeftSide>
+
+              {
+                !this.state.isCreating && this.state.karma === 'negative' && this.state.executors === 'right' &&
+                <div>
+                  <Button
+                    icon={ {
+                      svg: handsUpHuman,
+                      position: 'right',
+                    } }
+                    onClick={ this.props.onForgiveButtonClick }
+                  >
+                    Forgive
+                  </Button>
+                </div>
+              }
+            </Header>
+
+            <ContentEditableWrapper fullHeight>
+              <Description
+                creating={ this.state.isCreating }
+                edited={ this.state.description.isEdited }
+                invalid={ this.state.description.isInvalid }
+              >
+                { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
+              </Description>
+
+              <EditableDescription
+                creating={ this.state.isCreating }
+                edited={ this.state.description.isEdited }
+                contentEditable={ this.state.isCreating }
+                onInput={ (e) => this.handleInput(e, 'description') }
+                onKeyPress={ (e) => this.handleKeyPress(e, false) }
+              />
+            </ContentEditableWrapper>
+
+            <Footer>
+              <FooterLeftSide>
+                {
+                  (this.state.members || this.state.isCreating) &&
+                  <React.Fragment>
+                    <Members>
+                      {
+                        this.state.members && this.state.members.length && this.state.members.filter((member) => {
+                          return member.side === 'left';
+                        }).map((member, i) => {
+                          return (
+                            <Avatar key={ i }>
+                              <RetinaImage src={ { _1x: avatar_1x, _2x: avatar_2x } } alt={ '' }/>
+                            </Avatar>
+                          );
+                        })
+                      }
 
                       {
-                        // this.state.isLeftSelectOpened &&
-                        // <OutsideAlerter onClick={ () => this.toggleSelect('left') }>
-                        //   <StyledSelect
-                        //     options={ leftSelectOptions }
-                        //     type={ 'multi' }
-                        //     theme={ 'avatar' }
-                        //     menuIsOpen
-                        //     onChange={ (data) => this.handleSelectChange(data, 'left') }
-                        //   />
-                        // </OutsideAlerter>
+                        this.state.isCreating && leftSelectOptions.length > 0 &&
+                        <React.Fragment>
+                          <Avatar
+                            new
+                            // white={ this.state.isLeftSelectOpened }
+                            // onClick={ () => this.toggleSelect('left') }
+                          >
+                            <Icon icon={ plus }/>
+
+                            <Select onChange={ (e) => this.handleSelectChange(e, 'left') }>{ leftSelectOptions }</Select>
+                          </Avatar>
+
+                          {
+                            // this.state.isLeftSelectOpened &&
+                            // <OutsideAlerter onClick={ () => this.toggleSelect('left') }>
+                            //   <StyledSelect
+                            //     options={ leftSelectOptions }
+                            //     type={ 'multi' }
+                            //     theme={ 'avatar' }
+                            //     menuIsOpen
+                            //     onChange={ (data) => this.handleSelectChange(data, 'left') }
+                            //   />
+                            // </OutsideAlerter>
+                          }
+                        </React.Fragment>
                       }
-                    </React.Fragment>
-                  }
-                </Members>
+                    </Members>
 
-                <ExecutorsArrow
-                  icon={ longLeftArrow }
-                  executors={ this.state.executors }
-                  onClick={ this.state.isCreating ? this.handleExecutorsArrowClick : null }
-                />
+                    <ExecutorsArrow
+                      icon={ longLeftArrow }
+                      executors={ this.state.executors }
+                      onClick={ this.state.isCreating ? this.handleExecutorsArrowClick : null }
+                    />
 
-                <Members>
-                  {
-                    this.state.members && this.state.members.right && this.state.members.right.map((member, i) => {
-                      return (
-                        <Avatar key={ i }>
-                          <RetinaImage src={ member.avatar } alt={ 'avatar' }/>
-                        </Avatar>
-                      );
-                    })
-                  }
-
-                  {
-                    this.state.isCreating && rightSelectOptions.length > 0 &&
-                    <React.Fragment>
-                      <Avatar
-                        new
-                        // white={ this.state.isRightSelectOpened }
-                        // onClick={ () => this.toggleSelect('right') }
-                      >
-                        <Icon icon={ plus }/>
-
-                        <Select onChange={ (e) => this.handleSelectChange(e, 'right') }>{ rightSelectOptions }</Select>
-                      </Avatar>
+                    <Members>
+                      {
+                        this.state.members && this.state.members.length && this.state.members.filter((member) => {
+                          return member.side === 'right';
+                        }).map((member, i) => {
+                          return (
+                            <Avatar key={ i }>
+                              <RetinaImage src={ { _1x: avatar_1x, _2x: avatar_2x } } alt={ 'avatar' }/>
+                            </Avatar>
+                          );
+                        })
+                      }
 
                       {
-                        // this.state.isRightSelectOpened &&
-                        // <OutsideAlerter onClick={ () => this.toggleSelect('right') }>
-                        //   <StyledSelect
-                        //     options={ rightSelectOptions }
-                        //     type={ 'multi' }
-                        //     theme={ 'avatar' }
-                        //     menuIsOpen
-                        //     onChange={ (data) => this.handleSelectChange(data, 'right') }
-                        //   />
-                        // </OutsideAlerter>
+                        this.state.isCreating && rightSelectOptions.length > 0 &&
+                        <React.Fragment>
+                          <Avatar
+                            new
+                            // white={ this.state.isRightSelectOpened }
+                            // onClick={ () => this.toggleSelect('right') }
+                          >
+                            <Icon icon={ plus }/>
+
+                            <Select onChange={ (e) => this.handleSelectChange(e, 'right') }>{ rightSelectOptions }</Select>
+                          </Avatar>
+
+                          {
+                            // this.state.isRightSelectOpened &&
+                            // <OutsideAlerter onClick={ () => this.toggleSelect('right') }>
+                            //   <StyledSelect
+                            //     options={ rightSelectOptions }
+                            //     type={ 'multi' }
+                            //     theme={ 'avatar' }
+                            //     menuIsOpen
+                            //     onChange={ (data) => this.handleSelectChange(data, 'right') }
+                            //   />
+                            // </OutsideAlerter>
+                          }
+                        </React.Fragment>
                       }
-                    </React.Fragment>
-                  }
-                </Members>
-              </React.Fragment>
-            }
-          </FooterLeftSide>
+                    </Members>
+                  </React.Fragment>
+                }
+              </FooterLeftSide>
 
-          <FooterRightSide>
-            { !this.state.isCreating ?
-              <React.Fragment>
-                <Button
-                  type={ 'flat' }
-                  theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                  onClick={ this.props.onEditButtonClick }
-                >
-                  Edit
-                </Button>
-                <Button
-                  theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                  onClick={ this.props.onMoreButtonClick }
-                >
-                  More
-                </Button>
-              </React.Fragment>
-              :
-              <React.Fragment>
-                <Button
-                  type={ 'flat' }
-                  theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                  onClick={ this.props.onCancelButtonClick }
-                >
-                  Cancel
-                </Button>
-                <Button
-                  theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                  onClick={ this.handleSaveButtonClick }
-                >
-                  Save
-                </Button>
-              </React.Fragment>
-            }
-          </FooterRightSide>
-        </Footer>
+              <FooterRightSide>
+                { !this.state.isCreating ?
+                  <React.Fragment>
+                    <Button
+                      type={ 'flat' }
+                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                      onClick={ this.props.onEditButtonClick }
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                      onClick={ this.props.onMoreButtonClick }
+                    >
+                      More
+                    </Button>
+                  </React.Fragment>
+                  :
+                  <React.Fragment>
+                    <Button
+                      type={ 'flat' }
+                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                      onClick={ this.props.onCancelButtonClick }
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                      onClick={ this.handleSaveButtonClick }
+                    >
+                      Save
+                    </Button>
+                  </React.Fragment>
+                }
+              </FooterRightSide>
+            </Footer>
 
-        <Border type={ this.state.karma } onClick={ this.state.isCreating ? this.handleBorderClick : null }/>
-      </Wrapper>
+            <Border type={ this.state.karma } onClick={ this.state.isCreating ? this.handleBorderClick : null }/>
+          </Wrapper>
+        ) }
+      </AppConsumer>
     );
   }
 }

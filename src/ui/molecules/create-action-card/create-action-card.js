@@ -90,6 +90,16 @@ export class CreateActionCard extends React.Component {
                       create
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (action) => {
+                        // eslint-disable-next-line no-console
+                        console.log({
+                          title: action.title,
+                          date: action.date,
+                          description: action.description,
+                          karma: action.karma,
+                          executors: action.executors,
+                          members: action.members,
+                        });
+
                         createAction({
                           variables: {
                             title: action.title,
