@@ -1,4 +1,4 @@
-const env = process.env.REACT_APP_NODE_ENV || process.env.NODE_ENV; // 'local' 'staging' or 'development' or 'production'
+export const env = process.env.REACT_APP_NODE_ENV || process.env.NODE_ENV; // 'local' or 'staging' or 'development' or 'production'
 
 
 const local = {

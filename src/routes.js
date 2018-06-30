@@ -31,7 +31,7 @@ export const Routes = () => (
           <Route path={ '/login' } exact render={ () => <AuthenticationPage type={ 'login' }/> }/>
           <Route path={ '/signup' } exact render={ () => <AuthenticationPage type={ 'signup' }/> }/>
 
-          <ProtectedRoute path={ '/person' } component={ PersonPage }/>
+          <ProtectedRoute path={ '/:user/persons/:id' } exact component={ PersonPage }/>
         </React.Fragment>
       ) }
     </AppConsumer>

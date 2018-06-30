@@ -22,24 +22,30 @@ export class FeedPage extends React.Component {
         <AppConsumer>
           { (context) => (
             context.isLoggedIn ?
-              <ApolloConsumer>
-                { () => (
-                  <Query query={ GET_PERSONS }>
-                    { ({ error, loading, data }) => {
-                      if (error) {
-                        return <p>Error :( { error.message }</p>;
-                      } else if (loading) {
-                        return <p>Loading...</p>;
-                      }
+              <React.Fragment>
+                <PersonCardList/>
 
-                      return (
-                        <PersonCardList persons={ data.persons }/>
-                      );
-                    } }
-                  </Query>
-                ) }
+                {
+                  !context.persons.length &&
+                  <ApolloConsumer>
+                    { () => (
+                      <Query query={ GET_PERSONS }>
+                        { ({ error, loading, data }) => {
+                          if (error) {
+                            return <p>Error :( { error.message }</p>;
+                          } else if (loading) {
+                            return <p>Loading...</p>;
+                          }
 
-              </ApolloConsumer>
+                          context.updatePersons(data.persons);
+
+                          return null;
+                        } }
+                      </Query>
+                    ) }
+                  </ApolloConsumer>
+                }
+              </React.Fragment>
               :
               <div>Please, log in :)</div>
           ) }

@@ -2,6 +2,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import { AppConsumer } from 'index';
+
 import { PersonCard, CreatePersonCard } from 'ui/molecules';
 
 
@@ -19,40 +21,32 @@ const Wrapper = styled.div`
 
 export const PersonCardList = (props) => {
   return (
-    <Wrapper className={ props.className }>
-      { props.persons.map((person) => {
-        return (
-          <PersonCardWrapper key={ person.id }>
-            <PersonCard
-              avatar={ person.avatar }
-              name={ person.name }
-              position={ person.position }
-              karma={ person.karma }
-              description={ person.description }
-            />
-          </PersonCardWrapper>
-        );
-      }) }
-      
-      <CreatePersonCard/>
-    </Wrapper>
+    <AppConsumer>
+      { (context) => (
+        <Wrapper className={ props.className }>
+          { context.persons && context.persons.map((person) => {
+            return (
+              <PersonCardWrapper key={ person.id }>
+                <PersonCard
+                  id={ person.id }
+                  avatar={ person.avatar }
+                  name={ person.name }
+                  position={ person.position }
+                  karma={ person.karma }
+                  description={ person.description }
+                  authorNickname={ person.author.nickname }
+                />
+              </PersonCardWrapper>
+            );
+          }) }
+          <CreatePersonCard/>
+        </Wrapper>
+      ) }
+    </AppConsumer>
   );
 };
 
 
 PersonCardList.propTypes = {
   className: PropTypes.string,
-  persons: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      avatar: PropTypes.shape({
-        _1x: PropTypes.string.isRequired,
-        _2x: PropTypes.string.isRequired,
-      }),
-      name: PropTypes.string.isRequired,
-      position: PropTypes.string.isRequired,
-      karma: PropTypes.number.isRequired,
-      description: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
 };

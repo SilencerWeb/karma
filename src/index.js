@@ -2,11 +2,13 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { injectGlobal } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
+import { ApolloLink, split } from 'apollo-link';
 import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
+import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { WebSocketLink } from 'apollo-link-ws';
+import { getMainDefinition } from 'apollo-utilities';
 
 import { globalStyles } from 'ui/theme';
 
@@ -14,7 +16,7 @@ import { Routes } from 'routes';
 
 import { AUTH_TOKEN } from 'constants.js';
 
-import { config } from 'config';
+import { env, config } from 'config';
 
 import normalize from 'normalize.css/normalize.css';
 
@@ -22,31 +24,56 @@ import normalize from 'normalize.css/normalize.css';
 injectGlobal`${normalize} ${globalStyles}`;
 
 
-const httpLink = createHttpLink({
-  uri: config.PRISMA_ENDPOINT,
+const httpLink = new HttpLink({
+  uri: env === 'local' ? `http://${config.PRISMA_ENDPOINT}` : `https://${config.PRISMA_ENDPOINT}`,
 });
 
-const authLink = setContext((_, { headers }) => {
+const middlewareAuthLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem(AUTH_TOKEN);
 
-  return {
+  const authorizationHeader = token ? `Bearer ${token}` : null;
+
+  operation.setContext({
     headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: authorizationHeader,
     },
-  };
+  });
+
+  return forward(operation);
 });
 
+const httpLinkWithAuthToken = middlewareAuthLink.concat(httpLink);
+
+const wsLink = new WebSocketLink({
+  uri: `ws://${config.PRISMA_ENDPOINT}`,
+  options: {
+    reconnect: true,
+    connectionParams: {
+      authToken: localStorage.getItem(AUTH_TOKEN),
+    },
+  },
+});
+
+const link = split(
+  ({ query }) => {
+    const { kind, operation } = getMainDefinition(query);
+    return kind === 'OperationDefinition' && operation === 'subscription';
+  },
+  wsLink,
+  httpLinkWithAuthToken,
+);
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link,
   cache: new InMemoryCache(),
 });
 
 
 const AppContext = React.createContext({
   isLoggedIn: false,
-  toggleLoggedIn: () => {
-  },
+  toggleLoggedIn: null,
+  persons: [],
+  updatePersons: null,
 });
 
 export const AppConsumer = AppContext.Consumer;
@@ -55,6 +82,7 @@ export const AppConsumer = AppContext.Consumer;
 class App extends React.Component {
   state = {
     isLoggedIn: false,
+    persons: [],
   };
 
   toggleLoggedIn = () => {
@@ -62,6 +90,15 @@ class App extends React.Component {
       return {
         ...prevState,
         isLoggedIn: !prevState.isLoggedIn,
+      };
+    });
+  };
+
+  updatePersons = (persons) => {
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        persons: persons,
       };
     });
   };
@@ -80,9 +117,10 @@ class App extends React.Component {
     const appProviderValue = {
       isLoggedIn: this.state.isLoggedIn,
       toggleLoggedIn: this.toggleLoggedIn,
+      persons: this.state.persons,
+      updatePersons: this.updatePersons,
     };
 
-    
     // eslint-disable-next-line no-console
     console.log(config);
 

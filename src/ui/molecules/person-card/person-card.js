@@ -38,7 +38,6 @@ const Avatar = styled.div`
 
 const Name = Heading.extend`
   width: 100%;
-  text-transform: capitalize;
   text-align: center;
   outline: none;
   transition: ${transition};
@@ -417,7 +416,7 @@ export class PersonCard extends React.Component {
         <Footer>
           {
             !this.state.isCreating ?
-              <Link to={ '/person' }>
+              <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>
                 <Button icon={ {
                   svg: shortLeftArrow,
                   position: 'right',
@@ -446,11 +445,13 @@ PersonCard.propTypes = {
     _1x: PropTypes.string.isRequired,
     _2x: PropTypes.string.isRequired,
   }),
+  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   position: PropTypes.string.isRequired,
   karma: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
   create: PropTypes.bool,
+  authorNickname: PropTypes.string.isRequired,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
 };

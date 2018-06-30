@@ -7,7 +7,7 @@ export const CREATE_ACTION = gql`
     $description: String!,
     $karma: String!,
     $executors: String!,
-    $authorId: ID!
+    $members: [ActionMembersInput!]!,
   ) {
     createAction(
       title: $title,
@@ -15,7 +15,7 @@ export const CREATE_ACTION = gql`
       description: $description,
       karma: $karma,
       executors: $executors,
-      authorId: $authorId,
+      members: $members,
     ) {
       id
       title
@@ -23,6 +23,7 @@ export const CREATE_ACTION = gql`
       description
       karma
       executors
+      members
     }
   }
 `;

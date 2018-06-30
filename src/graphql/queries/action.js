@@ -9,6 +9,12 @@ export const GET_ACTIONS = gql`
       description
       karma
       executors
+      members {
+        person {
+          id
+        }
+        side
+      }
     }
   }
 `;

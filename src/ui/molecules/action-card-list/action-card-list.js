@@ -55,7 +55,7 @@ ActionCardList.propTypes = {
       description: PropTypes.string.isRequired,
       karma: PropTypes.string.isRequired,
       executors: PropTypes.string.isRequired,
-      members: PropTypes.object.isRequired,
+      members: PropTypes.object,
     }),
   ).isRequired,
   isActionCreating: PropTypes.bool,

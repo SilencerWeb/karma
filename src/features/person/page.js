@@ -11,6 +11,7 @@ import { CommonTemplate } from 'ui/templates';
 
 import { pencil } from 'ui/outlines';
 
+import { GET_PERSON } from 'graphql/queries/person';
 import { GET_ACTIONS } from 'graphql/queries/action';
 
 import avatar3_1x from 'assets/images/avatars/lg/avatar.png';
@@ -128,80 +129,108 @@ export class PersonPage extends React.Component {
   };
 
   render() {
-
     return (
       <CommonTemplate>
-        <Header>
-          <HeaderBackground>
-            <EditBackgroundButton>
-              <Icon icon={ pencil }/>
-            </EditBackgroundButton>
-          </HeaderBackground>
+        <ApolloConsumer>
+          { () => (
+            <React.Fragment>
+              {
+                !this.state.person &&
+                <Query query={ GET_PERSON } variables={ { id: this.props.match.params.id } }>
+                  { ({ error, loading, data }) => {
+                    if (error) {
+                      return <p>Error :( { error.message }</p>;
+                    } else if (loading) {
+                      return <p>Loading...</p>;
+                    }
 
-          <PersonAvatar>
-            <RetinaImage src={ { _1x: avatar3_1x, _2x: avatar3_2x } } alt={ '' }/>
-          </PersonAvatar>
+                    const { person } = data;
 
-          <PersonName type={ 'title' }>
-            Alex Walker
-          </PersonName>
+                    this.setState({ person: person });
 
-          <Karma type={ 'title' }>
-            +10
-          </Karma>
-        </Header>
-
-        <About>
-          <AboutHeader>
-            <Subtitle tag={ 'h2' }>
-              About
-            </Subtitle>
-
-            <EditButton>
-              <Icon icon={ pencil }/>
-            </EditButton>
-          </AboutHeader>
-
-          <p>Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.</p>
-        </About>
-
-        <Actions>
-          <ActionsHeader>
-            <Subtitle tag={ 'h2' }>
-              Action list
-            </Subtitle>
-
-            <Button onClick={ this.handleAddActionButtonClick }>Add an action</Button>
-          </ActionsHeader>
-
-
-          <ApolloConsumer>
-            { () => (
-              <Query query={ GET_ACTIONS }>
-                { ({ error, loading, data }) => {
-                  if (error) {
-                    return <p>Error :( { error.message }</p>;
-                  } else if (loading) {
-                    return <p>Loading...</p>;
+                    return null;
                   }
+                  }
+                </Query>
+              }
 
-                  return (
-                    <ActionCardList
-                      actions={ data.actions }
-                      isActionCreating={ this.state.isActionCreating }
-                      onCancelButtonClick={ this.handleCancelButtonClick }
-                      onSaveButtonClick={ this.handleSaveButtonClick }
-                    />
-                  );
-                } }
-              </Query>
-            ) }
-          </ApolloConsumer>
-        </Actions>
+              <Header>
+                <HeaderBackground>
+                  <EditBackgroundButton>
+                    <Icon icon={ pencil }/>
+                  </EditBackgroundButton>
+                </HeaderBackground>
+
+                <PersonAvatar>
+                  <RetinaImage src={ { _1x: avatar3_1x, _2x: avatar3_2x } } alt={ '' }/>
+                </PersonAvatar>
+
+                <PersonName type={ 'title' }>
+                  { this.state.person && this.state.person.name }
+                </PersonName>
+
+                <Karma type={ 'title' }>
+                  { this.state.person && `${this.state.person.karma}` }
+                </Karma>
+              </Header>
+
+              <About>
+                <AboutHeader>
+                  <Subtitle tag={ 'h2' }>
+                    About
+                  </Subtitle>
+
+                  <EditButton>
+                    <Icon icon={ pencil }/>
+                  </EditButton>
+                </AboutHeader>
+
+                <p> { this.state.person && this.state.person.description }</p>
+              </About>
+
+              <Actions>
+                <ActionsHeader>
+                  <Subtitle tag={ 'h2' }>
+                    Action list
+                  </Subtitle>
+
+                  <Button onClick={ this.handleAddActionButtonClick }>Add an action</Button>
+                </ActionsHeader>
+
+
+                <Query query={ GET_ACTIONS }>
+                  { ({ error, loading, data }) => {
+                    if (error) {
+                      return <p>Error :( { error.message }</p>;
+                    } else if (loading) {
+                      return <p>Loading...</p>;
+                    }
+
+                    return (
+                      <ActionCardList
+                        actions={ data.actions }
+                        isActionCreating={ this.state.isActionCreating }
+                        onCancelButtonClick={ this.handleCancelButtonClick }
+                        onSaveButtonClick={ this.handleSaveButtonClick }
+                      />
+                    );
+                  } }
+                </Query>
+              </Actions>
+            </React.Fragment>
+          ) }
+        </ApolloConsumer>
+
       </CommonTemplate>
     );
   }
 };
 
 
-PersonPage.propTypes = {};
+PersonPage.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+};

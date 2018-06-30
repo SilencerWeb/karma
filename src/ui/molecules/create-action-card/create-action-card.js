@@ -97,6 +97,7 @@ export class CreateActionCard extends React.Component {
                             description: action.description,
                             karma: action.karma,
                             executors: action.executors,
+                            members: action.members,
                           },
                           refetchQueries: [{ query: GET_ACTIONS }],
                         });
