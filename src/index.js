@@ -73,7 +73,9 @@ const AppContext = React.createContext({
   isLoggedIn: false,
   login: null,
   logout: null,
-  persons: [],
+  user: null,
+  updateUser: null,
+  persons: null,
   updatePersons: null,
   addPerson: null,
 });
@@ -84,7 +86,8 @@ export const AppConsumer = AppContext.Consumer;
 class App extends React.Component {
   state = {
     isLoggedIn: false,
-    persons: [],
+    user: null,
+    persons: null,
   };
 
   login = () => {
@@ -100,13 +103,12 @@ class App extends React.Component {
     client.cache.reset();
   };
 
+  updateUser = (user) => {
+    this.setState({ user: user });
+  };
+
   updatePersons = (persons) => {
-    this.setState((prevState) => {
-      return {
-        ...prevState,
-        persons: persons,
-      };
-    });
+    this.setState({ persons: persons });
   };
 
   addPerson = (person) => {
@@ -133,6 +135,8 @@ class App extends React.Component {
       isLoggedIn: this.state.isLoggedIn,
       login: this.login,
       logout: this.logout,
+      user: this.state.user,
+      updateUser: this.updateUser,
       persons: this.state.persons,
       updatePersons: this.updatePersons,
       addPerson: this.addPerson,

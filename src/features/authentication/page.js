@@ -103,6 +103,7 @@ export class AuthenticationPage extends React.Component {
                               },
                             }).then((response) => {
                               const token = response.data.signup.token;
+                              const user = response.data.signup.user;
 
                               localStorage.setItem(AUTH_TOKEN, token);
 
@@ -110,6 +111,13 @@ export class AuthenticationPage extends React.Component {
 
                               this.setState({
                                 shouldRedirectToMainPage: true,
+                              });
+
+                              context.updateUser({
+                                id: user.id,
+                                email: user.email,
+                                name: user.name,
+                                nickname: user.nickname,
                               });
                             });
                           } }

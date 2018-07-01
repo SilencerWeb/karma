@@ -7,7 +7,7 @@ export const CREATE_ACTION = gql`
     $description: String!,
     $karma: String!,
     $executors: String!,
-    $members: [ActionMembersInput!]!,
+    $members: [ActionMemberInput!]!,
   ) {
     createAction(
       title: $title,
@@ -28,6 +28,11 @@ export const CREATE_ACTION = gql`
           id
           name
         }
+        user {
+          id
+          name
+        }
+        isUser
         side
       }
     }

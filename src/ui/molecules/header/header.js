@@ -9,9 +9,6 @@ import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
 
 import { AUTH_TOKEN } from 'constants.js';
 
-import avatar_1x from 'assets/images/avatars/sm/avatar.png';
-import avatar_2x from 'assets/images/avatars/sm/avatar@2x.png';
-
 
 const Avatar = styled.div`
   width: 4rem;
@@ -27,7 +24,7 @@ const ContainerRightSide = styled.div`
   display: flex;
   align-items: center;
   
-  a {
+  a, button {
     display: inline-block;
     vertical-align: top;
     margin-right: 0.8rem;
@@ -53,11 +50,6 @@ const Wrapper = styled.header`
 
 
 export const Header = (props: props) => {
-  const avatarSources = {
-    _1x: avatar_1x,
-    _2x: avatar_2x,
-  };
-
   const handleLogoutButtonClick = (context) => {
     localStorage.removeItem(AUTH_TOKEN);
 
@@ -78,13 +70,10 @@ export const Header = (props: props) => {
               {
                 context.isLoggedIn ?
                   <React.Fragment>
+                    <Button>My actions</Button>
                     <Button onClick={ () => handleLogoutButtonClick(context) }>
                       Logout
                     </Button>
-                    <Avatar>
-                      <RetinaImage src={ avatarSources } alt={ '' }/>
-                    </Avatar>
-                    <Button>Add an action</Button>
                   </React.Fragment>
                   :
                   <React.Fragment>

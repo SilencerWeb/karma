@@ -10,11 +10,7 @@ import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
 
 import { handsUpHuman, longLeftArrow, plus } from 'ui/outlines';
 
-import { color, transition } from 'ui/theme';
-
-import avatar_1x from 'assets/images/avatars/xs/avatar.png';
-
-import avatar_2x from 'assets/images/avatars/xs/avatar@2x.png';
+import { font, color, transition } from 'ui/theme';
 
 
 const Title = Heading.extend`
@@ -157,38 +153,46 @@ const EditableDescription = styled(Description)`
 `;
 
 const Avatar = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 4rem;
   height: 4rem;
+  font-family: ${font.family.secondary};
+  font-weight: 700;
+  color: ${color.primary};
+  background-color: #ffffff;
   border-radius: 50%;
-  
+  box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.24);
+
   img {
     width: 100%;
     max-width: 100%;
   }
-  
+
   ${p => css`
-    
+
     ${p.new && css`
       display: flex;
       justify-content: center;
       align-items: center;
       background-color: ${color.primary};
       cursor: pointer;
-      
+
       svg {
         font-size: 1.6rem;
         color: #ffffff;
       }
-      
+
       ${p.white && css`
         background-color: #ffffff;
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
-        
+
         svg {
           color: ${color.primary};
         }
-        
+
         &&&:hover {
           transform: none;
         }
@@ -377,11 +381,12 @@ export class ActionCard extends React.Component {
     // isRightSelectOpened: false,
   };
 
-  generatePersonsForSelect = (persons) => {
+  generatePersonsForSelect = (persons, userId) => {
     const generatedPersons = persons.map((person) => {
       return {
         id: person.id,
         name: person.name,
+        isUser: person.id === userId,
         isSelected: false,
         side: null,
       };
@@ -471,6 +476,8 @@ export class ActionCard extends React.Component {
 
       state.members.push({
         personId: newMember.id,
+        name: newMember.name,
+        isUser: newMember.isUser,
         side: side,
       });
 
@@ -528,13 +535,21 @@ export class ActionCard extends React.Component {
         state.members.length > 0;
 
       if (isValid) {
+        const members = state.members.map((member) => {
+          return {
+            personId: member.personId,
+            isUser: member.isUser,
+            side: member.side,
+          };
+        });
+
         const person = {
           title: state.title.content,
           date: state.date.content,
           description: state.description.content,
           karma: state.karma,
           executors: state.executors,
-          members: state.members,
+          members: members,
         };
 
         this.props.onSaveButtonClick(person);
@@ -576,8 +591,8 @@ export class ActionCard extends React.Component {
         { (context) => (
           <Wrapper className={ this.props.className }>
             {
-              this.props.create && !this.state.persons.length && context.persons &&
-              this.generatePersonsForSelect(context.persons)
+              this.props.create && !this.state.persons.length && context.persons && context.user &&
+              this.generatePersonsForSelect([...context.persons, context.user], context.user.id)
             }
 
             <Header>
@@ -665,9 +680,13 @@ export class ActionCard extends React.Component {
                         this.state.members && this.state.members.length && this.state.members.filter((member) => {
                           return member.side === 'left';
                         }).map((member, i) => {
+                          const nameFirstLetters = member.name.split(' ').map((word) => {
+                            return word[0];
+                          }).join('');
+
                           return (
                             <Avatar key={ i }>
-                              <RetinaImage src={ { _1x: avatar_1x, _2x: avatar_2x } } alt={ '' }/>
+                              { nameFirstLetters }
                             </Avatar>
                           );
                         })
@@ -713,9 +732,13 @@ export class ActionCard extends React.Component {
                         this.state.members && this.state.members.length && this.state.members.filter((member) => {
                           return member.side === 'right';
                         }).map((member, i) => {
+                          const nameFirstLetters = member.name.split(' ').map((word) => {
+                            return word[0];
+                          }).join('');
+
                           return (
                             <Avatar key={ i }>
-                              <RetinaImage src={ { _1x: avatar_1x, _2x: avatar_2x } } alt={ 'avatar' }/>
+                              { nameFirstLetters }
                             </Avatar>
                           );
                         })
@@ -806,7 +829,13 @@ ActionCard.propTypes = {
   description: PropTypes.string.isRequired,
   karma: PropTypes.string.isRequired,
   executors: PropTypes.string,
-  members: PropTypes.object,
+  members: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      side: PropTypes.string.isRequired,
+    }),
+  ),
   create: PropTypes.bool,
   onForgiveButtonClick: PropTypes.func,
   onEditButtonClick: PropTypes.func,

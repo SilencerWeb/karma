@@ -12,7 +12,13 @@ export const GET_ACTIONS = gql`
       members {
         person {
           id
+          name
         }
+        user {
+          id
+          name
+        }
+        isUser
         side
       }
     }

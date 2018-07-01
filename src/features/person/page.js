@@ -3,19 +3,19 @@ import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { ApolloConsumer, Query } from 'react-apollo';
 
+import { AppConsumer } from 'index';
+
 import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
 
 import { ActionCardList } from 'ui/molecules';
 
 import { CommonTemplate } from 'ui/templates';
 
-import { pencil } from 'ui/outlines';
+import { pencil, user } from 'ui/outlines';
 
-import { GET_PERSON } from 'graphql/queries/person';
+import { color } from 'ui/theme';
+
 import { GET_ACTIONS } from 'graphql/queries/action';
-
-import avatar3_1x from 'assets/images/avatars/lg/avatar.png';
-import avatar3_2x from 'assets/images/avatars/lg/avatar@2x.png';
 
 
 const EditButton = styled.button`
@@ -59,7 +59,23 @@ const PersonAvatar = styled.div`
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 2.4rem;
+
+  ${p => css`
+    
+    ${p.new && css`
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: ${color.primary};
+  
+      svg {
+        font-size: 10rem;
+        color: #ffffff;
+      }
+    `}
+  `}
 `;
+
 
 const PersonName = Heading.extend`
   margin-bottom: 0.8rem;
@@ -110,6 +126,16 @@ export class PersonPage extends React.Component {
     isActionCreating: false,
   };
 
+  getPerson = (context) => {
+    const person = context.persons.filter((person) => {
+      return person.id === this.props.match.params.id;
+    })[0];
+
+    this.setState({
+      person: person,
+    });
+  };
+
   handleAddActionButtonClick = () => {
     this.setState({
       isActionCreating: true,
@@ -131,28 +157,10 @@ export class PersonPage extends React.Component {
   render() {
     return (
       <CommonTemplate>
-        <ApolloConsumer>
-          { () => (
+        <AppConsumer>
+          { (context) => (
             <React.Fragment>
-              {
-                !this.state.person &&
-                <Query query={ GET_PERSON } variables={ { id: this.props.match.params.id } }>
-                  { ({ error, loading, data }) => {
-                    if (error) {
-                      return <div>query GET_PERSONS got error: ${ error.message }</div>;
-                    } else if (loading) {
-                      return <div>query GET_PERSONS is loading...</div>;
-                    }
-
-                    if (data.person) {
-                      this.setState({ person: data.person });
-                    }
-
-                    return null;
-                  }
-                  }
-                </Query>
-              }
+              { !this.state.person && context.persons && this.getPerson(context) }
 
               <Header>
                 <HeaderBackground>
@@ -160,9 +168,9 @@ export class PersonPage extends React.Component {
                     <Icon icon={ pencil }/>
                   </EditBackgroundButton>
                 </HeaderBackground>
-
-                <PersonAvatar>
-                  <RetinaImage src={ { _1x: avatar3_1x, _2x: avatar3_2x } } alt={ '' }/>
+                
+                <PersonAvatar new>
+                  <Icon icon={ user }/>
                 </PersonAvatar>
 
                 <PersonName type={ 'title' }>
@@ -207,9 +215,15 @@ export class PersonPage extends React.Component {
                     }
 
                     if (data.actions) {
+                      const filteredActions = data.actions.filter((action) => {
+                        return action.members.some((member) => {
+                          return !member.isUser ? member.person.id === this.props.match.params.id : false;
+                        });
+                      });
+
                       return (
                         <ActionCardList
-                          actions={ data.actions }
+                          actions={ filteredActions }
                           isActionCreating={ this.state.isActionCreating }
                           onCancelButtonClick={ this.handleCancelButtonClick }
                           onSaveButtonClick={ this.handleSaveButtonClick }
@@ -223,8 +237,7 @@ export class PersonPage extends React.Component {
               </Actions>
             </React.Fragment>
           ) }
-        </ApolloConsumer>
-
+        </AppConsumer>
       </CommonTemplate>
     );
   }
