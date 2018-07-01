@@ -8,6 +8,7 @@ import { AppConsumer } from './index';
 import { FeedPage } from 'features/feed';
 import { PersonPage } from 'features/person';
 import { AuthenticationPage } from 'features/authentication';
+import { MyActionsPage } from 'features/my-actions';
 
 
 const ProtectedRoute = ({ component: Component, ...rest }) => (
@@ -32,6 +33,8 @@ export const Routes = () => (
           <Route path={ '/signup' } exact render={ () => <AuthenticationPage type={ 'signup' }/> }/>
 
           <ProtectedRoute path={ '/:user/persons/:id' } exact component={ PersonPage }/>
+
+          <ProtectedRoute path={ '/my-actions' } exact component={ MyActionsPage }/>
         </React.Fragment>
       ) }
     </AppConsumer>

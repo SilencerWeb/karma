@@ -70,7 +70,11 @@ export const Header = (props: props) => {
               {
                 context.isLoggedIn ?
                   <React.Fragment>
-                    <Button>My actions</Button>
+                    <Link to={ '/my-actions' }>
+                      <Button>
+                        My actions
+                      </Button>
+                    </Link>
                     <Button onClick={ () => handleLogoutButtonClick(context) }>
                       Logout
                     </Button>
