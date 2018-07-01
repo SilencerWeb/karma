@@ -151,6 +151,8 @@ export class PersonPage extends React.Component {
   };
 
   handleAddActionButtonClick = () => {
+    window.scrollTo(0, document.body.scrollHeight);
+
     this.setState({
       isActionCreating: true,
     });
@@ -209,7 +211,7 @@ export class PersonPage extends React.Component {
                 </PersonName>
 
                 <Karma type={ 'title' } status={ karmaStatus }>
-                  { karma }
+                  { `${ karma }` }
                 </Karma>
               </Header>
 

@@ -2,12 +2,15 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { graphql } from 'react-apollo';
 
 import { Button, RetinaImage, Heading, Icon } from 'ui/atoms';
 
 import { shortLeftArrow, user } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
+
+import { UPDATE_PERSON } from 'graphql/mutations/person';
 
 
 const Avatar = styled.div`
@@ -247,21 +250,22 @@ const Wrapper = styled.div`
 `;
 
 
-export class PersonCard extends React.Component {
+class PersonCardComponent extends React.Component {
   state = {
     isCreating: this.props.create,
+    isEditing: false,
     name: {
-      content: '',
+      content: this.props.name || '',
       isEdited: false,
       isInvalid: false,
     },
     position: {
-      content: '',
+      content: this.props.position || '',
       isEdited: false,
       isInvalid: false,
     },
     description: {
-      content: '',
+      content: this.props.description || '',
       isEdited: false,
       isInvalid: false,
     },
@@ -288,6 +292,24 @@ export class PersonCard extends React.Component {
     }
   };
 
+  handleEditButtonClick = () => {
+    this.setState({ isEditing: true });
+
+    const editableName = document.querySelector(`#${this.props.id}-editable-name`);
+    const editablePosition = document.querySelector(`#${this.props.id}-editable-position`);
+    const editableDescription = document.querySelector(`#${this.props.id}-editable-description`);
+
+    editableName.innerHTML = this.state.name.content;
+    editablePosition.innerHTML = this.state.position.content;
+    editableDescription.innerHTML = this.state.description.content;
+  };
+
+  handleCancelButtonClick = () => {
+    this.setState({ isEditing: false });
+
+    this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+  };
+
   handleSaveButtonClick = () => {
 
     this.setState((prevState) => {
@@ -310,9 +332,19 @@ export class PersonCard extends React.Component {
           description: state.description.content,
         };
 
-        this.props.onSaveButtonClick(person);
+        if (state.isEditing) {
+          person.id = this.props.id;
 
-        state.isCreating = false;
+          this.props.updatePerson({
+            variables: person,
+          });
+
+          state.isEditing = false;
+        } else {
+          this.props.onSaveButtonClick(person);
+
+          state.isCreating = false;
+        }
       } else {
         invalidFields.forEach((invalidField) => {
           state[invalidField].isInvalid = true;
@@ -360,18 +392,19 @@ export class PersonCard extends React.Component {
           <Name
             tag={ 'h2' }
             type={ 'title' }
-            creating={ this.state.isCreating }
-            edited={ this.state.name.isEdited }
+            creating={ this.state.isCreating || this.state.isEditing }
+            edited={ this.state.name.isEdited || this.state.isEditing }
             invalid={ this.state.name.isInvalid }
           >
             { this.state.name.content.length > 0 ? this.state.name.content : this.props.name }
           </Name>
           <EditableName
+            id={ this.props.id && `${this.props.id}-editable-name` }
             tag={ 'h2' }
             type={ 'title' }
-            creating={ this.state.isCreating }
-            edited={ this.state.name.isEdited }
-            contentEditable={ this.state.isCreating }
+            creating={ this.state.isCreating || this.state.isEditing }
+            edited={ this.state.name.isEdited || this.state.isEditing }
+            contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'name') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
           />
@@ -379,16 +412,17 @@ export class PersonCard extends React.Component {
 
         <ContentEditableWrapper>
           <Position
-            creating={ this.state.isCreating }
-            edited={ this.state.position.isEdited }
+            creating={ this.state.isCreating || this.state.isEditing }
+            edited={ this.state.position.isEdited || this.state.isEditing }
             invalid={ this.state.position.isInvalid }
           >
             { this.state.position.content.length > 0 ? this.state.position.content : this.props.position }
           </Position>
           <EditablePosition
-            creating={ this.state.isCreating }
-            edited={ this.state.position.isEdited }
-            contentEditable={ this.state.isCreating }
+            id={ this.props.id && `${this.props.id}-editable-position` }
+            creating={ this.state.isCreating || this.state.isEditing }
+            edited={ this.state.position.isEdited || this.state.isEditing }
+            contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'position') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
           />
@@ -398,16 +432,17 @@ export class PersonCard extends React.Component {
 
         <ContentEditableWrapper fullHeight>
           <Description
-            creating={ this.state.isCreating }
-            edited={ this.state.description.isEdited }
+            creating={ this.state.isCreating || this.state.isEditing }
+            edited={ this.state.description.isEdited || this.state.isEditing }
             invalid={ this.state.description.isInvalid }
           >
             { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
           </Description>
           <EditableDescription
-            creating={ this.state.isCreating }
-            edited={ this.state.description.isEdited }
-            contentEditable={ this.state.isCreating }
+            id={ this.props.id && `${this.props.id}-editable-description` }
+            creating={ this.state.isCreating || this.state.isEditing }
+            edited={ this.state.description.isEdited || this.state.isEditing }
+            contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'description') }
             onKeyPress={ (e) => this.handleKeyPress(e, true) }
           />
@@ -415,20 +450,23 @@ export class PersonCard extends React.Component {
 
         <Footer>
           {
-            !this.state.isCreating ?
-              <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>
-                <Button icon={ {
-                  svg: shortLeftArrow,
-                  position: 'right',
-                  rotation: 180,
-                } }
-                >
-                  More
-                </Button>
-              </Link>
+            !this.state.isCreating && !this.state.isEditing ?
+              <React.Fragment>
+                <Button onClick={ this.handleEditButtonClick }>Edit</Button>
+                <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>
+                  <Button icon={ {
+                    svg: shortLeftArrow,
+                    position: 'right',
+                    rotation: 180,
+                  } }
+                  >
+                    More
+                  </Button>
+                </Link>
+              </React.Fragment>
               :
               <React.Fragment>
-                <Button type={ 'flat' } onClick={ this.props.onCancelButtonClick }>Cancel</Button>
+                <Button type={ 'flat' } onClick={ this.handleCancelButtonClick }>Cancel</Button>
                 <Button onClick={ this.handleSaveButtonClick }>Save</Button>
               </React.Fragment>
           }
@@ -439,7 +477,7 @@ export class PersonCard extends React.Component {
 }
 
 
-PersonCard.propTypes = {
+PersonCardComponent.propTypes = {
   className: PropTypes.string,
   avatar: PropTypes.shape({
     _1x: PropTypes.string.isRequired,
@@ -454,8 +492,12 @@ PersonCard.propTypes = {
   authorNickname: PropTypes.string,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
+  updatePerson: PropTypes.func,
 };
 
-PersonCard.defaultProps = {
+PersonCardComponent.defaultProps = {
   create: false,
 };
+
+
+export const PersonCard = graphql(UPDATE_PERSON, { name: 'updatePerson' })(PersonCardComponent);

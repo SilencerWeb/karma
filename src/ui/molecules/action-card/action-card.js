@@ -702,7 +702,9 @@ export class ActionCard extends React.Component {
                           >
                             <Icon icon={ plus }/>
 
-                            <Select onChange={ (e) => this.handleSelectChange(e, 'left') }>{ leftSelectOptions }</Select>
+                            <Select onChange={ (e) => this.handleSelectChange(e, 'left') }>
+                              { leftSelectOptions }
+                            </Select>
                           </Avatar>
 
                           {
@@ -754,7 +756,9 @@ export class ActionCard extends React.Component {
                           >
                             <Icon icon={ plus }/>
 
-                            <Select onChange={ (e) => this.handleSelectChange(e, 'right') }>{ rightSelectOptions }</Select>
+                            <Select onChange={ (e) => this.handleSelectChange(e, 'right') }>
+                              { rightSelectOptions }
+                            </Select>
                           </Avatar>
 
                           {
