@@ -82,7 +82,21 @@ const PersonName = Heading.extend`
 `;
 
 const Karma = Heading.extend`
-  color: #27ae60;
+  
+  ${p => css`
+  
+    ${p.status === 'positive' && css`
+      color: #27ae60;
+    `}
+  
+    ${p.status === 'neutral' && css`
+      color: #bdbdbd;
+    `}
+    
+    ${p.status === 'negative' && css`
+      color: ${color.error};
+    `}
+  `}
 `.withComponent('span');
 
 const Header = styled.div`
@@ -155,6 +169,23 @@ export class PersonPage extends React.Component {
   };
 
   render() {
+    let karmaStatus;
+    let karma;
+
+    if (this.state.person) {
+      karma = this.state.person.karma;
+
+      if (karma === 0) {
+        karmaStatus = 'neutral';
+      } else {
+        karmaStatus = karma > 0 ? 'positive' : 'negative';
+
+        if (karmaStatus === 'positive') {
+          karma = `+${karma}`;
+        }
+      }
+    }
+
     return (
       <CommonTemplate>
         <AppConsumer>
@@ -168,7 +199,7 @@ export class PersonPage extends React.Component {
                     <Icon icon={ pencil }/>
                   </EditBackgroundButton>
                 </HeaderBackground>
-                
+
                 <PersonAvatar new>
                   <Icon icon={ user }/>
                 </PersonAvatar>
@@ -177,8 +208,8 @@ export class PersonPage extends React.Component {
                   { this.state.person && this.state.person.name }
                 </PersonName>
 
-                <Karma type={ 'title' }>
-                  { this.state.person && `${this.state.person.karma}` }
+                <Karma type={ 'title' } status={ karmaStatus }>
+                  { karma }
                 </Karma>
               </Header>
 

@@ -57,7 +57,6 @@ export class AuthenticationPage extends React.Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-
     if (props.type !== state.type) {
       state.type = props.type;
     }
@@ -109,15 +108,15 @@ export class AuthenticationPage extends React.Component {
 
                               context.login();
 
-                              this.setState({
-                                shouldRedirectToMainPage: true,
-                              });
-
                               context.updateUser({
                                 id: user.id,
                                 email: user.email,
                                 name: user.name,
                                 nickname: user.nickname,
+                              });
+
+                              this.setState({
+                                shouldRedirectToMainPage: true,
                               });
                             });
                           } }
@@ -230,6 +229,13 @@ export class AuthenticationPage extends React.Component {
                               localStorage.setItem(AUTH_TOKEN, token);
 
                               context.login();
+
+                              context.updateUser({
+                                id: user.id,
+                                email: user.email,
+                                name: user.name,
+                                nickname: user.nickname,
+                              });
 
                               this.setState({
                                 shouldRedirectToMainPage: true,

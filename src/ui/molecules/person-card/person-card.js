@@ -327,13 +327,13 @@ export class PersonCard extends React.Component {
     let karmaStatus;
     let karma = this.props.karma;
 
-    if (this.props.karma === 0) {
+    if (karma === 0) {
       karmaStatus = 'neutral';
     } else {
-      karmaStatus = this.props.karma > 0 ? 'positive' : 'negative';
+      karmaStatus = karma > 0 ? 'positive' : 'negative';
 
       if (karmaStatus === 'positive') {
-        karma = `+${this.props.karma}`;
+        karma = `+${karma}`;
       }
     }
 
