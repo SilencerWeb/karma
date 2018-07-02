@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { ApolloConsumer, Mutation, graphql } from 'react-apollo';
+import { Mutation, graphql } from 'react-apollo';
 
 import { AppConsumer } from 'index';
 
@@ -12,7 +12,6 @@ import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
-import { GET_PERSONS } from 'graphql/queries/person';
 import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
 
 

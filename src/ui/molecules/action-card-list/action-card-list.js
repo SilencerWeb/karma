@@ -18,7 +18,7 @@ export const ActionCardList = (props) => {
   return (
     <Wrapper className={ props.className }>
       { props.actions.map((action) => {
-        const members = action.members.map((member) => {
+        const members = action.members && action.members.map((member) => {
           return {
             id: member.isUser ? member.user.id : member.person.id,
             name: member.isUser ? member.user.name : member.person.name,

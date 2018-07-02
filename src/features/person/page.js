@@ -1,7 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { ApolloConsumer, Query } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
+import { Redirect } from 'react-router-dom';
 
 import { AppConsumer } from 'index';
 
@@ -11,10 +12,11 @@ import { ActionCardList } from 'ui/molecules';
 
 import { CommonTemplate } from 'ui/templates';
 
-import { pencil, user } from 'ui/outlines';
+import { pencil, user, trashCan } from 'ui/outlines';
 
 import { color } from 'ui/theme';
 
+import { DELETE_PERSON } from 'graphql/mutations/person';
 import { GET_ACTIONS } from 'graphql/queries/action';
 
 
@@ -48,6 +50,25 @@ const EditBackgroundButton = EditButton.extend`
   top: 2rem;
   right: 2rem;
   color: #ffffff;
+`;
+
+const DeletePersonButton = styled.button`
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  color: #ffffff;
+  background-color: transparent;
+  border: none;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  outline: none;
+  cursor: pointer;
+
+  svg {
+    font-size: 2.4rem;
+  }
 `;
 
 const PersonAvatar = styled.div`
@@ -138,6 +159,7 @@ const Actions = styled.div`
 export class PersonPage extends React.Component {
   state = {
     isActionCreating: false,
+    shouldRedirectToMainPage: false,
   };
 
   getPerson = (context) => {
@@ -155,6 +177,18 @@ export class PersonPage extends React.Component {
 
     this.setState({
       isActionCreating: true,
+    });
+  };
+
+  handleDeleteButtonClick = (deletePerson, context) => {
+    deletePerson({
+      variables: {
+        id: this.state.person.id,
+      },
+    }).then((response) => {
+      context.deletePerson(response.data.deletePerson.id);
+
+      this.setState({ shouldRedirectToMainPage: true });
     });
   };
 
@@ -190,6 +224,8 @@ export class PersonPage extends React.Component {
 
     return (
       <CommonTemplate>
+        { this.state.shouldRedirectToMainPage && <Redirect to={ '/' }/> }
+
         <AppConsumer>
           { (context) => (
             <React.Fragment>
@@ -197,6 +233,23 @@ export class PersonPage extends React.Component {
 
               <Header>
                 <HeaderBackground>
+                  <Mutation mutation={ DELETE_PERSON }>
+                    { (deletePerson, { loading, error }) => {
+                      if (error) {
+                        return <div>mutation DELETE_PERSON got error: ${ error.message }</div>;
+                      } else if (loading) {
+                        return <div>mutation DELETE_PERSON is loading...</div>;
+                      }
+
+                      return (
+                        <DeletePersonButton onClick={ () => this.handleDeleteButtonClick(deletePerson, context) }>
+                          <Icon icon={ trashCan }/>
+                        </DeletePersonButton>
+                      );
+                    }
+                    }
+                  </Mutation>
+
                   <EditBackgroundButton>
                     <Icon icon={ pencil }/>
                   </EditBackgroundButton>
