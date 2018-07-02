@@ -27,24 +27,21 @@ export class MyActionsPage extends React.Component {
                   return <div>query GET_ACTIONS is loading...</div>;
                 }
 
-                if (data.actions) {
+                if (data.actions && data.actions.length) {
                   const filteredActions = data.actions.filter((action) => {
                     return action.members.some((member) => {
                       return member.isUser ? member.user.id === context.user.id : false;
                     });
                   });
 
-                  return (
-                    <ActionCardList
-                      actions={ filteredActions }
-                      isActionCreating={ this.state.isActionCreating }
-                      onCancelButtonClick={ this.handleCancelButtonClick }
-                      onSaveButtonClick={ this.handleSaveButtonClick }
-                    />
-                  );
+                  if (filteredActions.length) {
+                    return (
+                      <ActionCardList actions={ filteredActions }/>
+                    );
+                  }
                 }
 
-                return null;
+                return <ActionCardList/>;
               } }
             </Query>
           ) }

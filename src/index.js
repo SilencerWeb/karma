@@ -78,7 +78,6 @@ const AppContext = React.createContext({
   updateUser: null,
 
   persons: [],
-  deletedPersonsIds: [],
   addPerson: null,
   updatePersons: null,
   deletePersons: null,
@@ -92,7 +91,6 @@ class App extends React.Component {
     isLoggedIn: false,
     user: null,
     persons: [],
-    deletedPersonsIds: [],
   };
 
   login = (user) => {
@@ -146,7 +144,6 @@ class App extends React.Component {
       return {
         ...prevState,
         persons: persons,
-        deletedPersonsIds: [...prevState.deletedPersonsIds, personId],
       };
     });
   };
@@ -171,7 +168,6 @@ class App extends React.Component {
       updateUser: this.updateUser,
 
       persons: this.state.persons,
-      deletedPersonsIds: this.state.deletedPersonsIds,
       addPerson: this.addPerson,
       updatePersons: this.updatePersons,
       deletePerson: this.deletePerson,

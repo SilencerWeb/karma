@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 export const ActionCardList = (props) => {
   return (
     <Wrapper className={ props.className }>
-      { props.actions.map((action) => {
+      { props.actions && props.actions.map((action) => {
         return (
           <ActionCardWrapper key={ action.id }>
             <ActionCard
@@ -28,10 +28,6 @@ export const ActionCardList = (props) => {
               karma={ action.karma }
               executors={ action.executors }
               members={ action.members }
-              // eslint-disable-next-line
-              onEditButtonClick={ () => console.log('edited!') }
-              // eslint-disable-next-line
-              onMoreButtonClick={ () => console.log('more') }
             />
           </ActionCardWrapper>
         );
@@ -51,6 +47,7 @@ ActionCardList.propTypes = {
   className: PropTypes.string,
   actions: PropTypes.arrayOf(
     PropTypes.shape({
+      id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       date: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
@@ -71,8 +68,8 @@ ActionCardList.propTypes = {
         }),
       ),
     }),
-  ).isRequired,
+  ),
   isActionCreating: PropTypes.bool,
-  onCancelButtonClick: PropTypes.func.isRequired,
-  onSaveButtonClick: PropTypes.func.isRequired,
+  onCancelButtonClick: PropTypes.func,
+  onSaveButtonClick: PropTypes.func,
 };

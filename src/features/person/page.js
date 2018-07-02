@@ -35,6 +35,8 @@ const EditButton = styled.button`
   }
 `;
 
+const Subtitle = Heading.withComponent('h2');
+
 const HeaderBackground = styled.div`
   position: absolute;
   top: -2rem;
@@ -43,13 +45,6 @@ const HeaderBackground = styled.div`
   height: 24rem;
   background: linear-gradient(90deg, #00b5ff 0%, #a24bff 100%);
   transform: translateX(-50%);
-`;
-
-const EditBackgroundButton = EditButton.extend`
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  color: #ffffff;
 `;
 
 const DeletePersonButton = styled.button`
@@ -69,6 +64,13 @@ const DeletePersonButton = styled.button`
   svg {
     font-size: 2.4rem;
   }
+`;
+
+const EditBackgroundButton = EditButton.extend`
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  color: #ffffff;
 `;
 
 const PersonAvatar = styled.div`
@@ -96,7 +98,6 @@ const PersonAvatar = styled.div`
     `}
   `}
 `;
-
 
 const PersonName = Heading.extend`
   margin-bottom: 0.8rem;
@@ -143,17 +144,11 @@ const About = styled.div`
   }
 `;
 
-const Subtitle = Heading.withComponent('h2');
-
 const ActionsHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2.4rem;
-`;
-
-const Actions = styled.div`
-
 `;
 
 export class PersonPage extends React.Component {
@@ -167,17 +162,13 @@ export class PersonPage extends React.Component {
       return person.id === this.props.match.params.id;
     })[0];
 
-    this.setState({
-      person: person,
-    });
+    this.setState({ person: person });
   };
 
   handleAddActionButtonClick = () => {
     window.scrollTo(0, document.body.scrollHeight);
 
-    this.setState({
-      isActionCreating: true,
-    });
+    this.setState({ isActionCreating: true });
   };
 
   handleDeleteButtonClick = (deletePerson, context) => {
@@ -193,15 +184,11 @@ export class PersonPage extends React.Component {
   };
 
   handleCancelButtonClick = () => {
-    this.setState({
-      isActionCreating: false,
-    });
+    this.setState({ isActionCreating: false });
   };
 
   handleSaveButtonClick = () => {
-    this.setState({
-      isActionCreating: false,
-    });
+    this.setState({ isActionCreating: false });
   };
 
   render() {
@@ -282,7 +269,7 @@ export class PersonPage extends React.Component {
                 <p> { this.state.person && this.state.person.description }</p>
               </About>
 
-              <Actions>
+              <div>
                 <ActionsHeader>
                   <Subtitle tag={ 'h2' }>
                     Action list
@@ -307,20 +294,22 @@ export class PersonPage extends React.Component {
                         });
                       });
 
-                      return (
-                        <ActionCardList
-                          actions={ filteredActions }
-                          isActionCreating={ this.state.isActionCreating }
-                          onCancelButtonClick={ this.handleCancelButtonClick }
-                          onSaveButtonClick={ this.handleSaveButtonClick }
-                        />
-                      );
+                      if (filteredActions.length) {
+                        return (
+                          <ActionCardList
+                            actions={ filteredActions }
+                            isActionCreating={ this.state.isActionCreating }
+                            onCancelButtonClick={ this.handleCancelButtonClick }
+                            onSaveButtonClick={ this.handleSaveButtonClick }
+                          />
+                        );
+                      }
                     }
 
-                    return null;
+                    return <ActionCardList/>;
                   } }
                 </Query>
-              </Actions>
+              </div>
             </React.Fragment>
           ) }
         </AppConsumer>

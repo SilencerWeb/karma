@@ -11,7 +11,7 @@ import { CommonTemplate } from 'ui/templates';
 
 import { GET_PERSONS } from 'graphql/queries/person';
 import { GET_USER } from 'graphql/queries/user';
-import { PERSON_SUBSCRIPTION } from 'graphql/subscriptions/person';
+import { CREATE_PERSON_SUBSCRIPTION } from 'graphql/subscriptions/person';
 
 
 export class FeedPage extends React.Component {
@@ -26,23 +26,21 @@ export class FeedPage extends React.Component {
               <React.Fragment>
                 <PersonCardList/>
 
-                <Subscription subscription={ PERSON_SUBSCRIPTION }>
+                <Subscription subscription={ CREATE_PERSON_SUBSCRIPTION }>
                   { ({ error, data }) => {
                     if (error) {
-                      return <div>subscription PERSON_SUBSCRIPTION got error: ${ error.message }</div>;
+                      return <div>subscription CREATE_PERSON_SUBSCRIPTION got error: ${ error.message }</div>;
                     }
 
-                    if (data && data.personUpdate && data.personUpdate.node) {
-                      const personUpdate = data.personUpdate.node;
+                    if (data && data.personCreated && data.personCreated.node) {
+                      const createdPerson = data.personCreated.node;
 
                       const isNewPerson = context.persons.every((person) => {
-                        return person.id !== personUpdate.id && context.deletedPersonsIds.every((deletedPersonId) => {
-                          return deletedPersonId !== personUpdate.id;
-                        });
+                        return person.id !== createdPerson.id;
                       });
 
                       if (isNewPerson) {
-                        context.addPerson(personUpdate);
+                        context.addPerson(createdPerson);
                       }
                     }
 
@@ -51,7 +49,7 @@ export class FeedPage extends React.Component {
                 </Subscription>
 
                 {
-                  (!context.persons || !context.persons.length) &&
+                  context.persons && !context.persons.length &&
                   <Query query={ GET_PERSONS }>
                     { ({ error, loading, data }) => {
                       if (error) {

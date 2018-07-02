@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const PERSON_SUBSCRIPTION = gql`
+export const CREATE_PERSON_SUBSCRIPTION = gql`
   subscription personUpdate {
-    personUpdate {
+    personCreated {
       node {
         id
         name
