@@ -117,7 +117,6 @@ module.exports = {
     'import/no-dynamic-require': 2,
     'import/no-webpack-loader-syntax': 2,
     'import/no-self-import': 2,
-    'import/no-useless-path-segments': 2,
 
     'import/export': 2,
     'import/no-mutable-exports': 2,

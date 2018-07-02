@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
-import { AppConsumer } from './index';
+import { AppConsumer } from 'index';
 
 import { FeedPage } from 'features/feed';
 import { PersonPage } from 'features/person';
@@ -33,7 +33,6 @@ export const Routes = () => (
           <Route path={ '/signup' } exact render={ () => <AuthenticationPage type={ 'signup' }/> }/>
 
           <ProtectedRoute path={ '/:user/persons/:id' } exact component={ PersonPage }/>
-
           <ProtectedRoute path={ '/my-actions' } exact component={ MyActionsPage }/>
         </React.Fragment>
       ) }

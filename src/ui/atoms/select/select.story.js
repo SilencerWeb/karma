@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { Select } from '.';
+import { Select } from './select';
 
 import avatar_1x from 'assets/images/avatars/xs/avatar.png';
 import avatar2_1x from 'assets/images/avatars/xs/avatar2.png';
@@ -38,8 +38,6 @@ stories.add('default', () => {
   const disabled = boolean('disabled', false);
 
   const error = boolean('error', false);
-
-  const fullWidth = boolean('full width', false);
 
   const options = [
     {
@@ -101,7 +99,6 @@ stories.add('default', () => {
       theme={ theme }
       disabled={ disabled }
       error={ error }
-      fullWidth={ fullWidth }
     />
   );
 });

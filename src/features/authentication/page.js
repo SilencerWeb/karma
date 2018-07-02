@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
 import * as Yup from 'yup';
+import { Redirect } from 'react-router-dom';
 import { Mutation } from 'react-apollo';
 import { Formik } from 'formik';
 
@@ -106,14 +106,7 @@ export class AuthenticationPage extends React.Component {
 
                               localStorage.setItem(AUTH_TOKEN, token);
 
-                              context.login();
-
-                              context.updateUser({
-                                id: user.id,
-                                email: user.email,
-                                name: user.name,
-                                nickname: user.nickname,
-                              });
+                              context.login(user);
 
                               this.setState({
                                 shouldRedirectToMainPage: true,
@@ -129,65 +122,46 @@ export class AuthenticationPage extends React.Component {
                              }) => (
                                <Form onSubmit={ handleSubmit } noValidate>
                                  <StyledFormField
-                                  textField={ {
-                                    name: 'email',
-                                  } }
                                   placeholder={ 'Email *' }
-                                  value={ values.email }
+                                  textFieldName={ 'email' }
+                                  textFieldType={ 'email' }
+                                  textFieldValue={ values.email }
+                                  helperText={ !!errors.email ? errors.email : null }
                                   error={ !!errors.email }
-                                  helperText={ !!errors.email ? {
-                                    content: errors.email,
-                                  } : null }
                                   onChange={ handleChange }
                                  />
                                  <StyledFormField
-                                  textField={ {
-                                    name: 'nickname',
-                                  } }
                                   placeholder={ 'Nickname *' }
-                                  value={ values.nickname }
+                                  textFieldName={ 'nickname' }
+                                  textFieldValue={ values.nickname }
+                                  helperText={ !!errors.nickname ? errors.nickname : null }
                                   error={ !!errors.nickname }
-                                  helperText={ !!errors.nickname ? {
-                                    content: errors.nickname,
-                                  } : null }
                                   onChange={ handleChange }
                                  />
                                  <StyledFormField
-                                  textField={ {
-                                    name: 'name',
-                                  } }
                                   placeholder={ 'Name' }
-                                  value={ values.name }
+                                  textFieldName={ 'name' }
+                                  textFieldValue={ values.name }
+                                  helperText={ !!errors.name ? errors.name : null }
                                   error={ !!errors.name }
-                                  helperText={ !!errors.name ? {
-                                    content: errors.name,
-                                  } : null }
                                   onChange={ handleChange }
                                  />
                                  <StyledFormField
-                                  textField={ {
-                                    name: 'password',
-                                    type: 'password',
-                                  } }
                                   placeholder={ 'Password *' }
-                                  value={ values.password }
+                                  textFieldName={ 'password' }
+                                  textFieldType={ 'password' }
+                                  textFieldValue={ values.password }
+                                  helperText={ !!errors.password ? errors.password : null }
                                   error={ !!errors.password }
-                                  helperText={ !!errors.password ? {
-                                    content: errors.password,
-                                  } : null }
                                   onChange={ handleChange }
                                  />
                                  <StyledFormField
-                                  textField={ {
-                                    name: 'confirmPassword',
-                                    type: 'password',
-                                  } }
                                   placeholder={ 'Confirm password *' }
-                                  value={ values.confirmPassword }
+                                  textFieldName={ 'confirmPassword' }
+                                  textFieldType={ 'password' }
+                                  textFieldValue={ values.confirmPassword }
+                                  helperText={ !!errors.confirmPassword ? errors.confirmPassword : null }
                                   error={ !!errors.confirmPassword }
-                                  helperText={ !!errors.confirmPassword ? {
-                                    content: errors.confirmPassword,
-                                  } : null }
                                   onChange={ handleChange }
                                  />
 
@@ -225,17 +199,11 @@ export class AuthenticationPage extends React.Component {
                               },
                             }).then((response) => {
                               const token = response.data.login.token;
+                              const user = response.data.login.user;
 
                               localStorage.setItem(AUTH_TOKEN, token);
 
-                              context.login();
-
-                              context.updateUser({
-                                id: user.id,
-                                email: user.email,
-                                name: user.name,
-                                nickname: user.nickname,
-                              });
+                              context.login(user);
 
                               this.setState({
                                 shouldRedirectToMainPage: true,
@@ -251,28 +219,20 @@ export class AuthenticationPage extends React.Component {
                              }) => (
                                <Form onSubmit={ handleSubmit } noValidate>
                                  <StyledFormField
-                                  textField={ {
-                                    name: 'login',
-                                  } }
                                   placeholder={ 'Email or nickname' }
-                                  value={ values.login }
+                                  textFieldName={ 'login' }
+                                  textFieldValue={ values.login }
+                                  helperText={ !!errors.login ? errors.login : null }
                                   error={ !!errors.login }
-                                  helperText={ !!errors.login ? {
-                                    content: errors.login,
-                                  } : null }
                                   onChange={ handleChange }
                                  />
                                  <StyledFormField
-                                  textField={ {
-                                    name: 'password',
-                                    type: 'password',
-                                  } }
                                   placeholder={ 'Password' }
-                                  value={ values.password }
+                                  textFieldName={ 'password' }
+                                  textFieldType={ 'password' }
+                                  textFieldValue={ values.password }
+                                  helperText={ !!errors.password ? errors.password : null }
                                   error={ !!errors.password }
-                                  helperText={ !!errors.password ? {
-                                    content: errors.password,
-                                  } : null }
                                   onChange={ handleChange }
                                  />
 

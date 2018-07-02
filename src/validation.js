@@ -9,6 +9,13 @@ export const email = Yup.string()
 export const password = Yup.string()
   .min(6, 'Password must be at least 6 characters')
   .max(128, 'Password cannot exceed 128 characters')
+  .test(
+    'match',
+    'Passwords must match',
+    function (password) {
+      return password === this.options.parent.currentPassword;
+    },
+  )
   .required('Password is required');
 
 export const confirmPassword = Yup.string()

@@ -2,14 +2,11 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
-import { transition } from 'ui/theme';
-
 
 const Wrapper = styled.svg`
   display: inline-block;
   vertical-align: top;
   fill: currentColor;
-  transition: ${transition};
 
   ${p => css`
 

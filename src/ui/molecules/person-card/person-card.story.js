@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { PersonCard } from '.';
+import { PersonCard } from './person-card';
 
 import avatar_1x from 'assets/images/avatars/md/avatar.png';
 import avatar_2x from 'assets/images/avatars/md/avatar@2x.png';

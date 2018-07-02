@@ -73,12 +73,14 @@ const AppContext = React.createContext({
   isLoggedIn: false,
   login: null,
   logout: null,
+
   user: null,
   updateUser: null,
+
   persons: [],
   deletedPersonsIds: [],
-  updatePersons: null,
   addPerson: null,
+  updatePersons: null,
   deletePersons: null,
 });
 
@@ -93,8 +95,16 @@ class App extends React.Component {
     deletedPersonsIds: [],
   };
 
-  login = () => {
-    this.setState({ isLoggedIn: true });
+  login = (user) => {
+    this.setState({
+      isLoggedIn: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        nickname: user.nickname,
+      },
+    });
   };
 
   logout = () => {
@@ -156,12 +166,14 @@ class App extends React.Component {
       isLoggedIn: this.state.isLoggedIn,
       login: this.login,
       logout: this.logout,
+
       user: this.state.user,
       updateUser: this.updateUser,
+
       persons: this.state.persons,
       deletedPersonsIds: this.state.deletedPersonsIds,
-      updatePersons: this.updatePersons,
       addPerson: this.addPerson,
+      updatePersons: this.updatePersons,
       deletePerson: this.deletePerson,
     };
 

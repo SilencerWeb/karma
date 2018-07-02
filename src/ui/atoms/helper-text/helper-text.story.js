@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { HelperText } from '.';
+import { HelperText } from './helper-text';
 
 import { warning } from 'ui/outlines';
 
@@ -27,14 +27,12 @@ stories
   .add('iconic', () => {
     const content = text('content', 'Hi! I\'m helper text');
 
-    const icon = {
-      svg: warning,
-      position: select('icon\'s position', {
-        left: 'left',
-        right: 'right',
-      }, 'right'),
-      rotation: number('icon\'s rotation (deg)', 0),
-    };
+    const icon = boolean('helper text icon', false);
+    const iconPosition = select('helper text icon\'s position', {
+      left: 'left',
+      right: 'right',
+    }, 'right');
+    const iconRotation = number('helper text icon\'s rotation (deg)', 0);
 
     const disabled = boolean('disabled', false);
 
@@ -42,7 +40,9 @@ stories
 
     return (
       <HelperText
-        icon={ icon }
+        icon={ icon ? warning : null }
+        iconPosition={ iconPosition }
+        iconRotation={ iconRotation }
         disabled={ disabled }
         error={ error }
       >

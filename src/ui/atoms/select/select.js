@@ -371,7 +371,7 @@ const MultiSimpleOption = (props) => {
 
   return (
     <div className={ optionClassNames } { ...props.innerProps }>
-      <Checkbox checked={ props.isSelected }/>
+      <Checkbox checked={ props.isSelected } readOnly/>
       <span>{ props.children }</span>
     </div>
   );

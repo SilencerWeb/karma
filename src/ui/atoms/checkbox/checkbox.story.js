@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { Checkbox } from '.';
+import { Checkbox } from './checkbox';
 
 
 const stories = storiesOf('atoms/Checkbox', module);

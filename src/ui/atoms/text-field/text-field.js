@@ -88,7 +88,7 @@ const Wrapper = styled.div`
       }
   
   
-      ${p.icon.position === 'left' && css`
+      ${p.iconPosition === 'left' && css`
   
         ${Input} {
           padding-left: 2.4rem;
@@ -99,7 +99,7 @@ const Wrapper = styled.div`
         }
       `}
   
-      ${p.icon.position === 'right' && css`
+      ${p.iconPosition === 'right' && css`
   
         ${Input} {
           padding-right: 2.4rem;
@@ -111,10 +111,10 @@ const Wrapper = styled.div`
       `}
       
       
-      ${p.icon.rotation && p.icon.rotation > 0 && css`
+      ${p.iconRotation > 0 && css`
   
         svg {
-          transform: translateY(-50%) rotate(${p.icon.rotation}deg);
+          transform: translateY(-50%) rotate(${p.iconRotation}deg);
         }    
       `}
     `}
@@ -131,20 +131,19 @@ const Wrapper = styled.div`
 
 
 export const TextField = (props) => {
-  const icon = props.icon && props.icon.svg ? <Icon icon={ props.icon.svg }/> : null;
+  const icon = props.icon ? <Icon icon={ props.icon }/> : null;
 
   const Field = props.tag && props.tag === 'textarea' ? Textarea : Input;
 
   return (
     <Wrapper
       className={ props.className }
-      icon={ props.icon && {
-        position: props.icon.position,
-        rotation: props.icon.rotation,
-      } }
+      icon={ props.icon }
+      iconPosition={ props.iconPosition }
+      iconRotation={ props.iconRotation }
       disabled={ props.disabled }
     >
-      { props.icon && props.icon.position === 'left' && icon }
+      { props.icon && props.iconPosition === 'left' && icon }
       <Field
         id={ props.id }
         name={ props.name }
@@ -157,7 +156,7 @@ export const TextField = (props) => {
         onFocus={ props.onFocus }
         onBlur={ props.onBlur }
       />
-      { props.icon && props.icon.position === 'right' && icon }
+      { props.icon && props.iconPosition === 'right' && icon }
     </Wrapper>
   );
 };
@@ -171,11 +170,9 @@ TextField.propTypes = {
   type: PropTypes.string,
   value: PropTypes.string,
   placeholder: PropTypes.string,
-  icon: PropTypes.shape({
-    svg: PropTypes.any.isRequired,
-    position: PropTypes.string.isRequired,
-    rotation: PropTypes.number,
-  }),
+  icon: PropTypes.any,
+  iconPosition: PropTypes.string,
+  iconRotation: PropTypes.number,
   disabled: PropTypes.bool,
   error: PropTypes.bool,
   onChange: PropTypes.func,

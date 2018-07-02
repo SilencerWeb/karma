@@ -2,7 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, text, boolean, number, object, array, select } from '@storybook/addon-knobs';
 
-import { FormField } from '.';
+import { FormField } from './form-field';
 
 import { warning } from 'ui/outlines';
 
@@ -39,8 +39,6 @@ textFieldStories
 
     const error = boolean('error', false);
 
-    const fullWidth = boolean('full width', false);
-
     return (
       <FormField
         tag={ tag }
@@ -48,7 +46,6 @@ textFieldStories
         label={ label }
         disabled={ disabled }
         error={ error }
-        fullWidth={ fullWidth }
       />
     );
   })
@@ -60,54 +57,45 @@ textFieldStories
       textarea: 'textarea',
     }, 'input');
 
-    const helperText = {
-      content: text('helper text content', 'Hi! I\'m helper text'),
-      icon: {
-        svg: warning,
-        position: select('helper text icon\'s position', {
-          left: 'left',
-          right: 'right',
-        }, 'right'),
-        rotation: number('helper text icon\'s rotation (deg)', 0),
-      },
-    };
+    const helperText = text('helper text', 'Hi! I\'m helper text');
+    const helperTextIcon = boolean('helper text icon', false);
+    const helperTextIconPosition = select('helper text icon\'s position', {
+      left: 'left',
+      right: 'right',
+    }, 'right');
+    const helperTextIconRotation = number('helper text icon\'s rotation (deg)', 0);
 
     const disabled = boolean('disabled', false);
 
     const error = boolean('error', false);
-
-    const fullWidth = boolean('full width', false);
 
     return (
       <FormField
         tag={ tag }
         label={ label }
         helperText={ helperText }
+        helperTextIcon={ helperTextIcon ? warning : null }
+        helperTextIconPosition={ helperTextIconPosition }
+        helperTextIconRotation={ helperTextIconRotation }
         disabled={ disabled }
         error={ error }
-        fullWidth={ fullWidth }
       />
     );
   })
   .add('limited textarea', () => {
-    const limit = number('limit', 100);
+    const textFieldLimit = number('text field limit', 100);
 
     const disabled = boolean('disabled', false);
 
     const error = boolean('error', false);
 
-    const fullWidth = boolean('full width', false);
-
     return (
       <FormField
         tag={ 'textarea' }
-        textField={ {
-          limit: limit,
-        } }
+        textFieldLimit={ textFieldLimit }
         label={ 'Textarea with limited symbols length' }
         disabled={ disabled }
         error={ error }
-        fullWidth={ fullWidth }
       />
     );
   });
@@ -121,12 +109,12 @@ selectStories
 
     const placeholder = text('placeholder', 'Choose a person');
 
-    const type = select('type', {
+    const selectType = select('type', {
       single: 'single',
       multi: 'multi',
     }, 'single');
 
-    const theme = select('theme', {
+    const selectTheme = select('theme', {
       simple: 'simple',
       avatar: 'avatar',
     }, 'simple');
@@ -135,9 +123,7 @@ selectStories
 
     const error = boolean('error', false);
 
-    const fullWidth = boolean('full width', false);
-
-    const options = [
+    const selectOptions = [
       {
         label: 'Neil Roberts',
         value: 'neil roberts',
@@ -191,17 +177,14 @@ selectStories
 
     return (
       <FormField
-        placeholder={ placeholder }
         tag={ 'select' }
-        select={ {
-          options: options,
-          type: type,
-          theme: theme,
-        } }
+        placeholder={ placeholder }
+        selectOptions={ selectOptions }
+        selectType={ selectType }
+        selectTheme={ selectTheme }
         label={ label }
         disabled={ disabled }
         error={ error }
-        fullWidth={ fullWidth }
       />
     );
   })
@@ -210,35 +193,29 @@ selectStories
 
     const placeholder = text('placeholder', 'Choose a person');
 
-    const type = select('type', {
+    const selectType = select('type', {
       single: 'single',
       multi: 'multi',
     }, 'single');
 
-    const theme = select('theme', {
+    const selectTheme = select('theme', {
       simple: 'simple',
       avatar: 'avatar',
     }, 'simple');
 
-    const helperText = {
-      content: text('helper text content', 'Hi! I\'m helper text'),
-      icon: {
-        svg: warning,
-        position: select('helper text icon\'s position', {
-          left: 'left',
-          right: 'right',
-        }, 'right'),
-        rotation: number('helper text icon\'s rotation (deg)', 0),
-      },
-    };
+    const helperText = text('helper text', 'Hi! I\'m helper text');
+    const helperTextIcon = boolean('helper text icon', false);
+    const helperTextIconPosition = select('helper text icon\'s position', {
+      left: 'left',
+      right: 'right',
+    }, 'right');
+    const helperTextIconRotation = number('helper text icon\'s rotation (deg)', 0);
 
     const disabled = boolean('disabled', false);
 
     const error = boolean('error', false);
 
-    const fullWidth = boolean('full width', false);
-
-    const options = [
+    const selectOptions = [
       {
         label: 'Neil Roberts',
         value: 'neil roberts',
@@ -294,16 +271,16 @@ selectStories
       <FormField
         tag={ 'select' }
         placeholder={ placeholder }
-        select={ {
-          options: options,
-          type: type,
-          theme: theme,
-        } }
+        selectOptions={ selectOptions }
+        selectType={ selectType }
+        selectTheme={ selectTheme }
         label={ label }
         helperText={ helperText }
+        helperTextIcon={ helperTextIcon ? warning : null }
+        helperTextIconPosition={ helperTextIconPosition }
+        helperTextIconRotation={ helperTextIconRotation }
         disabled={ disabled }
         error={ error }
-        fullWidth={ fullWidth }
       />
     );
   });

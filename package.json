@@ -73,6 +73,7 @@
     "start": "yarn node scripts/start.js",
     "storybook": "start-storybook -p 3001 -c .storybook",
     "dev": "concurrently 'yarn start' 'yarn storybook'",
+    "dev:local": "concurrently 'yarn start:local' 'yarn storybook'",
     "build": "node scripts/build.js",
     "lint": "yarn eslint src",
     "lint:fix": "yarn eslint src --fix",
