@@ -75,9 +75,11 @@ const AppContext = React.createContext({
   logout: null,
   user: null,
   updateUser: null,
-  persons: null,
+  persons: [],
+  deletedPersonsIds: [],
   updatePersons: null,
   addPerson: null,
+  deletePersons: null,
 });
 
 export const AppConsumer = AppContext.Consumer;
@@ -87,7 +89,8 @@ class App extends React.Component {
   state = {
     isLoggedIn: false,
     user: null,
-    persons: null,
+    persons: [],
+    deletedPersonsIds: [],
   };
 
   login = () => {
@@ -120,6 +123,24 @@ class App extends React.Component {
     });
   };
 
+  deletePerson = (personId) => {
+    this.setState((prevState) => {
+      const persons = [...prevState.persons];
+
+      const personIndexForDeleting = persons.findIndex((person) => {
+        return person.id === personId;
+      });
+
+      persons.splice(personIndexForDeleting, 1);
+
+      return {
+        ...prevState,
+        persons: persons,
+        deletedPersonsIds: [...prevState.deletedPersonsIds, personId],
+      };
+    });
+  };
+
   componentDidMount = () => {
     const token = localStorage.getItem(AUTH_TOKEN);
 
@@ -138,12 +159,11 @@ class App extends React.Component {
       user: this.state.user,
       updateUser: this.updateUser,
       persons: this.state.persons,
+      deletedPersonsIds: this.state.deletedPersonsIds,
       updatePersons: this.updatePersons,
       addPerson: this.addPerson,
+      deletePerson: this.deletePerson,
     };
-
-    // eslint-disable-next-line no-console
-    console.log('app re-rendered again :((');
 
     return (
       <ApolloProvider client={ client }>

@@ -2,15 +2,18 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
+import { ApolloConsumer, Mutation, graphql } from 'react-apollo';
+
+import { AppConsumer } from 'index';
 
 import { Button, RetinaImage, Heading, Icon } from 'ui/atoms';
 
-import { shortLeftArrow, user } from 'ui/outlines';
+import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
-import { UPDATE_PERSON } from 'graphql/mutations/person';
+import { GET_PERSONS } from 'graphql/queries/person';
+import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
 
 
 const Avatar = styled.div`
@@ -220,10 +223,23 @@ const ContentEditableWrapper = styled.div`
   `}
 `;
 
+const DeletePersonButton = styled(Button)`
+  background-color: ${color.error};
+`;
+
+const FooterLeftSide = styled.div`
+  align-self: flex-start;
+`;
+
+const FooterRightSide = styled.div`
+  align-self: flex-end;
+`;
+
 const Footer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-self: flex-end;
+  width: 100%;
   
   button {
     margin-right: 0.8rem;
@@ -290,6 +306,16 @@ class PersonCardComponent extends React.Component {
         document.execCommand('insertHTML', false, '<br><br>');
       }
     }
+  };
+
+  handleDeleteButtonClick = (deletePerson, context) => {
+    deletePerson({
+      variables: {
+        id: this.props.id,
+      },
+    }).then((response) => {
+      context.deletePerson(response.data.deletePerson.id);
+    });
   };
 
   handleEditButtonClick = () => {
@@ -371,106 +397,144 @@ class PersonCardComponent extends React.Component {
 
     return (
       <Wrapper className={ this.props.className }>
-        {
-          !this.props.create && this.props.avatar ?
-            <Avatar>
-              <RetinaImage
-                src={ {
-                  _1x: this.props.avatar._1x,
-                  _2x: this.props.avatar._2x,
-                } }
-                alt={ this.props.name }
-              />
-            </Avatar>
-            :
-            <Avatar new>
-              <Icon icon={ user }/>
-            </Avatar>
-        }
+        <AppConsumer>
+          { (context) => (
+            <React.Fragment>
+              {
+                !this.props.create && this.props.avatar ?
+                  <Avatar>
+                    <RetinaImage
+                      src={ {
+                        _1x: this.props.avatar._1x,
+                        _2x: this.props.avatar._2x,
+                      } }
+                      alt={ this.props.name }
+                    />
+                  </Avatar>
+                  :
+                  <Avatar new>
+                    <Icon icon={ user }/>
+                  </Avatar>
+              }
 
-        <ContentEditableWrapper>
-          <Name
-            tag={ 'h2' }
-            type={ 'title' }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.name.isEdited || this.state.isEditing }
-            invalid={ this.state.name.isInvalid }
-          >
-            { this.state.name.content.length > 0 ? this.state.name.content : this.props.name }
-          </Name>
-          <EditableName
-            id={ this.props.id && `${this.props.id}-editable-name` }
-            tag={ 'h2' }
-            type={ 'title' }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.name.isEdited || this.state.isEditing }
-            contentEditable={ this.state.isCreating || this.state.isEditing }
-            onInput={ (e) => this.handleInput(e, 'name') }
-            onKeyPress={ (e) => this.handleKeyPress(e, false) }
-          />
-        </ContentEditableWrapper>
+              <ContentEditableWrapper>
+                <Name
+                  tag={ 'h2' }
+                  type={ 'title' }
+                  creating={ this.state.isCreating || this.state.isEditing }
+                  edited={ this.state.name.isEdited || this.state.isEditing }
+                  invalid={ this.state.name.isInvalid }
+                >
+                  { this.state.name.content.length > 0 ? this.state.name.content : this.props.name }
+                </Name>
+                <EditableName
+                  id={ this.props.id && `${this.props.id}-editable-name` }
+                  tag={ 'h2' }
+                  type={ 'title' }
+                  creating={ this.state.isCreating || this.state.isEditing }
+                  edited={ this.state.name.isEdited || this.state.isEditing }
+                  contentEditable={ this.state.isCreating || this.state.isEditing }
+                  onInput={ (e) => this.handleInput(e, 'name') }
+                  onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                />
+              </ContentEditableWrapper>
 
-        <ContentEditableWrapper>
-          <Position
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.position.isEdited || this.state.isEditing }
-            invalid={ this.state.position.isInvalid }
-          >
-            { this.state.position.content.length > 0 ? this.state.position.content : this.props.position }
-          </Position>
-          <EditablePosition
-            id={ this.props.id && `${this.props.id}-editable-position` }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.position.isEdited || this.state.isEditing }
-            contentEditable={ this.state.isCreating || this.state.isEditing }
-            onInput={ (e) => this.handleInput(e, 'position') }
-            onKeyPress={ (e) => this.handleKeyPress(e, false) }
-          />
-        </ContentEditableWrapper>
+              <ContentEditableWrapper>
+                <Position
+                  creating={ this.state.isCreating || this.state.isEditing }
+                  edited={ this.state.position.isEdited || this.state.isEditing }
+                  invalid={ this.state.position.isInvalid }
+                >
+                  { this.state.position.content.length > 0 ? this.state.position.content : this.props.position }
+                </Position>
+                <EditablePosition
+                  id={ this.props.id && `${this.props.id}-editable-position` }
+                  creating={ this.state.isCreating || this.state.isEditing }
+                  edited={ this.state.position.isEdited || this.state.isEditing }
+                  contentEditable={ this.state.isCreating || this.state.isEditing }
+                  onInput={ (e) => this.handleInput(e, 'position') }
+                  onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                />
+              </ContentEditableWrapper>
 
-        <Karma status={ karmaStatus }>{ karma }</Karma>
+              <Karma status={ karmaStatus }>{ karma }</Karma>
 
-        <ContentEditableWrapper fullHeight>
-          <Description
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.description.isEdited || this.state.isEditing }
-            invalid={ this.state.description.isInvalid }
-          >
-            { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
-          </Description>
-          <EditableDescription
-            id={ this.props.id && `${this.props.id}-editable-description` }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.description.isEdited || this.state.isEditing }
-            contentEditable={ this.state.isCreating || this.state.isEditing }
-            onInput={ (e) => this.handleInput(e, 'description') }
-            onKeyPress={ (e) => this.handleKeyPress(e, true) }
-          />
-        </ContentEditableWrapper>
+              <ContentEditableWrapper fullHeight>
+                <Description
+                  creating={ this.state.isCreating || this.state.isEditing }
+                  edited={ this.state.description.isEdited || this.state.isEditing }
+                  invalid={ this.state.description.isInvalid }
+                >
+                  { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
+                </Description>
+                <EditableDescription
+                  id={ this.props.id && `${this.props.id}-editable-description` }
+                  creating={ this.state.isCreating || this.state.isEditing }
+                  edited={ this.state.description.isEdited || this.state.isEditing }
+                  contentEditable={ this.state.isCreating || this.state.isEditing }
+                  onInput={ (e) => this.handleInput(e, 'description') }
+                  onKeyPress={ (e) => this.handleKeyPress(e, true) }
+                />
+              </ContentEditableWrapper>
 
-        <Footer>
-          {
-            !this.state.isCreating && !this.state.isEditing ?
-              <React.Fragment>
-                <Button onClick={ this.handleEditButtonClick }>Edit</Button>
-                <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>
-                  <Button icon={ {
-                    svg: shortLeftArrow,
-                    position: 'right',
-                    rotation: 180,
-                  } }
-                  >
-                    More
-                  </Button>
-                </Link>
-              </React.Fragment>
-              :
-              <React.Fragment>
-                <Button type={ 'flat' } onClick={ this.handleCancelButtonClick }>Cancel</Button>
-                <Button onClick={ this.handleSaveButtonClick }>Save</Button>
-              </React.Fragment>
-          }
-        </Footer>
+              <Footer>
+                {
+                  !this.state.isCreating && !this.state.isEditing ?
+                    <React.Fragment>
+                      <FooterLeftSide/>
+                      <FooterRightSide>
+                        <Button onClick={ this.handleEditButtonClick }>Edit</Button>
+                        <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>
+                          <Button icon={ {
+                            svg: shortLeftArrow,
+                            position: 'right',
+                            rotation: 180,
+                          } }
+                          >
+                            More
+                          </Button>
+                        </Link>
+                      </FooterRightSide>
+                    </React.Fragment>
+                    :
+                    <React.Fragment>
+                      <FooterLeftSide>
+                        { this.state.isEditing &&
+                        <Mutation mutation={ DELETE_PERSON }>
+                          { (deletePerson, { loading, error }) => {
+                            if (error) {
+                              return <div>mutation DELETE_PERSON got error: ${ error.message }</div>;
+                            } else if (loading) {
+                              return <div>mutation DELETE_PERSON is loading...</div>;
+                            }
+
+                            return (
+                              <DeletePersonButton
+                                icon={ {
+                                  svg: trashCan,
+                                  position: 'left',
+                                } }
+                                onClick={ () => this.handleDeleteButtonClick(deletePerson, context) }
+                              >
+                                Delete
+                              </DeletePersonButton>
+                            );
+                          }
+                          }
+                        </Mutation>
+                        }
+                      </FooterLeftSide>
+
+                      <FooterRightSide>
+                        <Button type={ 'flat' } onClick={ this.handleCancelButtonClick }>Cancel</Button>
+                        <Button onClick={ this.handleSaveButtonClick }>Save</Button>
+                      </FooterRightSide>
+                    </React.Fragment>
+                }
+              </Footer>
+            </React.Fragment>
+          ) }
+        </AppConsumer>
       </Wrapper>
     );
   }

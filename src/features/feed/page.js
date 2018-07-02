@@ -36,7 +36,9 @@ export class FeedPage extends React.Component {
                       const personUpdate = data.personUpdate.node;
 
                       const isNewPerson = context.persons.every((person) => {
-                        return person.id !== personUpdate.id;
+                        return person.id !== personUpdate.id && context.deletedPersonsIds.every((deletedPersonId) => {
+                          return deletedPersonId !== personUpdate.id;
+                        });
                       });
 
                       if (isNewPerson) {
