@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { graphql } from 'react-apollo';
+import { Mutation, graphql } from 'react-apollo';
 
 import { AppConsumer } from 'index';
 
@@ -9,12 +9,17 @@ import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
 
 // import { OutsideAlerter } from 'ui/molecules';
 
-import { handsUpHuman, longLeftArrow, plus } from 'ui/outlines';
+import { handsUpHuman, longLeftArrow, plus, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
-import { UPDATE_ACTION } from 'graphql/mutations/action';
+import { GET_ACTIONS } from 'graphql/queries/action';
+import { UPDATE_ACTION, DELETE_ACTION } from 'graphql/mutations/action';
 
+
+const DeletePersonButton = styled(Button)`
+  background-color: ${color.error};
+`;
 
 const Title = Heading.extend`
   margin-bottom: 0.6rem;
@@ -417,6 +422,14 @@ export class ActionCardComponent extends React.Component {
     this.setState({ persons: generatedPersons });
   };
 
+  handleDeleteButtonClick = (deleteAction) => {
+    deleteAction({
+      variables: {
+        id: this.props.id,
+      },
+    });
+  };
+
   handleInput = (e, element) => {
     const target = e.currentTarget;
 
@@ -722,6 +735,37 @@ export class ActionCardComponent extends React.Component {
                   >
                     Forgive
                   </Button>
+                </div>
+              }
+
+              {
+                this.state.isEditing &&
+                <div>
+                  <Mutation
+                    mutation={ DELETE_ACTION }
+                    refetchQueries={ [{ query: GET_ACTIONS }] }
+                  >
+                    { (deleteAction, { loading, error }) => {
+                      if (error) {
+                        return <div>mutation DELETE_ACTION got error: ${ error.message }</div>;
+                      } else if (loading) {
+                        return <div>mutation DELETE_ACTION is loading...</div>;
+                      }
+
+                      return (
+                        <DeletePersonButton
+                          icon={ {
+                            svg: trashCan,
+                            position: 'left',
+                          } }
+                          onClick={ () => this.handleDeleteButtonClick(deleteAction) }
+                        >
+                          Delete
+                        </DeletePersonButton>
+                      );
+                    }
+                    }
+                  </Mutation>
                 </div>
               }
             </Header>

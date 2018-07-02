@@ -81,3 +81,15 @@ export const UPDATE_ACTION = gql`
     }
   }
 `;
+
+export const DELETE_ACTION = gql`
+  mutation deleteAction(
+    $id: ID!,
+  ) {
+    deleteAction(
+      id: $id,
+    ) {
+      id
+    }
+  }
+`;
