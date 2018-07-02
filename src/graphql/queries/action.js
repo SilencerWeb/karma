@@ -10,6 +10,7 @@ export const GET_ACTIONS = gql`
       karma
       executors
       members {
+        id
         person {
           id
           name

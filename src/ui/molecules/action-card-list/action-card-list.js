@@ -18,23 +18,16 @@ export const ActionCardList = (props) => {
   return (
     <Wrapper className={ props.className }>
       { props.actions.map((action) => {
-        const members = action.members && action.members.map((member) => {
-          return {
-            id: member.isUser ? member.user.id : member.person.id,
-            name: member.isUser ? member.user.name : member.person.name,
-            side: member.side,
-          };
-        });
-
         return (
           <ActionCardWrapper key={ action.id }>
             <ActionCard
+              id={ action.id }
               title={ action.title }
               date={ action.date }
               description={ action.description }
               karma={ action.karma }
               executors={ action.executors }
-              members={ members }
+              members={ action.members }
               // eslint-disable-next-line
               onEditButtonClick={ () => console.log('edited!') }
               // eslint-disable-next-line

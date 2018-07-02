@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { graphql } from 'react-apollo';
 
 import { AppConsumer } from 'index';
 
@@ -11,6 +12,8 @@ import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
 import { handsUpHuman, longLeftArrow, plus } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
+
+import { UPDATE_ACTION } from 'graphql/mutations/action';
 
 
 const Title = Heading.extend`
@@ -355,21 +358,22 @@ const Wrapper = styled.div`
   padding-left: calc(1.6rem + 0.8rem);
 `;
 
-export class ActionCard extends React.Component {
+export class ActionCardComponent extends React.Component {
   state = {
     isCreating: this.props.create,
+    isEditing: false,
     title: {
-      content: '',
+      content: this.props.title || '',
       isEdited: false,
       isInvalid: false,
     },
     date: {
-      content: '',
+      content: this.props.date || '',
       isEdited: false,
       isInvalid: false,
     },
     description: {
-      content: '',
+      content: this.props.description || '',
       isEdited: false,
       isInvalid: false,
     },
@@ -383,12 +387,30 @@ export class ActionCard extends React.Component {
 
   generatePersonsForSelect = (persons, userId) => {
     const generatedPersons = persons.map((person) => {
+      const isSelected = this.state.members && this.state.members.some((member) => {
+        const memberId = member.isUser ? member.user.id : member.person.id;
+
+        return person.id === memberId;
+      });
+
+      let side;
+
+      if (isSelected) {
+        const selectedMember = this.state.members.find((member) => {
+          const memberId = member.isUser ? member.user.id : member.person.id;
+
+          return person.id === memberId;
+        });
+
+        side = selectedMember.side;
+      }
+
       return {
         id: person.id,
         name: person.name,
         isUser: person.id === userId,
-        isSelected: false,
-        side: null,
+        isSelected: isSelected,
+        side: isSelected ? side : null,
       };
     });
 
@@ -468,20 +490,21 @@ export class ActionCard extends React.Component {
     this.setState((prevState) => {
       const state = { ...prevState };
 
-      if (!state.members) state.members = [];
+      const members = state.members && state.members.length ? [...state.members] : [];
+      const persons = [...state.persons];
 
-      const newMember = state.persons.find((person) => {
+      const newMember = persons.find((person) => {
         return person.id === value;
       });
 
-      state.members.push({
+      members.push({
         personId: newMember.id,
         name: newMember.name,
         isUser: newMember.isUser,
         side: side,
       });
 
-      state.persons = state.persons.map((person) => {
+      const newPersons = persons.map((person) => {
         if (value === person.id) {
           person.isSelected = true;
           person.side = side;
@@ -490,7 +513,11 @@ export class ActionCard extends React.Component {
         return person;
       });
 
-      return state;
+      return {
+        ...prevState,
+        members: members,
+        persons: newPersons,
+      };
     });
   };
 
@@ -512,6 +539,24 @@ export class ActionCard extends React.Component {
         executors: prevState.executors === 'left' ? 'right' : 'left',
       };
     });
+  };
+
+  handleEditButtonClick = (actionId) => {
+    this.setState({ isEditing: true });
+
+    const editableTitle = document.querySelector(`#${actionId}-editable-title`);
+    const editableDate = document.querySelector(`#${actionId}-editable-date`);
+    const editableDescription = document.querySelector(`#${actionId}-editable-description`);
+
+    editableTitle.innerHTML = this.state.title.content;
+    editableDate.innerHTML = this.state.date.content;
+    editableDescription.innerHTML = this.state.description.content;
+  };
+
+  handleCancelButtonClick = () => {
+    this.setState({ isEditing: false });
+
+    this.props.onCancelButtonClick && this.props.onCancelButtonClick();
   };
 
   handleSaveButtonClick = (e) => {
@@ -536,14 +581,31 @@ export class ActionCard extends React.Component {
 
       if (isValid) {
         const members = state.members.map((member) => {
-          return {
-            personId: member.personId,
-            isUser: member.isUser,
-            side: member.side,
-          };
+          let personId;
+
+          if (member.user || member.person) {
+            personId = member.isUser ? member.user.id : member.person.id;
+          } else {
+            personId = member.personId;
+          }
+
+          if (state.isEditing) {
+            return {
+              id: member.id,
+              personId: personId,
+              isUser: member.isUser,
+              side: member.side,
+            };
+          } else {
+            return {
+              personId: personId,
+              isUser: member.isUser,
+              side: member.side,
+            };
+          }
         });
 
-        const person = {
+        const action = {
           title: state.title.content,
           date: state.date.content,
           description: state.description.content,
@@ -552,9 +614,19 @@ export class ActionCard extends React.Component {
           members: members,
         };
 
-        this.props.onSaveButtonClick(person);
+        if (state.isEditing) {
+          action.id = this.props.id;
 
-        state.isCreating = false;
+          this.props.updateAction({
+            variables: action,
+          });
+
+          state.isEditing = false;
+        } else {
+          this.props.onSaveButtonClick(action);
+
+          state.isCreating = false;
+        }
       } else {
         invalidFields.forEach((invalidField) => {
           state[invalidField].isInvalid = true;
@@ -591,7 +663,7 @@ export class ActionCard extends React.Component {
         { (context) => (
           <Wrapper className={ this.props.className }>
             {
-              this.props.create && !this.state.persons.length && context.persons && context.user &&
+              (this.props.create || this.state.isEditing) && !this.state.persons.length && context.persons && context.user &&
               this.generatePersonsForSelect([...context.persons, context.user], context.user.id)
             }
 
@@ -600,18 +672,19 @@ export class ActionCard extends React.Component {
                 <ContentEditableWrapper>
                   <Title
                     tag={ 'h3' }
-                    creating={ this.state.isCreating }
-                    edited={ this.state.title.isEdited }
+                    creating={ this.state.isCreating || this.state.isEditing }
+                    edited={ this.state.title.isEdited || this.state.isEditing }
                     invalid={ this.state.title.isInvalid }
                   >
                     { this.state.title.content.length > 0 ? this.state.title.content : this.props.title }
                   </Title>
 
                   <EditableTitle
+                    id={ `${this.props.id}-editable-title` }
                     tag={ 'h3' }
-                    creating={ this.state.isCreating }
-                    edited={ this.state.title.isEdited }
-                    contentEditable={ this.state.isCreating }
+                    creating={ this.state.isCreating || this.state.isEditing }
+                    edited={ this.state.title.isEdited || this.state.isEditing }
+                    contentEditable={ this.state.isCreating || this.state.isEditing }
                     onInput={ (e) => this.handleInput(e, 'title') }
                     onKeyPress={ (e) => this.handleKeyPress(e, false) }
                   />
@@ -619,17 +692,18 @@ export class ActionCard extends React.Component {
 
                 <ContentEditableWrapper>
                   <Date
-                    creating={ this.state.isCreating }
-                    edited={ this.state.date.isEdited }
+                    creating={ this.state.isCreating || this.state.isEditing }
+                    edited={ this.state.date.isEdited || this.state.isEditing }
                     invalid={ this.state.date.isInvalid }
                   >
                     { this.state.date.content.length > 0 ? this.state.date.content : this.props.date }
                   </Date>
 
                   <EditableDate
-                    creating={ this.state.isCreating }
-                    edited={ this.state.date.isEdited }
-                    contentEditable={ this.state.isCreating }
+                    id={ `${this.props.id}-editable-date` }
+                    creating={ this.state.isCreating || this.state.isEditing }
+                    edited={ this.state.date.isEdited || this.state.isEditing }
+                    contentEditable={ this.state.isCreating || this.state.isEditing }
                     onInput={ (e) => this.handleInput(e, 'date') }
                     onKeyPress={ (e) => this.handleKeyPress(e, false) }
                   />
@@ -637,7 +711,7 @@ export class ActionCard extends React.Component {
               </HeaderLeftSide>
 
               {
-                !this.state.isCreating && this.state.karma === 'negative' && this.state.executors === 'right' &&
+                !this.state.isCreating && !this.state.isEditing && this.state.karma === 'negative' && this.state.executors === 'right' &&
                 <div>
                   <Button
                     icon={ {
@@ -654,17 +728,18 @@ export class ActionCard extends React.Component {
 
             <ContentEditableWrapper fullHeight>
               <Description
-                creating={ this.state.isCreating }
-                edited={ this.state.description.isEdited }
+                creating={ this.state.isCreating || this.state.isEditing }
+                edited={ this.state.description.isEdited || this.state.isEditing }
                 invalid={ this.state.description.isInvalid }
               >
                 { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
               </Description>
 
               <EditableDescription
-                creating={ this.state.isCreating }
-                edited={ this.state.description.isEdited }
-                contentEditable={ this.state.isCreating }
+                id={ `${this.props.id}-editable-description` }
+                creating={ this.state.isCreating || this.state.isEditing }
+                edited={ this.state.description.isEdited || this.state.isEditing }
+                contentEditable={ this.state.isCreating || this.state.isEditing }
                 onInput={ (e) => this.handleInput(e, 'description') }
                 onKeyPress={ (e) => this.handleKeyPress(e, false) }
               />
@@ -673,14 +748,22 @@ export class ActionCard extends React.Component {
             <Footer>
               <FooterLeftSide>
                 {
-                  (this.state.members || this.state.isCreating) &&
+                  (this.state.members || this.state.isCreating || this.state.isEditing) &&
                   <React.Fragment>
                     <Members>
                       {
                         this.state.members && this.state.members.length && this.state.members.filter((member) => {
                           return member.side === 'left';
                         }).map((member, i) => {
-                          const nameFirstLetters = member.name.split(' ').map((word) => {
+                          let name;
+
+                          if (member.user || member.person) {
+                            name = member.isUser ? member.user.name : member.person.name;
+                          } else {
+                            name = member.name;
+                          }
+
+                          const nameFirstLetters = name.split(' ').map((word) => {
                             return word[0];
                           }).join('');
 
@@ -693,7 +776,7 @@ export class ActionCard extends React.Component {
                       }
 
                       {
-                        this.state.isCreating && leftSelectOptions.length > 0 &&
+                        (this.state.isCreating || this.state.isEditing) && leftSelectOptions.length > 0 &&
                         <React.Fragment>
                           <Avatar
                             new
@@ -726,7 +809,7 @@ export class ActionCard extends React.Component {
                     <ExecutorsArrow
                       icon={ longLeftArrow }
                       executors={ this.state.executors }
-                      onClick={ this.state.isCreating ? this.handleExecutorsArrowClick : null }
+                      onClick={ this.state.isCreating || this.state.isEditing ? this.handleExecutorsArrowClick : null }
                     />
 
                     <Members>
@@ -734,7 +817,15 @@ export class ActionCard extends React.Component {
                         this.state.members && this.state.members.length && this.state.members.filter((member) => {
                           return member.side === 'right';
                         }).map((member, i) => {
-                          const nameFirstLetters = member.name.split(' ').map((word) => {
+                          let name;
+
+                          if (member.user || member.person) {
+                            name = member.isUser ? member.user.name : member.person.name;
+                          } else {
+                            name = member.name;
+                          }
+
+                          const nameFirstLetters = name.split(' ').map((word) => {
                             return word[0];
                           }).join('');
 
@@ -747,7 +838,7 @@ export class ActionCard extends React.Component {
                       }
 
                       {
-                        this.state.isCreating && rightSelectOptions.length > 0 &&
+                        (this.state.isCreating || this.state.isEditing) && rightSelectOptions.length > 0 &&
                         <React.Fragment>
                           <Avatar
                             new
@@ -781,43 +872,44 @@ export class ActionCard extends React.Component {
               </FooterLeftSide>
 
               <FooterRightSide>
-                { !this.state.isCreating ?
-                  <React.Fragment>
-                    <Button
-                      type={ 'flat' }
-                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                      onClick={ this.props.onEditButtonClick }
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                      onClick={ this.props.onMoreButtonClick }
-                    >
-                      More
-                    </Button>
-                  </React.Fragment>
-                  :
-                  <React.Fragment>
-                    <Button
-                      type={ 'flat' }
-                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                      onClick={ this.props.onCancelButtonClick }
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                      onClick={ this.handleSaveButtonClick }
-                    >
-                      Save
-                    </Button>
-                  </React.Fragment>
+                {
+                  !this.state.isCreating && !this.state.isEditing ?
+                    <React.Fragment>
+                      <Button
+                        type={ 'flat' }
+                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                        onClick={ () => this.handleEditButtonClick(this.props.id) }
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                        onClick={ this.props.onMoreButtonClick }
+                      >
+                        More
+                      </Button>
+                    </React.Fragment>
+                    :
+                    <React.Fragment>
+                      <Button
+                        type={ 'flat' }
+                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                        onClick={ this.handleCancelButtonClick }
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
+                        onClick={ this.handleSaveButtonClick }
+                      >
+                        Save
+                      </Button>
+                    </React.Fragment>
                 }
               </FooterRightSide>
             </Footer>
 
-            <Border type={ this.state.karma } onClick={ this.state.isCreating ? this.handleBorderClick : null }/>
+            <Border type={ this.state.karma } onClick={ this.state.isCreating || this.state.isEditing ? this.handleBorderClick : null }/>
           </Wrapper>
         ) }
       </AppConsumer>
@@ -826,7 +918,8 @@ export class ActionCard extends React.Component {
 }
 
 
-ActionCard.propTypes = {
+ActionCardComponent.propTypes = {
+  id: PropTypes.string,
   className: PropTypes.string,
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
@@ -835,15 +928,25 @@ ActionCard.propTypes = {
   executors: PropTypes.string,
   members: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
+      person: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+      }),
+      user: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+      }),
+      isUser: PropTypes.bool.isRequired,
       side: PropTypes.string.isRequired,
     }),
   ),
   create: PropTypes.bool,
   onForgiveButtonClick: PropTypes.func,
-  onEditButtonClick: PropTypes.func,
   onMoreButtonClick: PropTypes.func,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
+  updateAction: PropTypes.func,
 };
+
+
+export const ActionCard = graphql(UPDATE_ACTION, { name: 'updateAction' })(ActionCardComponent);
