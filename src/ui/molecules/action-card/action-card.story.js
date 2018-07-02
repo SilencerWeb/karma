@@ -4,13 +4,6 @@ import { withKnobs, text, boolean, number, object, array, select } from '@storyb
 
 import { ActionCard } from './action-card';
 
-import avatar_1x from 'assets/images/avatars/sm/avatar.png';
-import avatar_2x from 'assets/images/avatars/sm/avatar@2x.png';
-
-import avatar2_1x from 'assets/images/avatars/sm/avatar2.png';
-import avatar2_2x from 'assets/images/avatars/sm/avatar2@2x.png';
-
-
 const stories = storiesOf('molecules/ActionCard', module);
 stories.addDecorator(withKnobs);
 
@@ -33,31 +26,6 @@ stories
       right: 'right',
     }, 'left');
 
-    const members = {
-      left: [
-        {
-          avatar: {
-            _1x: avatar_1x,
-            _2x: avatar_2x,
-          },
-        },
-        {
-          avatar: {
-            _1x: avatar_1x,
-            _2x: avatar_2x,
-          },
-        },
-      ],
-      right: [
-        {
-          avatar: {
-            _1x: avatar2_1x,
-            _2x: avatar2_2x,
-          },
-        },
-      ],
-    };
-
     return (
       <ActionCard
         title={ title }
@@ -65,7 +33,6 @@ stories
         description={ description }
         karma={ karma }
         executors={ executors }
-        members={ members }
         // eslint-disable-next-line
         onEditButtonClick={ () => console.log('edited!') }
         // eslint-disable-next-line

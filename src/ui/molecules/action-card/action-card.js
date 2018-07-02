@@ -17,7 +17,7 @@ import { GET_ACTIONS } from 'graphql/queries/action';
 import { UPDATE_ACTION, DELETE_ACTION } from 'graphql/mutations/action';
 
 
-const DeletePersonButton = styled(Button)`
+const DeleteActionButton = styled(Button)`
   background-color: ${color.error};
 `;
 
@@ -270,6 +270,7 @@ const ExecutorsArrow = styled(Icon)`
   font-size: 2.4rem;
   margin-right: 0.8rem;
   margin-left: 0.8rem;
+  transition: ${transition};
 
   ${p => css`
   
@@ -363,22 +364,70 @@ const Wrapper = styled.div`
   padding-left: calc(1.6rem + 0.8rem);
 `;
 
+
+// toggleSelect = (side) => {
+//   const state = { ...this.state };
+//
+//   if (side === 'left') {
+//     state.isLeftSelectOpened = !state.isLeftSelectOpened;
+//     state.isRightSelectOpened = false;
+//   } else if (side === 'right') {
+//     state.isRightSelectOpened = !state.isRightSelectOpened;
+//     state.isLeftSelectOpened = false;
+//   }
+//
+//   const didStateChanged = this.state.isLeftSelectOpened !== state.isLeftSelectOpened ||
+//     this.state.isRightSelectOpened !== state.isRightSelectOpened;
+//
+//   if (didStateChanged) {
+//     this.setState(state);
+//   }
+// };
+
+// handleSelectChange = (members, side) => {
+//   const state = { ...this.state };
+//
+//   if (!state.members) state.members = {};
+//
+//   state.members[side] = members.map((member) => {
+//     return {
+//       avatar: member.avatar,
+//     };
+//   });
+//
+//   state.persons = state.persons.map((person) => {
+//     const member = members.find((member) => {
+//       return member.value === person.name;
+//     });
+//
+//     if (member) {
+//       person.isSelected = true;
+//       person.side = side;
+//     }
+//
+//     return person;
+//   });
+//
+//   this.setState(state);
+// };
+
+
 export class ActionCardComponent extends React.Component {
   state = {
-    isCreating: this.props.create,
+    isCreating: this.props.create || false,
     isEditing: false,
     title: {
-      content: this.props.title || '',
+      content: this.props.title,
       isEdited: false,
       isInvalid: false,
     },
     date: {
-      content: this.props.date || '',
+      content: this.props.date,
       isEdited: false,
       isInvalid: false,
     },
     description: {
-      content: this.props.description || '',
+      content: this.props.description,
       isEdited: false,
       isInvalid: false,
     },
@@ -393,18 +442,14 @@ export class ActionCardComponent extends React.Component {
   generatePersonsForSelect = (persons, userId) => {
     const generatedPersons = persons.map((person) => {
       const isSelected = this.state.members && this.state.members.some((member) => {
-        const memberId = member.isUser ? member.user.id : member.person.id;
-
-        return person.id === memberId;
+        return person.id === member.personId;
       });
 
       let side;
 
       if (isSelected) {
         const selectedMember = this.state.members.find((member) => {
-          const memberId = member.isUser ? member.user.id : member.person.id;
-
-          return person.id === memberId;
+          return person.id === member.personId;
         });
 
         side = selectedMember.side;
@@ -420,14 +465,6 @@ export class ActionCardComponent extends React.Component {
     });
 
     this.setState({ persons: generatedPersons });
-  };
-
-  handleDeleteButtonClick = (deleteAction) => {
-    deleteAction({
-      variables: {
-        id: this.props.id,
-      },
-    });
   };
 
   handleInput = (e, element) => {
@@ -450,52 +487,6 @@ export class ActionCardComponent extends React.Component {
       }
     }
   };
-
-  // toggleSelect = (side) => {
-  //   const state = { ...this.state };
-  //
-  //   if (side === 'left') {
-  //     state.isLeftSelectOpened = !state.isLeftSelectOpened;
-  //     state.isRightSelectOpened = false;
-  //   } else if (side === 'right') {
-  //     state.isRightSelectOpened = !state.isRightSelectOpened;
-  //     state.isLeftSelectOpened = false;
-  //   }
-  //
-  //   const didStateChanged = this.state.isLeftSelectOpened !== state.isLeftSelectOpened ||
-  //     this.state.isRightSelectOpened !== state.isRightSelectOpened;
-  //
-  //   if (didStateChanged) {
-  //     this.setState(state);
-  //   }
-  // };
-
-  // handleSelectChange = (members, side) => {
-  //   const state = { ...this.state };
-  //
-  //   if (!state.members) state.members = {};
-  //
-  //   state.members[side] = members.map((member) => {
-  //     return {
-  //       avatar: member.avatar,
-  //     };
-  //   });
-  //
-  //   state.persons = state.persons.map((person) => {
-  //     const member = members.find((member) => {
-  //       return member.value === person.name;
-  //     });
-  //
-  //     if (member) {
-  //       person.isSelected = true;
-  //       person.side = side;
-  //     }
-  //
-  //     return person;
-  //   });
-  //
-  //   this.setState(state);
-  // };
 
   handleSelectChange = (e, side) => {
     const value = e.currentTarget.value;
@@ -566,13 +557,21 @@ export class ActionCardComponent extends React.Component {
     editableDescription.innerHTML = this.state.description.content;
   };
 
+  handleDeleteButtonClick = (deleteAction) => {
+    deleteAction({
+      variables: {
+        id: this.props.id,
+      },
+    });
+  };
+
   handleCancelButtonClick = () => {
     this.setState({ isEditing: false });
 
     this.props.onCancelButtonClick && this.props.onCancelButtonClick();
   };
 
-  handleSaveButtonClick = (e) => {
+  handleSaveButtonClick = () => {
 
     this.setState((prevState) => {
       const state = { ...prevState };
@@ -594,28 +593,17 @@ export class ActionCardComponent extends React.Component {
 
       if (isValid) {
         const members = state.members.map((member) => {
-          let personId;
-
-          if (member.user || member.person) {
-            personId = member.isUser ? member.user.id : member.person.id;
-          } else {
-            personId = member.personId;
-          }
+          const newMember = {
+            personId: member.personId,
+            isUser: member.isUser,
+            side: member.side,
+          };
 
           if (state.isEditing) {
-            return {
-              id: member.id,
-              personId: personId,
-              isUser: member.isUser,
-              side: member.side,
-            };
-          } else {
-            return {
-              personId: personId,
-              isUser: member.isUser,
-              side: member.side,
-            };
+            newMember.id = member.id;
           }
+
+          return newMember;
         });
 
         const action = {
@@ -669,6 +657,14 @@ export class ActionCardComponent extends React.Component {
           { person.name }
         </option>
       );
+    });
+
+    const leftSideMembers = this.state.members && this.state.members.length && this.state.members.filter((member) => {
+      return member.side === 'left';
+    });
+
+    const rightSideMembers = this.state.members && this.state.members.length && this.state.members.filter((member) => {
+      return member.side === 'right';
     });
 
     return (
@@ -753,7 +749,7 @@ export class ActionCardComponent extends React.Component {
                       }
 
                       return (
-                        <DeletePersonButton
+                        <DeleteActionButton
                           icon={ {
                             svg: trashCan,
                             position: 'left',
@@ -761,7 +757,7 @@ export class ActionCardComponent extends React.Component {
                           onClick={ () => this.handleDeleteButtonClick(deleteAction) }
                         >
                           Delete
-                        </DeletePersonButton>
+                        </DeleteActionButton>
                       );
                     }
                     }
@@ -796,18 +792,8 @@ export class ActionCardComponent extends React.Component {
                   <React.Fragment>
                     <Members>
                       {
-                        this.state.members && this.state.members.length && this.state.members.filter((member) => {
-                          return member.side === 'left';
-                        }).map((member, i) => {
-                          let name;
-
-                          if (member.user || member.person) {
-                            name = member.isUser ? member.user.name : member.person.name;
-                          } else {
-                            name = member.name;
-                          }
-
-                          const nameFirstLetters = name.split(' ').map((word) => {
+                        leftSideMembers && leftSideMembers.length > 0 && leftSideMembers.map((member, i) => {
+                          const nameFirstLetters = member.name.split(' ').map((word) => {
                             return word[0];
                           }).join('');
 
@@ -850,26 +836,19 @@ export class ActionCardComponent extends React.Component {
                       }
                     </Members>
 
-                    <ExecutorsArrow
-                      icon={ longLeftArrow }
-                      executors={ this.state.executors }
-                      onClick={ this.state.isCreating || this.state.isEditing ? this.handleExecutorsArrowClick : null }
-                    />
+                    {
+                      (this.state.isCreating || this.state.isEditing || (rightSideMembers && rightSideMembers.length > 0)) &&
+                      <ExecutorsArrow
+                        icon={ longLeftArrow }
+                        executors={ this.state.executors }
+                        onClick={ this.state.isCreating || this.state.isEditing ? this.handleExecutorsArrowClick : null }
+                      />
+                    }
 
                     <Members>
                       {
-                        this.state.members && this.state.members.length && this.state.members.filter((member) => {
-                          return member.side === 'right';
-                        }).map((member, i) => {
-                          let name;
-
-                          if (member.user || member.person) {
-                            name = member.isUser ? member.user.name : member.person.name;
-                          } else {
-                            name = member.name;
-                          }
-
-                          const nameFirstLetters = name.split(' ').map((word) => {
+                        rightSideMembers && rightSideMembers.length > 0 && rightSideMembers.map((member, i) => {
+                          const nameFirstLetters = member.name.split(' ').map((word) => {
                             return word[0];
                           }).join('');
 
@@ -969,17 +948,12 @@ ActionCardComponent.propTypes = {
   date: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   karma: PropTypes.string.isRequired,
-  executors: PropTypes.string,
+  executors: PropTypes.string.isRequired,
   members: PropTypes.arrayOf(
     PropTypes.shape({
-      person: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-      }),
-      user: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-      }),
+      id: PropTypes.string.isRequired,
+      personId: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
       isUser: PropTypes.bool.isRequired,
       side: PropTypes.string.isRequired,
     }),

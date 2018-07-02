@@ -50,13 +50,10 @@ export class CreateActionCard extends React.Component {
   handleCancelButtonClick = () => {
     this.props.onCancelButtonClick && this.props.onCancelButtonClick();
 
-    this.setState({
-      isCreating: false,
-    });
+    this.setState({ isCreating: false });
   };
 
   static getDerivedStateFromProps = (props, state) => {
-
     if (props.isCreating) {
       state.isCreating = props.isCreating;
     }
@@ -65,9 +62,9 @@ export class CreateActionCard extends React.Component {
   };
 
   render() {
-    const title = 'Action title';
-    const date = '12.05.2018';
-    const description = 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
+    const placeholderTitle = 'Action title';
+    const placeholderDate = '12.05.2018';
+    const placeholderDescription = 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
 
     return (
       <React.Fragment>
@@ -82,24 +79,14 @@ export class CreateActionCard extends React.Component {
                 <Mutation mutation={ CREATE_ACTION }>
                   { (createAction) => (
                     <ActionCard
-                      title={ title }
-                      date={ date }
-                      description={ description }
+                      title={ placeholderTitle }
+                      date={ placeholderDate }
+                      description={ placeholderDescription }
                       karma={ 'neutral' }
                       executors={ 'left' }
                       create
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (action) => {
-                        // eslint-disable-next-line no-console
-                        console.log({
-                          title: action.title,
-                          date: action.date,
-                          description: action.description,
-                          karma: action.karma,
-                          executors: action.executors,
-                          members: action.members,
-                        });
-
                         createAction({
                           variables: {
                             title: action.title,

@@ -18,6 +18,16 @@ export const ActionCardList = (props) => {
   return (
     <Wrapper className={ props.className }>
       { props.actions && props.actions.map((action) => {
+        const members = action.members.map((member) => {
+          return {
+            id: member.id,
+            personId: member.isUser ? member.user.id : member.person.id,
+            name: member.isUser ? member.user.name : member.person.name,
+            isUser: member.isUser,
+            side: member.side,
+          };
+        });
+
         return (
           <ActionCardWrapper key={ action.id }>
             <ActionCard
@@ -27,7 +37,7 @@ export const ActionCardList = (props) => {
               description={ action.description }
               karma={ action.karma }
               executors={ action.executors }
-              members={ action.members }
+              members={ members }
             />
           </ActionCardWrapper>
         );

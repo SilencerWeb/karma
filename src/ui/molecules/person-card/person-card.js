@@ -267,20 +267,20 @@ const Wrapper = styled.div`
 
 class PersonCardComponent extends React.Component {
   state = {
-    isCreating: this.props.create,
+    isCreating: this.props.create || false,
     isEditing: false,
     name: {
-      content: this.props.name || '',
+      content: this.props.name,
       isEdited: false,
       isInvalid: false,
     },
     position: {
-      content: this.props.position || '',
+      content: this.props.position,
       isEdited: false,
       isInvalid: false,
     },
     description: {
-      content: this.props.description || '',
+      content: this.props.description,
       isEdited: false,
       isInvalid: false,
     },
@@ -481,6 +481,7 @@ class PersonCardComponent extends React.Component {
                   !this.state.isCreating && !this.state.isEditing ?
                     <React.Fragment>
                       <FooterLeftSide/>
+                      
                       <FooterRightSide>
                         <Button onClick={ this.handleEditButtonClick }>Edit</Button>
                         <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>
