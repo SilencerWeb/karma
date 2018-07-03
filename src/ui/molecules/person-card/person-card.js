@@ -265,7 +265,7 @@ const Wrapper = styled.div`
 `;
 
 
-class PersonCardComponent extends React.Component {
+class PersonCardComponent extends React.PureComponent {
   state = {
     isCreating: this.props.create || false,
     isEditing: false,
@@ -380,6 +380,22 @@ class PersonCardComponent extends React.Component {
     });
   };
 
+  static getDerivedStateFromProps = (props, state) => {
+    if (!state.isCreating && !state.isEditing) {
+      if (props.name) {
+        state.name.content = props.name;
+      }
+      if (props.position) {
+        state.position.content = props.position;
+      }
+      if (props.description) {
+        state.description.content = props.description;
+      }
+    }
+
+    return state;
+  };
+
   render() {
     let karmaStatus;
     let karma = this.props.karma;
@@ -481,7 +497,7 @@ class PersonCardComponent extends React.Component {
                   !this.state.isCreating && !this.state.isEditing ?
                     <React.Fragment>
                       <FooterLeftSide/>
-                      
+
                       <FooterRightSide>
                         <Button onClick={ this.handleEditButtonClick }>Edit</Button>
                         <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>

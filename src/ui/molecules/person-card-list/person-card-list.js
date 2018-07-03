@@ -24,7 +24,7 @@ export const PersonCardList = (props) => {
     <AppConsumer>
       { (context) => (
         <Wrapper className={ props.className }>
-          { context.persons && context.persons.map((person) => {
+          { context.persons && context.persons.length > 0 && context.persons.map((person) => {
             return (
               <PersonCardWrapper key={ person.id }>
                 <PersonCard

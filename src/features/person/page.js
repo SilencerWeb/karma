@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { Query, Mutation } from 'react-apollo';
 import { Redirect } from 'react-router-dom';
+import deepEqual from 'deep-equal';
 
 import { AppConsumer } from 'index';
 
@@ -162,7 +163,11 @@ export class PersonPage extends React.Component {
       return person.id === this.props.match.params.id;
     })[0];
 
-    this.setState({ person: person });
+    const shouldPersonBeUpdated = !deepEqual(this.state.person, person);
+
+    if (shouldPersonBeUpdated) {
+      this.setState({ person: person });
+    }
   };
 
   handleAddActionButtonClick = () => {
@@ -216,7 +221,7 @@ export class PersonPage extends React.Component {
         <AppConsumer>
           { (context) => (
             <React.Fragment>
-              { !this.state.person && context.persons && this.getPerson(context) }
+              { context.persons && this.getPerson(context) }
 
               <Header>
                 <HeaderBackground>

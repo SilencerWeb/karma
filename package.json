@@ -9,6 +9,7 @@
     "apollo-link-ws": "^1.0.8",
     "apollo-utilities": "^1.0.16",
     "classnames": "^2.2.6",
+    "deep-equal": "^1.0.1",
     "formik": "^0.11.11",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
