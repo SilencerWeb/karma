@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { Query, Mutation } from 'react-apollo';
+import { Mutation } from 'react-apollo';
 import { Redirect } from 'react-router-dom';
 import deepEqual from 'deep-equal';
 
@@ -18,7 +18,6 @@ import { pencil, user, trashCan } from 'ui/outlines';
 import { color } from 'ui/theme';
 
 import { DELETE_PERSON } from 'graphql/mutations/person';
-import { GET_ACTIONS } from 'graphql/queries/action';
 
 
 const EditButton = styled.button`
@@ -283,37 +282,12 @@ export class PersonPage extends React.Component {
                   <Button onClick={ this.handleAddActionButtonClick }>Add an action</Button>
                 </ActionsHeader>
 
-
-                <Query query={ GET_ACTIONS }>
-                  { ({ error, loading, data }) => {
-                    if (error) {
-                      return <div>query GET_ACTIONS got error: ${ error.message }</div>;
-                    } else if (loading) {
-                      return <div>query GET_ACTIONS is loading...</div>;
-                    }
-
-                    if (data.actions && data.actions.length) {
-                      const filteredActions = data.actions.filter((action) => {
-                        return action.members.some((member) => {
-                          return !member.isUser ? member.person.id === this.props.match.params.id : false;
-                        });
-                      });
-
-                      if (filteredActions.length) {
-                        return (
-                          <ActionCardList
-                            actions={ filteredActions }
-                            isActionCreating={ this.state.isActionCreating }
-                            onCancelButtonClick={ this.handleCancelButtonClick }
-                            onSaveButtonClick={ this.handleSaveButtonClick }
-                          />
-                        );
-                      }
-                    }
-
-                    return <ActionCardList/>;
-                  } }
-                </Query>
+                <ActionCardList
+                  memberId={ this.state.person && this.state.person.id }
+                  isActionCreating={ this.state.isActionCreating }
+                  onCancelButtonClick={ this.handleCancelButtonClick }
+                  onSaveButtonClick={ this.handleSaveButtonClick }
+                />
               </div>
             </React.Fragment>
           ) }

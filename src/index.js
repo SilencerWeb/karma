@@ -3,13 +3,26 @@ import * as ReactDOM from 'react-dom';
 import { injectGlobal } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloLink, split } from 'apollo-link';
-import { ApolloProvider, Subscription } from 'react-apollo';
+import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
-import deepEqual from 'deep-equal';
+
+import {
+  GetUserQuery,
+  GetPersonsQuery,
+  GetActionsQuery,
+
+  CreatePersonSubscription,
+  UpdatePersonSubscription,
+  DeletePersonSubscription,
+
+  CreateActionSubscription,
+  UpdateActionSubscription,
+  DeleteActionSubscription,
+} from 'ui/molecules';
 
 import { globalStyles } from 'ui/theme';
 
@@ -20,12 +33,6 @@ import { AUTH_TOKEN } from 'constants.js';
 import { env, config } from 'config';
 
 import normalize from 'normalize.css/normalize.css';
-
-import {
-  CREATE_PERSON_SUBSCRIPTION,
-  UPDATE_PERSON_SUBSCRIPTION,
-  DELETE_PERSON_SUBSCRIPTION,
-} from 'graphql/subscriptions/person';
 
 
 injectGlobal`${normalize} ${globalStyles}`;
@@ -76,20 +83,7 @@ const client = new ApolloClient({
 });
 
 
-const AppContext = React.createContext({
-  isLoggedIn: false,
-  login: null,
-  logout: null,
-
-  user: null,
-  updateUser: null,
-
-  persons: [],
-  addPerson: null,
-  updatePerson: null,
-  updatePersons: null,
-  deletePersons: null,
-});
+const AppContext = React.createContext();
 
 export const AppConsumer = AppContext.Consumer;
 
@@ -97,8 +91,17 @@ export const AppConsumer = AppContext.Consumer;
 class App extends React.Component {
   state = {
     isLoggedIn: false,
+
     user: null,
+    didGetUserQueryMount: false,
+
     persons: [],
+    deletedPersonsIds: [],
+    didGetPersonsQueryMount: false,
+
+    actions: [],
+    deletedActionsIds: [],
+    didGetActionsQueryMount: false,
   };
 
   login = (user) => {
@@ -122,56 +125,80 @@ class App extends React.Component {
     client.cache.reset();
   };
 
-  updateUser = (user) => {
-    this.setState({ user: user });
+
+  updateUser = (user, didGetUserQueryMount) => {
+    if (didGetUserQueryMount !== undefined) {
+      this.setState({
+        user: user,
+        didGetUserQueryMount: true,
+      });
+    } else {
+      this.setState({ user: user });
+    }
   };
 
-  addPerson = (person) => {
+
+  addPersonOrAction = (newElement, elementType) => {
     this.setState((prevState) => {
       return {
         ...prevState,
-        persons: [...prevState.persons, person],
+        [elementType]: [...prevState[elementType], newElement],
       };
     });
   };
 
-  updatePerson = (updatedPerson) => {
+  updatePersonOrAction = (updatedElement, elementType) => {
     this.setState((prevState) => {
-      const persons = [...prevState.persons];
+      const elements = [...prevState[elementType]];
 
-      const personForUpdateIndex = persons.findIndex((person) => {
-        return updatedPerson.id === person.id;
+      const elementForUpdateIndex = elements.findIndex((element) => {
+        return updatedElement.id === element.id;
       });
 
-      persons.splice(personForUpdateIndex, 1, updatedPerson);
+      elements.splice(elementForUpdateIndex, 1, updatedElement);
 
       return {
         ...prevState,
-        persons: persons,
+        [elementType]: elements,
       };
     });
   };
 
-  updatePersons = (persons) => {
-    this.setState({ persons: persons });
+  updatePersonsOrActions = (elements, elementType, didGetElementsQueryMount) => {
+    if (didGetElementsQueryMount !== undefined) {
+
+      const didGetElementsQueryMount = elementType === 'persons' ?
+        'didGetPersonsQueryMount' : 'didGetActionsQueryMount';
+
+      this.setState({
+        [elementType]: elements,
+        [didGetElementsQueryMount]: true,
+      });
+    } else {
+      this.setState({ [elementType]: elements });
+    }
   };
 
-  deletePerson = (personId) => {
+  deletePersonOrAction = (elementId, elementType) => {
     this.setState((prevState) => {
-      const persons = [...prevState.persons];
+      const elements = [...prevState[elementType]];
 
-      const personIndexForDeleting = persons.findIndex((person) => {
-        return person.id === personId;
+      const elementForDeletingIndex = elements.findIndex((element) => {
+        return element.id === elementId;
       });
 
-      persons.splice(personIndexForDeleting, 1);
+      elements.splice(elementForDeletingIndex, 1);
+
+      const deletedElementsIds = elementType === 'persons' ? 'deletedPersonsIds' : 'deletedActionsIds';
 
       return {
         ...prevState,
-        persons: persons,
+        [elementType]: elements,
+        [deletedElementsIds]: [...prevState[deletedElementsIds], elementId],
       };
     });
   };
+
 
   componentDidMount = () => {
     const token = localStorage.getItem(AUTH_TOKEN);
@@ -183,6 +210,7 @@ class App extends React.Component {
     }
   };
 
+
   render() {
     const appProviderValue = {
       isLoggedIn: this.state.isLoggedIn,
@@ -193,10 +221,15 @@ class App extends React.Component {
       updateUser: this.updateUser,
 
       persons: this.state.persons,
-      addPerson: this.addPerson,
-      updatePerson: this.updatePerson,
-      updatePersons: this.updatePersons,
-      deletePerson: this.deletePerson,
+      deletedPersonsIds: this.state.deletedPersonsIds,
+
+      actions: this.state.actions,
+      deletedActionsIds: this.state.deletedActionsIds,
+
+      addPersonOrAction: this.addPersonOrAction,
+      updatePersonOrAction: this.updatePersonOrAction,
+      updatePersonsOrActions: this.updatePersonsOrActions,
+      deletePersonOrAction: this.deletePersonOrAction,
     };
 
     return (
@@ -205,73 +238,22 @@ class App extends React.Component {
           <AppContext.Provider value={ appProviderValue }>
             <Routes/>
 
-            <Subscription subscription={ CREATE_PERSON_SUBSCRIPTION }>
-              { ({ error, data }) => {
-                if (error) {
-                  return <div>subscription CREATE_PERSON_SUBSCRIPTION got error: ${ error.message }</div>;
-                }
+            {
+              this.state.isLoggedIn &&
+              <React.Fragment>
+                { !this.state.didGetUserQueryMount && <GetUserQuery/> }
+                { !this.state.didGetPersonsQueryMount && <GetPersonsQuery/> }
+                { !this.state.didGetActionsQueryMount && <GetActionsQuery/> }
 
-                if (data && data.personCreated && data.personCreated.node) {
-                  const createdPerson = data.personCreated.node;
+                <CreatePersonSubscription/>
+                <UpdatePersonSubscription/>
+                <DeletePersonSubscription/>
 
-                  const isNewPerson = this.state.persons.every((person) => {
-                    return person.id !== createdPerson.id;
-                  });
-
-                  if (isNewPerson) {
-                    this.addPerson(createdPerson);
-                  }
-                }
-
-                return null;
-              } }
-            </Subscription>
-
-            <Subscription subscription={ UPDATE_PERSON_SUBSCRIPTION }>
-              { ({ error, data }) => {
-                if (error) {
-                  return <div>subscription UPDATE_PERSON_SUBSCRIPTION got error: ${ error.message }</div>;
-                }
-
-                if (data && data.personUpdated && data.personUpdated.node) {
-                  const updatedPerson = data.personUpdated.node;
-
-                  const personForUpdateIndex = this.state.persons.findIndex((person) => {
-                    return updatedPerson.id === person.id;
-                  });
-
-                  const isUpdated = !deepEqual(this.state.persons[personForUpdateIndex], updatedPerson);
-
-                  if (isUpdated) {
-                    this.updatePerson(data.personUpdated.node);
-                  }
-                }
-
-                return null;
-              } }
-            </Subscription>
-
-            <Subscription subscription={ DELETE_PERSON_SUBSCRIPTION }>
-              { ({ error, data }) => {
-                if (error) {
-                  return <div>subscription DELETE_PERSON_SUBSCRIPTION got error: ${ error.message }</div>;
-                }
-
-                if (data && data.personDeleted && data.personDeleted.previousValues) {
-                  const deletedPersonId = data.personDeleted.previousValues.id;
-
-                  const isDeleted = this.state.persons.every((person) => {
-                    return deletedPersonId !== person.id;
-                  });
-
-                  if (!isDeleted) {
-                    this.deletePerson(deletedPersonId);
-                  }
-                }
-
-                return null;
-              } }
-            </Subscription>
+                <CreateActionSubscription/>
+                <UpdateActionSubscription/>
+                <DeleteActionSubscription/>
+              </React.Fragment>
+            }
           </AppContext.Provider>
         </BrowserRouter>
       </ApolloProvider>

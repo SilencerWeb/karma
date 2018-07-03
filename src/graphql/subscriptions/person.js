@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 export const CREATE_PERSON_SUBSCRIPTION = gql`
   subscription personCreated {
     personCreated {
+      mutation
       node {
         id
         name

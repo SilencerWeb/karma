@@ -638,6 +638,32 @@ export class ActionCardComponent extends React.Component {
     });
   };
 
+
+  static getDerivedStateFromProps = (props, state) => {
+    if (!state.isCreating && !state.isEditing) {
+      if (props.title) {
+        state.title.content = props.title;
+      }
+      if (props.date) {
+        state.date.content = props.date;
+      }
+      if (props.description) {
+        state.description.content = props.description;
+      }
+      if (props.karma) {
+        state.karma = props.karma;
+      }
+      if (props.executors) {
+        state.executors = props.executors;
+      }
+      if (props.members) {
+        state.members = props.members;
+      }
+    }
+
+    return state;
+  };
+
   render() {
     const leftSelectOptions = this.state.persons.filter((person) => {
       return !person.isSelected && person.side !== 'right';
