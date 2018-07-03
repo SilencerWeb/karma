@@ -292,7 +292,7 @@ export class PersonPage extends React.Component {
                       return <div>query GET_ACTIONS is loading...</div>;
                     }
 
-                    if (data.actions) {
+                    if (data.actions && data.actions.length) {
                       const filteredActions = data.actions.filter((action) => {
                         return action.members.some((member) => {
                           return !member.isUser ? member.person.id === this.props.match.params.id : false;

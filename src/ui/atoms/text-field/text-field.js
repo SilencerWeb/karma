@@ -168,8 +168,14 @@ TextField.propTypes = {
   tag: PropTypes.string,
   name: PropTypes.string,
   type: PropTypes.string,
-  value: PropTypes.string,
-  placeholder: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  placeholder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   icon: PropTypes.any,
   iconPosition: PropTypes.string,
   iconRotation: PropTypes.number,

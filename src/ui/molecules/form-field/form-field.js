@@ -77,9 +77,11 @@ export class FormField extends React.Component {
               tag={ this.props.tag }
               name={ this.props.textFieldName }
               type={ this.props.textFieldType }
-              value={ this.props.textFieldValue }
+              value={ this.props.textFieldValue || '' }
               placeholder={ this.props.placeholder }
               icon={ this.props.textFieldIcon }
+              iconPosition={ this.props.textFieldIconPosition }
+              iconRotation={ this.props.textFieldIconRotation }
               disabled={ this.props.disabled }
               error={ this.props.error || (isLimited && !doesValuePassLimit) }
               onChange={ isLimited ? this.handleTextFieldChange : this.props.onChange }
@@ -129,12 +131,20 @@ FormField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
   tag: PropTypes.string,
-  placeholder: PropTypes.string,
+  placeholder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
 
   textFieldName: PropTypes.string,
   textFieldType: PropTypes.string,
-  textFieldValue: PropTypes.string,
+  textFieldValue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   textFieldIcon: PropTypes.any,
+  textFieldIconPosition: PropTypes.string,
+  textFieldIconRotation: PropTypes.number,
   textFieldLimit: PropTypes.number,
 
   selectOptions: PropTypes.arrayOf(

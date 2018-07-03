@@ -13,7 +13,7 @@ export const password = Yup.string()
     'match',
     'Passwords must match',
     function (password) {
-      return password === this.options.parent.currentPassword;
+      return this.options.parent.currentPassword ? password === this.options.parent.currentPassword : true;
     },
   )
   .required('Password is required');
