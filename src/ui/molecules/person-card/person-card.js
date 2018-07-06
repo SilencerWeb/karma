@@ -494,11 +494,10 @@ class PersonCardComponent extends React.PureComponent {
                 <FooterRightSide>
                   <Button onClick={ this.handleEditButtonClick }>Edit</Button>
                   <Link to={ `${this.props.authorNickname}/persons/${this.props.id}` }>
-                    <Button icon={ {
-                      svg: shortLeftArrow,
-                      position: 'right',
-                      rotation: 180,
-                    } }
+                    <Button
+                      icon={ shortLeftArrow }
+                      iconPosition={ 'right' }
+                      iconRotation={ 180 }
                     >
                       More
                     </Button>
@@ -519,10 +518,8 @@ class PersonCardComponent extends React.PureComponent {
 
                       return (
                         <DeletePersonButton
-                          icon={ {
-                            svg: trashCan,
-                            position: 'left',
-                          } }
+                          icon={ trashCan }
+                          iconPosition={ 'left' }
                           onClick={ () => this.handleDeleteButtonClick(deletePerson) }
                         >
                           Delete

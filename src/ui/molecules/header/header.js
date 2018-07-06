@@ -7,6 +7,8 @@ import { AppConsumer } from 'index';
 
 import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
 
+import { exit } from 'ui/outlines';
+
 import { AUTH_TOKEN } from 'constants.js';
 
 
@@ -75,7 +77,11 @@ export const Header = (props: props) => {
                         My actions
                       </Button>
                     </Link>
-                    <Button onClick={ () => handleLogoutButtonClick(context) }>
+                    <Button
+                      icon={ exit }
+                      iconPosition={ 'right' }
+                      onClick={ () => handleLogoutButtonClick(context) }
+                    >
                       Logout
                     </Button>
                   </React.Fragment>

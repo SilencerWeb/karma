@@ -749,10 +749,8 @@ export class ActionCardComponent extends React.Component {
                 !this.state.isCreating && !this.state.isEditing && this.state.karma === 'negative' && this.state.executors === 'right' &&
                 <div>
                   <Button
-                    icon={ {
-                      svg: handsUpHuman,
-                      position: 'right',
-                    } }
+                    icon={ handsUpHuman }
+                    iconPosition={ 'right' }
                     onClick={ this.props.onForgiveButtonClick }
                   >
                     Forgive
@@ -776,10 +774,8 @@ export class ActionCardComponent extends React.Component {
 
                       return (
                         <DeleteActionButton
-                          icon={ {
-                            svg: trashCan,
-                            position: 'left',
-                          } }
+                          icon={ trashCan }
+                          iconPosition={ 'left' }
                           onClick={ () => this.handleDeleteButtonClick(deleteAction) }
                         >
                           Delete

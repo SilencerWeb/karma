@@ -17,3 +17,4 @@ export { DeletePersonSubscription } from './subscriptions/delete-person-subscrip
 export { CreateActionSubscription } from './subscriptions/create-action-subscription';
 export { UpdateActionSubscription } from './subscriptions/update-action-subscription';
 export { DeleteActionSubscription } from './subscriptions/delete-action-subscription';
+export { ContactForm } from './contact-form/contact-form';

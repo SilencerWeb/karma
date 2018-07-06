@@ -64,7 +64,7 @@ const WrapperAsButton = styled.button`
       }
   
   
-      ${p.icon.position === 'left' && css`
+      ${p.iconPosition === 'left' && css`
         padding-left: 1.2rem;
         
         span {
@@ -72,7 +72,7 @@ const WrapperAsButton = styled.button`
         }
       `}
   
-      ${p.icon.position === 'right' && css`
+      ${p.iconPosition === 'right' && css`
         padding-right: 1.2rem;
         
         span {
@@ -81,10 +81,10 @@ const WrapperAsButton = styled.button`
       `}
       
       
-      ${p.icon.rotation && p.icon.rotation > 0 && css`
+      ${p.iconRotation > 0 && css`
   
         svg {
-          transform: rotate(${p.icon.rotation}deg);
+          transform: rotate(${p.iconRotation}deg);
         }
       `}
     `}
@@ -97,25 +97,24 @@ const WrapperAsLink = WrapperAsButton.withComponent('a');
 export const Button = (props) => {
   const Wrapper = props.tag && props.tag === 'a' ? WrapperAsLink : WrapperAsButton;
 
-  const icon = props.icon && props.icon.svg ? <Icon icon={ props.icon.svg }/> : null;
+  const icon = props.icon ? <Icon icon={ props.icon }/> : null;
 
   return (
     <Wrapper
       className={ props.className }
       type={ props.type }
       theme={ props.theme }
-      icon={ props.icon && {
-        position: props.icon.position,
-        rotation: props.icon.rotation,
-      } }
+      icon={ props.icon }
+      iconPosition={ props.iconPosition }
+      iconRotation={ props.iconRotation }
       { ...props.attributes }
       onClick={ props.onClick }
     >
-      { props.icon && props.icon.position === 'left' && icon }
+      { props.icon && props.iconPosition === 'left' && icon }
       <span>
         { props.children }
       </span>
-      { props.icon && props.icon.position === 'right' && icon }
+      { props.icon && props.iconPosition === 'right' && icon }
     </Wrapper>
   );
 };
@@ -126,16 +125,14 @@ Button.propTypes = {
   tag: PropTypes.string,
   type: PropTypes.string,
   theme: PropTypes.string,
-  icon: PropTypes.shape({
-    svg: PropTypes.any.isRequired,
-    position: PropTypes.string.isRequired,
-    rotation: PropTypes.number,
-  }),
+  icon: PropTypes.any,
+  iconPosition: PropTypes.string,
+  iconRotation: PropTypes.number,
   attributes: PropTypes.object,
   onClick: PropTypes.func,
   children: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.element,
+    PropTypes.number,
   ]).isRequired,
 };
 

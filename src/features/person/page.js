@@ -162,6 +162,12 @@ export class PersonPage extends React.Component {
       return person.id === this.props.match.params.id;
     })[0];
 
+    if (person === undefined) {
+      this.setState({ shouldRedirectToMainPage: true });
+
+      return;
+    }
+
     const shouldPersonBeUpdated = !deepEqual(this.state.person, person);
 
     if (shouldPersonBeUpdated) {
@@ -175,14 +181,12 @@ export class PersonPage extends React.Component {
     this.setState({ isActionCreating: true });
   };
 
-  handleDeleteButtonClick = (deletePerson, context) => {
+  handleDeleteButtonClick = (deletePerson) => {
     deletePerson({
       variables: {
         id: this.state.person.id,
       },
-    }).then((response) => {
-      context.deletePerson(response.data.deletePerson.id);
-
+    }).then(() => {
       this.setState({ shouldRedirectToMainPage: true });
     });
   };
@@ -233,7 +237,7 @@ export class PersonPage extends React.Component {
                       }
 
                       return (
-                        <DeletePersonButton onClick={ () => this.handleDeleteButtonClick(deletePerson, context) }>
+                        <DeletePersonButton onClick={ () => this.handleDeleteButtonClick(deletePerson) }>
                           <Icon icon={ trashCan }/>
                         </DeletePersonButton>
                       );
