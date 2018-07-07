@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { injectGlobal } from 'styled-components';
+import styled, { css, injectGlobal } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloLink, split } from 'apollo-link';
 import { ApolloProvider } from 'react-apollo';
@@ -10,7 +10,12 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 
+import { Overlay } from 'ui/atoms';
+
 import {
+  Modal,
+  ContactForm,
+
   GetUserQuery,
   GetPersonsQuery,
   GetActionsQuery,
@@ -24,7 +29,7 @@ import {
   DeleteActionSubscription,
 } from 'ui/molecules';
 
-import { globalStyles } from 'ui/theme';
+import { globalStyles, transition } from 'ui/theme';
 
 import { Routes } from 'routes';
 
@@ -88,6 +93,38 @@ const AppContext = React.createContext();
 export const AppConsumer = AppContext.Consumer;
 
 
+const StyledModal = styled(Modal)`
+  margin-top: auto;
+  margin-bottom: auto;
+`;
+
+const ModalsWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: ${transition};
+  overflow-x: hidden;
+  overflow-y: auto;
+  
+  ${p => css`
+    
+    ${p.visible && css`
+      opacity: 1;
+      visibility: visible;
+    `}
+  `}
+`;
+
+
 class App extends React.Component {
   state = {
     isLoggedIn: false,
@@ -102,6 +139,8 @@ class App extends React.Component {
     actions: [],
     deletedActionsIds: [],
     didGetActionsQueryMount: false,
+
+    visibleModal: '',
   };
 
   login = (user) => {
@@ -200,6 +239,19 @@ class App extends React.Component {
   };
 
 
+  showModal = (modalName) => {
+    this.setState({
+      visibleModal: modalName,
+    });
+  };
+
+  hideModal = () => {
+    this.setState({
+      visibleModal: '',
+    });
+  };
+
+
   componentDidMount = () => {
     const token = localStorage.getItem(AUTH_TOKEN);
 
@@ -230,6 +282,9 @@ class App extends React.Component {
       updatePersonOrAction: this.updatePersonOrAction,
       updatePersonsOrActions: this.updatePersonsOrActions,
       deletePersonOrAction: this.deletePersonOrAction,
+
+      showModal: this.showModal,
+      hideModal: this.hideModal,
     };
 
     return (
@@ -254,6 +309,17 @@ class App extends React.Component {
                 <DeleteActionSubscription/>
               </React.Fragment>
             }
+
+            <Overlay visible={ !!this.state.visibleModal }/>
+
+            <ModalsWrapper visible={ !!this.state.visibleModal }>
+              {
+                this.state.visibleModal === 'ContactForm' &&
+                <StyledModal>
+                  <ContactForm/>
+                </StyledModal>
+              }
+            </ModalsWrapper>
           </AppContext.Provider>
         </BrowserRouter>
       </ApolloProvider>

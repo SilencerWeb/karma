@@ -2,6 +2,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import { AppConsumer } from 'index';
+
 import { Container, Button } from 'ui/atoms';
 
 
@@ -27,14 +29,18 @@ const Wrapper = styled.div`
 export const Footer = (props) => {
   return (
     <Wrapper className={ props.className }>
-      <Container>
-        <div>
-          <Copyright>Copyright © 2018 by Gorodov Maksim. All rights reserved.</Copyright>
-        </div>
-        <div>
-          <Button>Contact me</Button>
-        </div>
-      </Container>
+      <AppConsumer>
+        { (context) => (
+          <Container>
+            <div>
+              <Copyright>Copyright © 2018 by Gorodov Maksim. All rights reserved.</Copyright>
+            </div>
+            <div>
+              <Button onClick={ () => context.showModal('ContactForm') }>Contact me</Button>
+            </div>
+          </Container>
+        ) }
+      </AppConsumer>
     </Wrapper>
   );
 };

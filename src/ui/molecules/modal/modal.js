@@ -2,8 +2,6 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 
-import { transition } from 'ui/theme';
-
 
 const Wrapper = styled.div`
   max-width: 50rem;
@@ -14,19 +12,6 @@ const Wrapper = styled.div`
   padding-right: 3.2rem;
   padding-bottom: 3.2rem;
   padding-left: 3.2rem;
-  margin-right: auto;
-  margin-left: auto;
-  opacity: 0;
-  visibility: hidden;
-  transition: ${transition};
-  
-  ${p => css`
-    
-    ${p.visible && css`
-      opacity: 1;
-      visibility: visible;
-    `}
-  `}
 `;
 
 
@@ -35,7 +20,7 @@ export class Modal extends React.Component {
 
   render() {
     return (
-      <Wrapper className={ this.props.className } visible={ this.props.visible }>
+      <Wrapper className={ this.props.className }>
         { this.props.children }
       </Wrapper>
     );
@@ -45,6 +30,5 @@ export class Modal extends React.Component {
 
 Modal.propTypes = {
   className: PropTypes.string,
-  visible: PropTypes.bool,
   children: PropTypes.element.isRequired,
 };

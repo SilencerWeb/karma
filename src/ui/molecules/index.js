@@ -18,3 +18,4 @@ export { CreateActionSubscription } from './subscriptions/create-action-subscrip
 export { UpdateActionSubscription } from './subscriptions/update-action-subscription';
 export { DeleteActionSubscription } from './subscriptions/delete-action-subscription';
 export { ContactForm } from './contact-form/contact-form';
+export { Modal } from './modal/modal';
