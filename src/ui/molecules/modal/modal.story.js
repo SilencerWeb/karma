@@ -11,8 +11,10 @@ const stories = storiesOf('molecules/Modal', module);
 stories.addDecorator(withKnobs);
 
 stories.add('default', () => {
+  const visible = boolean('visible', true);
+
   return (
-    <Modal>
+    <Modal visible={ visible }>
       <ContactForm/>
     </Modal>
   );
