@@ -19,16 +19,24 @@ const Wrapper = styled.div`
   > ${Container} {
     flex-grow: 1;
     display: flex;
-    align-items: center;
     padding-top: 2rem;
-    padding-bottom: 6rem;
+    padding-bottom: 2rem;
   }
+  
+  ${p => css`
+    
+    ${p.centeredContent && css`
+      > ${Container} {
+        align-items: center;
+      }
+    `}
+  `}
 `;
 
 
 export const CommonTemplate = (props) => {
   return (
-    <Wrapper>
+    <Wrapper centeredContent={ props.centeredContent }>
       <Header/>
       <Container>
         <ContainerInner>
@@ -42,5 +50,6 @@ export const CommonTemplate = (props) => {
 
 
 CommonTemplate.propTypes = {
+  centeredContent: PropTypes.bool,
   children: PropTypes.node.isRequired,
 };

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { lighten } from 'polished';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Mutation, graphql } from 'react-apollo';
@@ -222,6 +223,10 @@ const ContentEditableWrapper = styled.div`
 
 const DeletePersonButton = styled(Button)`
   background-color: ${color.error};
+  
+  &:hover {
+    background-color: ${lighten(0.15, color.error)};
+  }
 `;
 
 const FooterLeftSide = styled.div`
@@ -260,6 +265,11 @@ const Wrapper = styled.div`
   padding-right: 2.4rem;
   padding-bottom: 3.2rem;
   padding-left: 2.4rem;
+  transition: ${transition};
+  
+  &:hover {
+    box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44), 0 -0.8rem 1.6rem rgba(176, 190, 197, 0.44);
+  }
 `;
 
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { lighten } from 'polished';
 import PropTypes from 'prop-types';
 import { Mutation, graphql } from 'react-apollo';
 
@@ -19,6 +20,10 @@ import { UPDATE_ACTION, DELETE_ACTION } from 'graphql/mutations/action';
 
 const DeleteActionButton = styled(Button)`
   background-color: ${color.error};
+  
+  &:hover {
+    background-color: ${lighten(0.15, color.error)};
+  }
 `;
 
 const Title = Heading.extend`
@@ -186,6 +191,10 @@ const Avatar = styled.div`
       align-items: center;
       background-color: ${color.primary};
       cursor: pointer;
+      
+      &:hover {
+        transform: scale(1.2);
+      }
 
       svg {
         font-size: 1.6rem;
@@ -213,6 +222,13 @@ const Members = styled.div`
   position: relative;
   display: flex;
   
+  &:hover {
+  
+    ${Avatar} {
+      margin-left: 0;
+    }
+  }
+  
   ${Avatar} {
     position: relative;
     margin-left: -2rem;
@@ -220,8 +236,7 @@ const Members = styled.div`
     overflow: hidden;
     
     &:hover {
-      z-index: 9;
-      transform: scale(1.2);
+      box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44);
     }
     
     &:first-child {
@@ -264,12 +279,12 @@ const Select = styled.select`
   width: 100%;
   height: 100%;
   opacity: 0;
+  cursor: pointer;
 `;
 
-const ExecutorsArrow = styled(Icon)`
-  font-size: 2.4rem;
-  margin-right: 0.8rem;
-  margin-left: 0.8rem;
+const ExecutorsButton = styled(Button)`
+  margin-right: 0.4rem;
+  margin-left: 0.4rem;
   transition: ${transition};
 
   ${p => css`
@@ -282,7 +297,20 @@ const ExecutorsArrow = styled(Icon)`
     ${p.executors === 'right' && css`
       color: ${color.secondary};
     `}
+    
+    ${!p.hoverable && css`
+      background-color: transparent;
+      cursor: default;
+      
+      &:hover {
+        background-color: transparent;
+      }
+    `}
   `}
+  
+  svg {
+    font-size: 2.4rem;
+  }
 `;
 
 const HeaderLeftSide = styled.div`
@@ -346,6 +374,10 @@ const Border = styled.div`
     ${p.type === 'negative' && css`
       background-color: ${color.error};
     `}
+    
+    ${!p.hoverable && css`
+      cursor: default;
+    `}
   `}
 `;
 
@@ -362,6 +394,11 @@ const Wrapper = styled.div`
   padding-right: 1.6rem;
   padding-bottom: 2.4rem;
   padding-left: calc(1.6rem + 0.8rem);
+  transition: ${transition};
+  
+  &:hover {
+    box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44), 0 -0.8rem 1.6rem rgba(176, 190, 197, 0.44);
+  }
 `;
 
 
@@ -535,7 +572,7 @@ export class ActionCardComponent extends React.Component {
     });
   };
 
-  handleExecutorsArrowClick = () => {
+  handleExecutorsButtonClick = () => {
 
     this.setState((prevState) => {
       return {
@@ -860,11 +897,16 @@ export class ActionCardComponent extends React.Component {
 
                     {
                       (this.state.isCreating || this.state.isEditing || (rightSideMembers && rightSideMembers.length > 0)) &&
-                      <ExecutorsArrow
-                        icon={ longLeftArrow }
+                      <ExecutorsButton
+                        type={ 'icon' }
+                        theme={ this.state.executors === 'left' ? 'primary' : 'secondary' }
                         executors={ this.state.executors }
-                        onClick={ this.state.isCreating || this.state.isEditing ? this.handleExecutorsArrowClick : null }
-                      />
+                        hoverable={ this.state.isCreating || this.state.isEditing }
+                        withoutRipple={ !(this.state.isCreating || this.state.isEditing) }
+                        onClick={ this.state.isCreating || this.state.isEditing ? this.handleExecutorsButtonClick : null }
+                      >
+                        <Icon icon={ longLeftArrow }/>
+                      </ExecutorsButton>
                     }
 
                     <Members>
@@ -954,7 +996,11 @@ export class ActionCardComponent extends React.Component {
               </FooterRightSide>
             </Footer>
 
-            <Border type={ this.state.karma } onClick={ this.state.isCreating || this.state.isEditing ? this.handleBorderClick : null }/>
+            <Border
+              type={ this.state.karma }
+              hoverable={ this.state.isCreating || this.state.isEditing }
+              onClick={ this.state.isCreating || this.state.isEditing ? this.handleBorderClick : null }
+            />
           </Wrapper>
         ) }
       </AppConsumer>

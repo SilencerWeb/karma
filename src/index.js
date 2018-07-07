@@ -240,6 +240,8 @@ class App extends React.Component {
 
 
   showModal = (modalName) => {
+    document.querySelector('body').style.overflow = 'hidden';
+
     this.setState({
       visibleModal: modalName,
     });
@@ -249,6 +251,8 @@ class App extends React.Component {
     this.setState({
       visibleModal: '',
     });
+
+    document.querySelector('body').style.overflow = '';
   };
 
 

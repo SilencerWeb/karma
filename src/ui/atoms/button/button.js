@@ -29,6 +29,7 @@ const WrapperAsButton = styled.button`
   transition: ${transition};
   
   span {
+    display: inline-block;
     vertical-align: middle;
   }
 
@@ -36,9 +37,11 @@ const WrapperAsButton = styled.button`
 
     ${p.type === 'raised' && css`
       color: ${color.text.secondary};
-      box-shadow: 0 0.3rem 0.1rem -0.2rem ${rgba('#000', 0.2)}, 
-                  0 0.2rem 0.2rem 0 ${rgba('#000', 0.14)}, 
-                  0 0.1rem 0.5rem 0 ${rgba('#000', 0.12)};
+      box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
+      
+      &:hover {
+        box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.44);
+      }
       
       ${p.theme === 'primary' && css`
         background-color: ${color.primary};
@@ -73,6 +76,47 @@ const WrapperAsButton = styled.button`
         
         &:hover {
           background-color: ${rgba(color.secondary, 0.1)}
+        }
+      `}
+    `}
+    
+    ${p.type === 'icon' && css`
+      background-color: transparent;
+      border-radius: 50%;
+      padding-top: 1.2rem;
+      padding-right: 1.2rem;
+      padding-bottom: 1.2rem;
+      padding-left: 1.2rem;
+      
+      ${p.theme === 'primary' && css`
+        color: ${color.primary};
+        
+        &:hover {
+          background-color: ${rgba(color.primary, 0.1)}
+        }
+      `}
+      
+      ${p.theme === 'secondary' && css`
+        color: ${color.secondary};
+        
+        &:hover {
+          background-color: ${rgba(color.secondary, 0.1)}
+        }
+      `}
+      
+      ${p.theme === 'gray' && css`
+        color: #3c4858;
+        
+        &:hover {
+          background-color: ${rgba('#3c4858', 0.1)}
+        }
+      `}
+      
+      ${p.theme === 'white' && css`
+        color: #ffffff;
+        
+        &:hover {
+          background-color: ${rgba('#ffffff', 0.1)}
         }
       `}
     `}
@@ -137,7 +181,7 @@ export const Button = (props) => {
       </span>
       { props.icon && props.iconPosition === 'right' && icon }
 
-      <Ink/>
+      { !props.withoutRipple && <Ink/> }
     </Wrapper>
   );
 };
@@ -152,11 +196,9 @@ Button.propTypes = {
   iconPosition: PropTypes.string,
   iconRotation: PropTypes.number,
   attributes: PropTypes.object,
+  withoutRipple: PropTypes.bool,
   onClick: PropTypes.func,
-  children: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]).isRequired,
+  children: PropTypes.any.isRequired,
 };
 
 Button.defaultProps = {

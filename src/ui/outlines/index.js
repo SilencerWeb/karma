@@ -12,3 +12,4 @@ export { default as trashCan } from './trash-can.svg';
 export { default as send } from './send.svg';
 export { default as exit } from './exit.svg';
 export { default as attachmentClip } from './attachment-clip.svg';
+export { default as heart } from './heart.svg';

@@ -9,7 +9,7 @@ import { PersonCard } from 'ui/molecules';
 
 import { plus } from 'ui/outlines';
 
-import { color } from 'ui/theme';
+import { color, transition } from 'ui/theme';
 
 import { GET_PERSONS } from 'graphql/queries/person';
 import { CREATE_PERSON } from 'graphql/mutations/person';
@@ -28,6 +28,11 @@ const Wrapper = styled.div`
   padding-bottom: 3.2rem;
   padding-left: 2.4rem;
   cursor: pointer;
+  transition: ${transition};
+  
+  &:hover {
+    box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44), 0 -0.8rem 1.6rem rgba(176, 190, 197, 0.44);
+  }
   
   svg {
     font-size: 10rem;

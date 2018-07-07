@@ -11,6 +11,7 @@ const FileInput = styled.input.attrs({ type: 'file' })`
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
   display: inline-block;
   vertical-align: top;
   width: 100%;
@@ -36,8 +37,9 @@ export const UploadFile = (props) => {
         iconPosition={ 'left' }
       >
         { props.children }
+
+        <FileInput name={ props.name }/>
       </Button>
-      <FileInput/>
     </Wrapper>
   );
 };
@@ -45,8 +47,6 @@ export const UploadFile = (props) => {
 
 UploadFile.propTypes = {
   className: PropTypes.string,
-  children: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]).isRequired,
+  name: PropTypes.string,
+  children: PropTypes.string.isRequired,
 };

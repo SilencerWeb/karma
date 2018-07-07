@@ -20,23 +20,6 @@ import { color } from 'ui/theme';
 import { DELETE_PERSON } from 'graphql/mutations/person';
 
 
-const EditButton = styled.button`
-  background-color: transparent;
-  border: none;
-  padding-top: 0;
-  padding-right: 0;
-  padding-bottom: 0;
-  padding-left: 0;
-  outline: none;
-  cursor: pointer;
-
-  svg {
-    font-size: 2.4rem;
-  }
-`;
-
-const Subtitle = Heading.withComponent('h2');
-
 const HeaderBackground = styled.div`
   position: absolute;
   top: -2rem;
@@ -47,30 +30,24 @@ const HeaderBackground = styled.div`
   transform: translateX(-50%);
 `;
 
-const DeletePersonButton = styled.button`
+const BackgroundButton = styled(Button)`
   position: absolute;
-  top: 2rem;
-  left: 2rem;
-  color: #ffffff;
-  background-color: transparent;
-  border: none;
-  padding-top: 0;
-  padding-right: 0;
-  padding-bottom: 0;
-  padding-left: 0;
-  outline: none;
-  cursor: pointer;
+  top: 0.8rem;
 
   svg {
     font-size: 2.4rem;
   }
-`;
-
-const EditBackgroundButton = EditButton.extend`
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  color: #ffffff;
+  
+  ${p => css`
+    
+    ${p.right && css`
+      right: 1.6rem;
+    `}
+    
+    ${p.left && css`
+      left: 1.6rem;
+    `}
+  `}
 `;
 
 const PersonAvatar = styled.div`
@@ -126,6 +103,15 @@ const Header = styled.div`
   text-align: center;
   padding-top: 7rem;
   margin-bottom: 6rem;
+`;
+
+const Subtitle = Heading.withComponent('h2');
+
+const EditAboutButton = styled(Button)`
+
+  svg {
+    font-size: 1.8rem;
+  }
 `;
 
 const AboutHeader = styled.div`
@@ -237,17 +223,22 @@ export class PersonPage extends React.Component {
                       }
 
                       return (
-                        <DeletePersonButton onClick={ () => this.handleDeleteButtonClick(deletePerson) }>
+                        <BackgroundButton
+                          type={ 'icon' }
+                          theme={ 'white' }
+                          left
+                          onClick={ () => this.handleDeleteButtonClick(deletePerson) }
+                        >
                           <Icon icon={ trashCan }/>
-                        </DeletePersonButton>
+                        </BackgroundButton>
                       );
                     }
                     }
                   </Mutation>
 
-                  <EditBackgroundButton>
+                  <BackgroundButton type={ 'icon' } theme={ 'white' } right>
                     <Icon icon={ pencil }/>
-                  </EditBackgroundButton>
+                  </BackgroundButton>
                 </HeaderBackground>
 
                 <PersonAvatar new>
@@ -269,9 +260,9 @@ export class PersonPage extends React.Component {
                     About
                   </Subtitle>
 
-                  <EditButton>
+                  <EditAboutButton type={ 'icon' } theme={ 'gray' }>
                     <Icon icon={ pencil }/>
-                  </EditButton>
+                  </EditAboutButton>
                 </AboutHeader>
 
                 <p> { this.state.person && this.state.person.description }</p>

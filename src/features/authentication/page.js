@@ -70,7 +70,7 @@ export class AuthenticationPage extends React.Component {
 
   render() {
     return (
-      <CommonTemplate>
+      <CommonTemplate centeredContent={ true }>
         { this.state.shouldRedirectToMainPage && <Redirect to={ '/' }/> }
 
         <AppConsumer>

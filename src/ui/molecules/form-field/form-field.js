@@ -27,7 +27,8 @@ const Wrapper = styled.div`
 
 export class FormField extends React.Component {
   state = {
-    value: '',
+    id: null,
+    value: null,
     focused: false,
   };
 
@@ -47,15 +48,17 @@ export class FormField extends React.Component {
     this.setState({ value: value });
   };
 
+  componentDidMount = () => {
+    if (!this.props.id) {
+      this.setState({ id: Math.random().toString(36).substr(2, 9) });
+    }
+  };
+
   render() {
     const isLimited = this.props.tag === 'textarea' && this.props.textFieldLimit && this.props.textFieldLimit > 0;
     const doesValuePassLimit = isLimited && this.state.value.length <= this.props.textFieldLimit;
 
-    let id = this.props.id;
-
-    if (this.props.label && !id) {
-      id = Math.random().toString(36).substr(2, 9);
-    }
+    let id = this.props.id || this.state.id;
 
     return (
       <Wrapper

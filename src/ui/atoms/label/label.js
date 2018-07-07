@@ -35,7 +35,7 @@ Label.propTypes = {
   className: PropTypes.string,
   disabled: PropTypes.bool,
   error: PropTypes.bool,
-  children: PropTypes.string.isRequired,
+  children: PropTypes.any.isRequired,
 };
 
 Label.defaultProps = {

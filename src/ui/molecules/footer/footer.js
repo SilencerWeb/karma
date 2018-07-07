@@ -4,12 +4,22 @@ import PropTypes from 'prop-types';
 
 import { AppConsumer } from 'index';
 
-import { Container, Button } from 'ui/atoms';
+import { Container, Button, Icon } from 'ui/atoms';
+
+import { heart } from 'ui/outlines';
+
+import { color } from 'ui/theme';
 
 
-const Copyright = styled.p`
+const MadeBy = styled.p`
   margin-top: 0;
   margin-bottom: 0;
+  
+  svg {
+    vertical-align: middle;
+    font-size: 1.6rem;
+    color: ${color.error};
+  }
 `;
 
 const Wrapper = styled.div`
@@ -33,7 +43,7 @@ export const Footer = (props) => {
         { (context) => (
           <Container>
             <div>
-              <Copyright>Copyright © 2018 by Gorodov Maksim. All rights reserved.</Copyright>
+              <MadeBy>Made with <Icon icon={ heart }/> by Maksim Gorodov</MadeBy>
             </div>
             <div>
               <Button onClick={ () => context.showModal('ContactForm') }>Contact me</Button>
