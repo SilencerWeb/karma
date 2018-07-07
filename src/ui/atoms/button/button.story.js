@@ -53,17 +53,22 @@ stories
       secondary: 'secondary',
     }, 'primary');
 
-    const icon = {
-      svg: shortLeftArrow,
-      position: select('icon\'s position', {
-        left: 'left',
-        right: 'right',
-      }, 'right'),
-      rotation: number('icon\'s rotation (deg)', 0),
-    };
+    const icon = boolean('icon', false);
+    const iconPosition = select('icon\'s position', {
+      left: 'left',
+      right: 'right',
+    }, 'right');
+    const iconRotation = number('icon\'s rotation (deg)', 0);
 
     return (
-      <Button tag={ tag } type={ type } theme={ theme } icon={ icon }>
+      <Button
+        tag={ tag }
+        type={ type }
+        theme={ theme }
+        icon={ icon && shortLeftArrow }
+        iconPosition={ iconPosition }
+        iconRotation={ iconRotation }
+      >
         { content }
       </Button>
     );
