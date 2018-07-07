@@ -53,7 +53,7 @@ stories
       secondary: 'secondary',
     }, 'primary');
 
-    const icon = boolean('icon', false);
+    const icon = boolean('icon', true);
     const iconPosition = select('icon\'s position', {
       left: 'left',
       right: 'right',

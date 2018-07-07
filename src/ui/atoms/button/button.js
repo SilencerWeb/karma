@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { lighten, rgba } from 'polished';
 import PropTypes from 'prop-types';
+import Ink from 'react-ink';
 
 import { Icon } from 'ui/atoms';
 
@@ -8,6 +10,7 @@ import { color, transition } from 'ui/theme';
 
 
 const WrapperAsButton = styled.button`
+  position: relative;
   display: inline-block;
   vertical-align: top;
   font-size: 1.4rem;
@@ -16,6 +19,7 @@ const WrapperAsButton = styled.button`
   text-transform: uppercase;
   text-decoration: none;
   border: none;
+  border-radius: 0.4rem;
   padding-top: 1.2rem;
   padding-right: 2rem;
   padding-bottom: 1.2rem;
@@ -32,15 +36,24 @@ const WrapperAsButton = styled.button`
 
     ${p.type === 'raised' && css`
       color: ${color.text.secondary};
-      border-radius: 0.4rem;
-      box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
+      box-shadow: 0 0.3rem 0.1rem -0.2rem ${rgba('#000', 0.2)}, 
+                  0 0.2rem 0.2rem 0 ${rgba('#000', 0.14)}, 
+                  0 0.1rem 0.5rem 0 ${rgba('#000', 0.12)};
       
       ${p.theme === 'primary' && css`
         background-color: ${color.primary};
+        
+        &:hover {
+          background-color: ${lighten(0.15, color.primary)}
+        }
       `}
       
       ${p.theme === 'secondary' && css`
         background-color: ${color.secondary};
+        
+        &:hover {
+          background-color: ${lighten(0.15, color.secondary)}
+        }
       `}
     `}
   
@@ -49,10 +62,18 @@ const WrapperAsButton = styled.button`
       
       ${p.theme === 'primary' && css`
         color: ${color.primary};
+        
+        &:hover {
+          background-color: ${rgba(color.primary, 0.1)}
+        }
       `}
       
       ${p.theme === 'secondary' && css`
         color: ${color.secondary};
+        
+        &:hover {
+          background-color: ${rgba(color.secondary, 0.1)}
+        }
       `}
     `}
     
@@ -115,6 +136,8 @@ export const Button = (props) => {
         { props.children }
       </span>
       { props.icon && props.iconPosition === 'right' && icon }
+
+      <Ink/>
     </Wrapper>
   );
 };
