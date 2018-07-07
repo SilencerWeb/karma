@@ -7,6 +7,10 @@ import { Label, TextField, Select, HelperText } from 'ui/atoms';
 import { color } from 'ui/theme';
 
 
+const RequiredAsterisk = styled.span`
+  color: ${color.error}
+`;
+
 const Wrapper = styled.div`
   
   ${p => css`
@@ -67,6 +71,7 @@ export class FormField extends React.Component {
             error={ this.props.error || (isLimited && !doesValuePassLimit) }
           >
             { this.props.label }
+            { this.props.required && <RequiredAsterisk> *</RequiredAsterisk> }
           </Label>
         }
 
@@ -135,6 +140,7 @@ FormField.propTypes = {
     PropTypes.string,
     PropTypes.number,
   ]),
+  required: PropTypes.bool,
 
   textFieldName: PropTypes.string,
   textFieldType: PropTypes.string,

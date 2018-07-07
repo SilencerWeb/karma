@@ -10,7 +10,7 @@ export const Label = styled.label`
   width: 100%;
   font-size: 1.2rem;
   color: #828282;
-  margin-bottom: 0.8rem;
+  padding-bottom: 0.8rem;
   transition: color ${transition}, opacity ${transition};
   
   &:last-child {

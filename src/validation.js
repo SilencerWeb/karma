@@ -3,8 +3,7 @@
 import * as Yup from 'yup';
 
 export const email = Yup.string()
-  .email('A valid email is required')
-  .required('Email is required');
+  .email('A valid email is required');
 
 export const password = Yup.string()
   .min(6, 'Password must be at least 6 characters')
@@ -15,8 +14,7 @@ export const password = Yup.string()
     function (password) {
       return this.options.parent.currentPassword ? password === this.options.parent.currentPassword : true;
     },
-  )
-  .required('Password is required');
+  );
 
 export const confirmPassword = Yup.string()
   .test(
@@ -25,5 +23,4 @@ export const confirmPassword = Yup.string()
     function (currentPassword) {
       return currentPassword === this.options.parent.password;
     },
-  )
-  .required('Confirm password is required');
+  );

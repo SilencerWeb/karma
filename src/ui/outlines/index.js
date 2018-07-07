@@ -11,3 +11,4 @@ export { default as handsUpHuman } from './human_hands-up.svg';
 export { default as trashCan } from './trash-can.svg';
 export { default as send } from './send.svg';
 export { default as exit } from './exit.svg';
+export { default as attachmentClip } from './attachment-clip.svg';

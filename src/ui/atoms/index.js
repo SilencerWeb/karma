@@ -11,3 +11,4 @@ export { Select } from './select/select';
 export { RetinaImage } from './retina-image/retina-image';
 export { Logo } from './logo/logo';
 export { Container } from './container/container';
+export { UploadFile } from './upload-file/upload-file';

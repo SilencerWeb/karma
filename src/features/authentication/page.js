@@ -21,12 +21,16 @@ import * as validation from 'validation';
 import { SIGNUP, LOGIN } from 'graphql/mutations/authentication';
 
 
-const StyledFormField = styled(FormField)`
+const FormFieldWrapper = styled.div`
   margin-bottom: 2rem;
   
   &:last-child {
     margin-bottom: 0;
   }
+`;
+
+const FormFieldsWrapper = styled.div`
+  margin-bottom: 4rem;
 `;
 
 const FormFooter = styled.div`
@@ -83,11 +87,11 @@ export class AuthenticationPage extends React.Component {
                         <Formik
                           validationSchema={
                             Yup.object().shape({
-                              email: validation.email,
+                              email: validation.email.required('Email is required'),
                               nickname: Yup.string().required('Nickname is required'),
                               name: Yup.string(),
-                              password: validation.password,
-                              confirmPassword: validation.confirmPassword,
+                              password: validation.password.required('Password is required'),
+                              confirmPassword: validation.confirmPassword.required('Password confirmation is required'),
                             })
                           }
                           validateOnBlur={ this.state.validateOnBlur }
@@ -121,49 +125,74 @@ export class AuthenticationPage extends React.Component {
                                handleSubmit,
                              }) => (
                                <Form onSubmit={ handleSubmit } noValidate>
-                                 <StyledFormField
-                                  placeholder={ 'Email *' }
-                                  textFieldName={ 'email' }
-                                  textFieldType={ 'email' }
-                                  textFieldValue={ values.email }
-                                  helperText={ !!errors.email ? errors.email : null }
-                                  error={ !!errors.email }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  placeholder={ 'Nickname *' }
-                                  textFieldName={ 'nickname' }
-                                  textFieldValue={ values.nickname }
-                                  helperText={ !!errors.nickname ? errors.nickname : null }
-                                  error={ !!errors.nickname }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  placeholder={ 'Name' }
-                                  textFieldName={ 'name' }
-                                  textFieldValue={ values.name }
-                                  helperText={ !!errors.name ? errors.name : null }
-                                  error={ !!errors.name }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  placeholder={ 'Password *' }
-                                  textFieldName={ 'password' }
-                                  textFieldType={ 'password' }
-                                  textFieldValue={ values.password }
-                                  helperText={ !!errors.password ? errors.password : null }
-                                  error={ !!errors.password }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  placeholder={ 'Confirm password *' }
-                                  textFieldName={ 'confirmPassword' }
-                                  textFieldType={ 'password' }
-                                  textFieldValue={ values.confirmPassword }
-                                  helperText={ !!errors.confirmPassword ? errors.confirmPassword : null }
-                                  error={ !!errors.confirmPassword }
-                                  onChange={ handleChange }
-                                 />
+                                 <FormFieldsWrapper>
+                                   <FormFieldWrapper>
+                                     <FormField
+                                      placeholder={ 'john.doe@gmail.com' }
+                                      required
+                                      textFieldName={ 'email' }
+                                      textFieldType={ 'email' }
+                                      textFieldValue={ values.email }
+                                      label={ 'Email' }
+                                      helperText={ !!errors.email ? errors.email : null }
+                                      error={ !!errors.email }
+                                      onChange={ handleChange }
+                                     />
+                                   </FormFieldWrapper>
+
+                                   <FormFieldWrapper>
+                                     <FormField
+                                      placeholder={ 'john.doe' }
+                                      required
+                                      textFieldName={ 'nickname' }
+                                      textFieldValue={ values.nickname }
+                                      label={ 'Nickname' }
+                                      helperText={ !!errors.nickname ? errors.nickname : null }
+                                      error={ !!errors.nickname }
+                                      onChange={ handleChange }
+                                     />
+                                   </FormFieldWrapper>
+
+                                   <FormFieldWrapper>
+                                     <FormField
+                                      placeholder={ 'John Doe' }
+                                      textFieldName={ 'name' }
+                                      textFieldValue={ values.name }
+                                      label={ 'Name' }
+                                      helperText={ !!errors.name ? errors.name : null }
+                                      error={ !!errors.name }
+                                      onChange={ handleChange }
+                                     />
+                                   </FormFieldWrapper>
+
+                                   <FormFieldWrapper>
+                                     <FormField
+                                      placeholder={ 'password123' }
+                                      required
+                                      textFieldName={ 'password' }
+                                      textFieldType={ 'password' }
+                                      textFieldValue={ values.password }
+                                      label={ 'Password' }
+                                      helperText={ !!errors.password ? errors.password : null }
+                                      error={ !!errors.password }
+                                      onChange={ handleChange }
+                                     />
+                                   </FormFieldWrapper>
+
+                                   <FormFieldWrapper>
+                                     <FormField
+                                      placeholder={ 'password123' }
+                                      required
+                                      textFieldName={ 'confirmPassword' }
+                                      textFieldType={ 'password' }
+                                      textFieldValue={ values.confirmPassword }
+                                      label={ 'Confirm password' }
+                                      helperText={ !!errors.confirmPassword ? errors.confirmPassword : null }
+                                      error={ !!errors.confirmPassword }
+                                      onChange={ handleChange }
+                                     />
+                                   </FormFieldWrapper>
+                                 </FormFieldsWrapper>
 
                                  <FormFooter>
                                    <Button onClick={ this.handleSubmitButtonClick }>Submit</Button>
@@ -186,7 +215,7 @@ export class AuthenticationPage extends React.Component {
                           validationSchema={
                             Yup.object().shape({
                               login: Yup.string().required('Login is required'),
-                              password: validation.password,
+                              password: validation.password.required('Password is required'),
                             })
                           }
                           validateOnBlur={ this.state.validateOnBlur }
@@ -218,23 +247,34 @@ export class AuthenticationPage extends React.Component {
                                handleSubmit,
                              }) => (
                                <Form onSubmit={ handleSubmit } noValidate>
-                                 <StyledFormField
-                                  placeholder={ 'Email or nickname' }
-                                  textFieldName={ 'login' }
-                                  textFieldValue={ values.login }
-                                  helperText={ !!errors.login ? errors.login : null }
-                                  error={ !!errors.login }
-                                  onChange={ handleChange }
-                                 />
-                                 <StyledFormField
-                                  placeholder={ 'Password' }
-                                  textFieldName={ 'password' }
-                                  textFieldType={ 'password' }
-                                  textFieldValue={ values.password }
-                                  helperText={ !!errors.password ? errors.password : null }
-                                  error={ !!errors.password }
-                                  onChange={ handleChange }
-                                 />
+                                 <FormFieldsWrapper>
+                                   <FormFieldWrapper>
+                                     <FormField
+                                      placeholder={ 'john.doe' }
+                                      required
+                                      textFieldName={ 'login' }
+                                      textFieldValue={ values.login }
+                                      label={ 'Email or nickname' }
+                                      helperText={ !!errors.login ? errors.login : null }
+                                      error={ !!errors.login }
+                                      onChange={ handleChange }
+                                     />
+                                   </FormFieldWrapper>
+
+                                   <FormFieldWrapper>
+                                     <FormField
+                                      placeholder={ 'password123' }
+                                      required
+                                      textFieldName={ 'password' }
+                                      textFieldType={ 'password' }
+                                      textFieldValue={ values.password }
+                                      label={ 'Password' }
+                                      helperText={ !!errors.password ? errors.password : null }
+                                      error={ !!errors.password }
+                                      onChange={ handleChange }
+                                     />
+                                   </FormFieldWrapper>
+                                 </FormFieldsWrapper>
 
                                  <FormFooter>
                                    <Button onClick={ this.handleSubmitButtonClick }>Submit</Button>
