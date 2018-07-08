@@ -33,7 +33,7 @@ import { globalStyles, transition } from 'ui/theme';
 
 import { Routes } from 'routes';
 
-import { AUTH_TOKEN } from 'constants.js';
+import { AUTH_TOKEN } from './constants';
 
 import { env, config } from 'config';
 
