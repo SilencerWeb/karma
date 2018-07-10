@@ -60,6 +60,10 @@ const PersonAvatar = styled.div`
   margin-left: auto;
   margin-bottom: 2.4rem;
 
+  img {
+    width: 100%;
+  }
+
   ${p => css`
     
     ${p.new && css`
@@ -186,6 +190,11 @@ export class PersonPage extends React.Component {
   };
 
   render() {
+    const name = this.state.person && this.state.person.name ? this.state.person.name : null;
+    const position = this.state.person && this.state.person.position ? this.state.person.position : null;
+    const description = this.state.person && this.state.person.description ? this.state.person.description : null;
+    const avatar = this.state.person && this.state.person.avatar && this.state.person.avatar.url ? this.state.person.avatar.url : null;
+
     let karmaStatus;
     let karma;
 
@@ -241,12 +250,17 @@ export class PersonPage extends React.Component {
                   </BackgroundButton>
                 </HeaderBackground>
 
-                <PersonAvatar new>
-                  <Icon icon={ user }/>
+                <PersonAvatar new={ !avatar }>
+                  { !avatar ?
+                    <Icon icon={ user }/>
+                    :
+                    <img src={ avatar } alt={ name }/>
+                  }
+
                 </PersonAvatar>
 
                 <PersonName type={ 'title' }>
-                  { this.state.person && this.state.person.name }
+                  { name }
                 </PersonName>
 
                 <Karma type={ 'title' } status={ karmaStatus }>
@@ -265,7 +279,7 @@ export class PersonPage extends React.Component {
                   </EditAboutButton>
                 </AboutHeader>
 
-                <p> { this.state.person && this.state.person.description }</p>
+                <p> { description }</p>
               </About>
 
               <div>
