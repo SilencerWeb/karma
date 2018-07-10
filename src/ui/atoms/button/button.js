@@ -153,6 +153,11 @@ const WrapperAsButton = styled.button`
         }
       `}
     `}
+    
+    ${p.disabled && css`
+      opacity: 0.4;
+      cursor: not-allowed;
+    `}
   `}
 `;
 
@@ -173,6 +178,7 @@ export const Button = (props) => {
       iconPosition={ props.iconPosition }
       iconRotation={ props.iconRotation }
       { ...props.attributes }
+      disabled={ props.disabled }
       onClick={ props.onClick }
     >
       { props.icon && props.iconPosition === 'left' && icon }
@@ -197,6 +203,7 @@ Button.propTypes = {
   iconRotation: PropTypes.number,
   attributes: PropTypes.object,
   withoutRipple: PropTypes.bool,
+  disabled: PropTypes.bool,
   onClick: PropTypes.func,
   children: PropTypes.any.isRequired,
 };

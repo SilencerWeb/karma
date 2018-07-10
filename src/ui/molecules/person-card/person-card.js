@@ -408,7 +408,12 @@ class PersonCardComponent extends React.PureComponent {
             id: response.data.uploadFile.id,
             url: response.data.uploadFile.url,
           },
+          isAvatarLoading: false,
         });
+      });
+
+      this.setState({
+        isAvatarLoading: true,
       });
     }
   };
@@ -511,6 +516,11 @@ class PersonCardComponent extends React.PureComponent {
   };
 
   render() {
+    const name = this.state.name.content.length > 0 ? this.state.name.content : this.props.name;
+    const position = this.state.position.content.length > 0 ? this.state.position.content : this.props.position;
+    const description = this.state.description.content.length > 0 ? this.state.description.content : this.props.description;
+    const avatar = this.state.avatar && this.state.avatar.url ? this.state.avatar.url : this.props.avatar;
+
     let karmaStatus;
     let karma = this.props.karma;
 
@@ -527,13 +537,13 @@ class PersonCardComponent extends React.PureComponent {
     return (
       <Wrapper className={ this.props.className }>
         {
-          !this.props.create && this.props.avatar ?
+          !this.state.isCreating && !this.state.isEditing && avatar ?
             <Avatar>
-              <img src={ this.props.avatar } alt={ this.props.name }/>
+              <img src={ avatar } alt={ name }/>
             </Avatar>
             :
             <Avatar new>
-              { !this.state.avatar && <Icon icon={ user }/> }
+              { !avatar && <Icon icon={ user }/> }
 
               {
                 (this.state.isCreating || this.state.isEditing) &&
@@ -544,9 +554,9 @@ class PersonCardComponent extends React.PureComponent {
                     }
 
                     return (
-                      this.state.avatar && this.state.avatar.url ?
+                      avatar ?
                         <React.Fragment>
-                          <img src={ this.state.avatar.url } alt={ this.state.name }/>
+                          <img src={ avatar } alt={ name }/>
                           <RemoveAvatar onClick={ this.handleRemoveAvatarClick }>
                             Delete
                           </RemoveAvatar>
@@ -573,7 +583,7 @@ class PersonCardComponent extends React.PureComponent {
             edited={ this.state.name.isEdited || this.state.isEditing }
             invalid={ this.state.name.isInvalid }
           >
-            { this.state.name.content.length > 0 ? this.state.name.content : this.props.name }
+            { name }
           </Name>
           <EditableName
             id={ this.props.id && `${this.props.id}-editable-name` }
@@ -593,7 +603,7 @@ class PersonCardComponent extends React.PureComponent {
             edited={ this.state.position.isEdited || this.state.isEditing }
             invalid={ this.state.position.isInvalid }
           >
-            { this.state.position.content.length > 0 ? this.state.position.content : this.props.position }
+            { position }
           </Position>
           <EditablePosition
             id={ this.props.id && `${this.props.id}-editable-position` }
@@ -613,7 +623,7 @@ class PersonCardComponent extends React.PureComponent {
             edited={ this.state.description.isEdited || this.state.isEditing }
             invalid={ this.state.description.isInvalid }
           >
-            { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
+            { description }
           </Description>
           <EditableDescription
             id={ this.props.id && `${this.props.id}-editable-description` }
@@ -673,7 +683,12 @@ class PersonCardComponent extends React.PureComponent {
 
                 <FooterRightSide>
                   <Button type={ 'flat' } onClick={ this.handleCancelButtonClick }>Cancel</Button>
-                  <Button onClick={ this.handleSaveButtonClick }>Save</Button>
+                  <Button
+                    disabled={ this.state.isAvatarLoading }
+                    onClick={ !this.state.isAvatarLoading ? this.handleSaveButtonClick : null }
+                  >
+                    Save
+                  </Button>
                 </FooterRightSide>
               </React.Fragment>
           }
