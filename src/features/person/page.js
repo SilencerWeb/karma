@@ -15,7 +15,7 @@ import { CommonTemplate } from 'ui/templates';
 
 import { pencil, user, trashCan } from 'ui/outlines';
 
-import { color } from 'ui/theme';
+import { font, color } from 'ui/theme';
 
 import { DELETE_PERSON } from 'graphql/mutations/person';
 
@@ -84,7 +84,14 @@ const PersonName = Heading.extend`
   margin-bottom: 0.8rem;
 `;
 
+const PersonPosition = Heading.extend`
+  display: block;
+  color: #828282;
+  margin-bottom: 0.8rem;
+`.withComponent('span');
+
 const Karma = Heading.extend`
+  display: block;
   
   ${p => css`
   
@@ -263,7 +270,11 @@ export class PersonPage extends React.Component {
                   { name }
                 </PersonName>
 
-                <Karma type={ 'title' } status={ karmaStatus }>
+                <PersonPosition type={ 'title' } tag={ 'h3' }>
+                  { position }
+                </PersonPosition>
+
+                <Karma type={ 'title' } tag={ 'h2' } status={ karmaStatus }>
                   { `${ karma }` }
                 </Karma>
               </Header>
