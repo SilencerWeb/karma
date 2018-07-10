@@ -93,14 +93,7 @@ export class CreateActionCard extends React.Component {
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (action) => {
                         createAction({
-                          variables: {
-                            title: action.title,
-                            date: action.date,
-                            description: action.description,
-                            karma: action.karma,
-                            executors: action.executors,
-                            members: action.members,
-                          },
+                          variables: action,
                           refetchQueries: [{ query: GET_ACTIONS }],
                         });
 

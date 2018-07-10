@@ -357,17 +357,17 @@ class PersonCardComponent extends React.PureComponent {
     isCreating: this.props.create || false,
     isEditing: false,
     name: {
-      content: this.props.name,
+      content: '',
       isEdited: false,
       isInvalid: false,
     },
     position: {
-      content: this.props.position,
+      content: '',
       isEdited: false,
       isInvalid: false,
     },
     description: {
-      content: this.props.description,
+      content: '',
       isEdited: false,
       isInvalid: false,
     },

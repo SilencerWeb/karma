@@ -454,17 +454,17 @@ export class ActionCardComponent extends React.Component {
     isCreating: this.props.create || false,
     isEditing: false,
     title: {
-      content: this.props.title,
+      content: '',
       isEdited: false,
       isInvalid: false,
     },
     date: {
-      content: this.props.date,
+      content: '',
       isEdited: false,
       isInvalid: false,
     },
     description: {
-      content: this.props.description,
+      content: '',
       isEdited: false,
       isInvalid: false,
     },
@@ -702,6 +702,10 @@ export class ActionCardComponent extends React.Component {
   };
 
   render() {
+    const title = this.state.title.content.length > 0 ? this.state.title.content : this.props.title;
+    const date = this.state.date.content.length > 0 ? this.state.date.content : this.props.date;
+    const description = this.state.description.content.length > 0 ? this.state.description.content : this.props.description;
+
     const leftSelectOptions = this.state.persons.filter((person) => {
       return !person.isSelected && person.side !== 'right';
     }).map((person) => {
@@ -748,7 +752,7 @@ export class ActionCardComponent extends React.Component {
                     edited={ this.state.title.isEdited || this.state.isEditing }
                     invalid={ this.state.title.isInvalid }
                   >
-                    { this.state.title.content.length > 0 ? this.state.title.content : this.props.title }
+                    { title }
                   </Title>
 
                   <EditableTitle
@@ -768,7 +772,7 @@ export class ActionCardComponent extends React.Component {
                     edited={ this.state.date.isEdited || this.state.isEditing }
                     invalid={ this.state.date.isInvalid }
                   >
-                    { this.state.date.content.length > 0 ? this.state.date.content : this.props.date }
+                    { date }
                   </Date>
 
                   <EditableDate
@@ -831,7 +835,7 @@ export class ActionCardComponent extends React.Component {
                 edited={ this.state.description.isEdited || this.state.isEditing }
                 invalid={ this.state.description.isInvalid }
               >
-                { this.state.description.content.length > 0 ? this.state.description.content : this.props.description }
+                { description }
               </Description>
 
               <EditableDescription
@@ -852,13 +856,21 @@ export class ActionCardComponent extends React.Component {
                     <Members>
                       {
                         leftSideMembers && leftSideMembers.length > 0 && leftSideMembers.map((member, i) => {
+                          const person = context.persons.find((person) => {
+                            return person.id === member.personId;
+                          });
+
                           const nameFirstLetters = member.name.split(' ').map((word) => {
                             return word[0];
                           }).join('');
 
                           return (
                             <Avatar key={ i }>
-                              { nameFirstLetters }
+                              {
+                                person.avatar && person.avatar.url ?
+                                  <img src={ person.avatar.url } alt={ member.name }/>
+                                  :
+                                  nameFirstLetters }
                             </Avatar>
                           );
                         })
