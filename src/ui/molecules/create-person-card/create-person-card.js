@@ -84,11 +84,7 @@ export class CreatePersonCard extends React.Component {
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (person) => {
                         createPerson({
-                          variables: {
-                            name: person.name,
-                            position: person.position,
-                            description: person.description,
-                          },
+                          variables: person,
                           refetchQueries: [{ query: GET_PERSONS }],
                         });
 

@@ -1,20 +1,86 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { lighten } from 'polished';
+import { lighten, rgba } from 'polished';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Mutation, graphql } from 'react-apollo';
 
 import { Button, RetinaImage, Heading, Icon } from 'ui/atoms';
 
-import { shortLeftArrow, user, trashCan } from 'ui/outlines';
+import { shortLeftArrow, user, trashCan, upload } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
 import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
+import { UPLOAD_FILE } from 'graphql/mutations/file';
 
+
+const UploadAvatar = styled.label`
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: ${color.primary};
+  border-radius: 50%;
+  opacity: 0;
+  visibility: hidden;
+  transition: ${transition};
+  cursor: pointer;
+  
+  input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0;
+    opacity: 0;
+  }
+`;
+
+const LoadingAvatar = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-family: ${font.family.secondary};
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  color: ${color.text.secondary};
+  background-color: ${color.primary};
+  border-radius: 50%;
+  transition: ${transition};
+`;
+
+const RemoveAvatar = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-family: ${font.family.secondary};
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  color: ${color.text.secondary};
+  background-color: ${rgba(color.primary, 0.8)};
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: ${transition};
+`;
 
 const Avatar = styled.div`
+  position: relative;
   width: 15rem;
   height: 15rem;
   border-radius: 50%;
@@ -31,6 +97,19 @@ const Avatar = styled.div`
       justify-content: center;
       align-items: center;
       background-color: ${color.primary};
+
+      &:hover {
+      
+        ${UploadAvatar} {
+          opacity: 1;
+          visibility: visible;
+        }
+      
+        ${RemoveAvatar} {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
 
       svg {
         font-size: 4.6rem;
@@ -315,6 +394,31 @@ class PersonCardComponent extends React.PureComponent {
     }
   };
 
+  handleFileInputChange = (e, uploadFile) => {
+    const file = e.currentTarget.files[0];
+
+    if (file) {
+      uploadFile({
+        variables: {
+          file: file,
+        },
+      }).then((response) => {
+        this.setState({
+          avatar: {
+            id: response.data.uploadFile.id,
+            url: response.data.uploadFile.url,
+          },
+        });
+      });
+    }
+  };
+
+  handleRemoveAvatarClick = () => {
+    this.setState({
+      avatar: null,
+    });
+  };
+
   handleDeleteButtonClick = (deletePerson) => {
     deletePerson({
       variables: {
@@ -362,6 +466,10 @@ class PersonCardComponent extends React.PureComponent {
           position: state.position.content,
           description: state.description.content,
         };
+
+        if (state.avatar) {
+          person.avatar = state.avatar.id;
+        }
 
         if (state.isEditing) {
           person.id = this.props.id;
@@ -421,17 +529,39 @@ class PersonCardComponent extends React.PureComponent {
         {
           !this.props.create && this.props.avatar ?
             <Avatar>
-              <RetinaImage
-                src={ {
-                  _1x: this.props.avatar._1x,
-                  _2x: this.props.avatar._2x,
-                } }
-                alt={ this.props.name }
-              />
+              <img src={ this.props.avatar } alt={ this.props.name }/>
             </Avatar>
             :
             <Avatar new>
-              <Icon icon={ user }/>
+              { !this.state.avatar && <Icon icon={ user }/> }
+
+              {
+                (this.state.isCreating || this.state.isEditing) &&
+                <Mutation mutation={ UPLOAD_FILE }>
+                  { (uploadFile, { loading }) => {
+                    if (loading) {
+                      return <LoadingAvatar>Loading...</LoadingAvatar>;
+                    }
+
+                    return (
+                      this.state.avatar && this.state.avatar.url ?
+                        <React.Fragment>
+                          <img src={ this.state.avatar.url } alt={ this.state.name }/>
+                          <RemoveAvatar onClick={ this.handleRemoveAvatarClick }>
+                            Delete
+                          </RemoveAvatar>
+                        </React.Fragment>
+                        :
+                        <UploadAvatar>
+                          <Icon icon={ upload }/>
+
+                          <input type={ 'file' } onChange={ (e) => this.handleFileInputChange(e, uploadFile) }/>
+                        </UploadAvatar>
+
+                    );
+                  } }
+                </Mutation>
+              }
             </Avatar>
         }
 
@@ -556,11 +686,8 @@ class PersonCardComponent extends React.PureComponent {
 
 PersonCardComponent.propTypes = {
   className: PropTypes.string,
-  avatar: PropTypes.shape({
-    _1x: PropTypes.string.isRequired,
-    _2x: PropTypes.string.isRequired,
-  }),
   id: PropTypes.string,
+  avatar: PropTypes.string,
   name: PropTypes.string.isRequired,
   position: PropTypes.string.isRequired,
   karma: PropTypes.number.isRequired,

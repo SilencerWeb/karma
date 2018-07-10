@@ -6,6 +6,9 @@ export const CREATE_PERSON_SUBSCRIPTION = gql`
       mutation
       node {
         id
+        avatar {
+          url
+        }
         name
         position
         description
@@ -23,6 +26,9 @@ export const UPDATE_PERSON_SUBSCRIPTION = gql`
     personUpdated {
       node {
         id
+        avatar {
+          url
+        }
         name
         position
         description

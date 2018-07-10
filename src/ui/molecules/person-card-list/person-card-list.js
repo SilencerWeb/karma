@@ -29,7 +29,7 @@ export const PersonCardList = (props) => {
               <PersonCardWrapper key={ person.id }>
                 <PersonCard
                   id={ person.id }
-                  avatar={ person.avatar }
+                  avatar={ person.avatar ? person.avatar.url : null }
                   name={ person.name }
                   position={ person.position }
                   karma={ person.karma }
