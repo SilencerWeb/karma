@@ -35,7 +35,7 @@ const BackgroundButton = styled(Button)`
   top: 0.8rem;
 
   svg {
-    font-size: 2.4rem;
+    font-size: 3.2rem;
   }
   
   ${p => css`
@@ -48,6 +48,17 @@ const BackgroundButton = styled(Button)`
       left: 1.6rem;
     `}
   `}
+`;
+
+const EditPersonInfoButton = styled(Button)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+
+  svg {
+    font-size: 3.2rem;
+  }
 `;
 
 const PersonAvatar = styled.div`
@@ -109,8 +120,15 @@ const Karma = Heading.extend`
   `}
 `.withComponent('span');
 
+const PersonInfo = styled.div`
+  position: relative;
+  width: 40rem;
+`;
+
 const Header = styled.div`
   position: relative;
+  display: flex;
+  justify-content: center;
   text-align: center;
   padding-top: 7rem;
   margin-bottom: 6rem;
@@ -257,26 +275,32 @@ export class PersonPage extends React.Component {
                   </BackgroundButton>
                 </HeaderBackground>
 
-                <PersonAvatar new={ !avatar }>
-                  { !avatar ?
-                    <Icon icon={ user }/>
-                    :
-                    <img src={ avatar } alt={ name }/>
-                  }
+                <PersonInfo>
+                  <EditPersonInfoButton type={ 'icon' } theme={ 'white' }>
+                    <Icon icon={ pencil }/>
+                  </EditPersonInfoButton>
 
-                </PersonAvatar>
+                  <PersonAvatar new={ !avatar }>
+                    { !avatar ?
+                      <Icon icon={ user }/>
+                      :
+                      <img src={ avatar } alt={ name }/>
+                    }
 
-                <PersonName type={ 'title' }>
-                  { name }
-                </PersonName>
+                  </PersonAvatar>
 
-                <PersonPosition type={ 'title' } tag={ 'h3' }>
-                  { position }
-                </PersonPosition>
+                  <PersonName type={ 'title' }>
+                    { name }
+                  </PersonName>
 
-                <Karma type={ 'title' } tag={ 'h2' } status={ karmaStatus }>
-                  { `${ karma }` }
-                </Karma>
+                  <PersonPosition type={ 'title' } tag={ 'h3' }>
+                    { position }
+                  </PersonPosition>
+
+                  <Karma type={ 'title' } tag={ 'h2' } status={ karmaStatus }>
+                    { `${ karma }` }
+                  </Karma>
+                </PersonInfo>
               </Header>
 
               <About>

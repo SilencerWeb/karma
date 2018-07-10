@@ -870,7 +870,8 @@ export class ActionCardComponent extends React.Component {
                                 person.avatar && person.avatar.url ?
                                   <img src={ person.avatar.url } alt={ member.name }/>
                                   :
-                                  nameFirstLetters }
+                                  nameFirstLetters
+                              }
                             </Avatar>
                           );
                         })
@@ -924,13 +925,22 @@ export class ActionCardComponent extends React.Component {
                     <Members>
                       {
                         rightSideMembers && rightSideMembers.length > 0 && rightSideMembers.map((member, i) => {
+                          const person = context.persons.find((person) => {
+                            return person.id === member.personId;
+                          });
+
                           const nameFirstLetters = member.name.split(' ').map((word) => {
                             return word[0];
                           }).join('');
 
                           return (
                             <Avatar key={ i }>
-                              { nameFirstLetters }
+                              {
+                                person.avatar && person.avatar.url ?
+                                  <img src={ person.avatar.url } alt={ member.name }/>
+                                  :
+                                  nameFirstLetters
+                              }
                             </Avatar>
                           );
                         })
