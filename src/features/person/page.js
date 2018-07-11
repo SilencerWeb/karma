@@ -467,8 +467,8 @@ export class PersonPage extends React.Component {
             content: target.textContent,
             isEdited: target.textContent.length > 0,
           },
-          invalidFields: invalidFields,
         },
+        invalidFields: invalidFields,
       };
     });
   };
@@ -508,8 +508,8 @@ export class PersonPage extends React.Component {
             content: person.position,
             isEdited: false,
           },
-          invalidFields: [],
         },
+        invalidFields: [],
         isPersonInfoEditing: true,
       };
     });
@@ -534,8 +534,8 @@ export class PersonPage extends React.Component {
             content: person.position,
             isEdited: false,
           },
-          invalidFields: [],
         },
+        invalidFields: [],
         isPersonInfoEditing: false,
       };
     });
@@ -747,7 +747,6 @@ export class PersonPage extends React.Component {
                       type={ 'title' }
                       creating={ this.state.isPersonInfoEditing }
                       edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.name.isEdited }
-                      invalid={ this.state.isPersonInfoEditing && this.state.updatedPerson.name.isInvalid }
                     >
                       { name }
                     </Name>
@@ -766,7 +765,6 @@ export class PersonPage extends React.Component {
                     <Position
                       creating={ this.state.isPersonInfoEditing }
                       edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.position.isEdited }
-                      invalid={ this.state.isPersonInfoEditing && this.state.updatedPerson.position.isInvalid }
                     >
                       { position }
                     </Position>
@@ -806,7 +804,7 @@ export class PersonPage extends React.Component {
                         <Mutation mutation={ UPDATE_PERSON }>
                           { (updatePerson) => (
                             <SavePersonInfoButton
-                              disabled={ this.state.isAvatarLoading || !!this.state.updatedPerson.invalidFields.length }
+                              disabled={ this.state.isAvatarLoading || !!this.state.invalidFields.length }
                               onClick={ () => this.handleSavePersonInfoButtonClick(updatePerson) }
                             >
                               Save

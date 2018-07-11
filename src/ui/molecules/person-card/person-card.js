@@ -134,11 +134,6 @@ const Name = Heading.extend`
     ${p.creating && p.edited && css`
       display: none;
     `}
-    
-    ${p.invalid && css`
-      color: ${color.error};
-      opacity: 1;
-    `}
   `}
 `.withComponent('h2');
 
@@ -185,11 +180,6 @@ const Position = styled.span`
     
     ${p.creating && p.edited && css`
       display: none;
-    `}
-    
-    ${p.invalid && css`
-      color: ${color.error};
-      opacity: 1;
     `}
   `}
 `;
@@ -255,11 +245,6 @@ const Description = styled.p`
     
     ${p.creating && p.edited && css`
       display: none;
-    `}
-    
-    ${p.invalid && css`
-      color: ${color.error};
-      opacity: 1;
     `}
   `}
 `;
@@ -356,31 +341,64 @@ class PersonCardComponent extends React.PureComponent {
   state = {
     isCreating: this.props.create || false,
     isEditing: false,
-    name: {
-      content: '',
-      isEdited: false,
-      isInvalid: false,
+    person: {
+      name: {
+        content: '',
+        isEdited: false,
+      },
+      position: {
+        content: '',
+        isEdited: false,
+      },
+      description: {
+        content: '',
+        isEdited: false,
+      },
     },
-    position: {
-      content: '',
-      isEdited: false,
-      isInvalid: false,
+    updatedPerson: {
+      name: {
+        content: '',
+        isEdited: false,
+      },
+      position: {
+        content: '',
+        isEdited: false,
+      },
+      description: {
+        content: '',
+        isEdited: false,
+      },
     },
-    description: {
-      content: '',
-      isEdited: false,
-      isInvalid: false,
-    },
+    invalidFields: this.props.create ? ['name', 'position'] : [],
   };
 
   handleInput = (e, element) => {
     const target = e.currentTarget;
 
-    this.setState({
-      [element]: {
-        content: target.textContent,
-        isEdited: target.textContent.length > 0,
-      },
+    this.setState((prevState) => {
+      const fields = ['name', 'position'];
+
+      const invalidFields = [];
+
+      fields.forEach((field) => {
+        const content = field === element ? target.textContent : prevState.updatedPerson[field].content;
+
+        if (content.length === 0) {
+          invalidFields.push(field);
+        }
+      });
+
+      return {
+        ...prevState,
+        updatedPerson: {
+          ...prevState.updatedPerson,
+          [element]: {
+            content: target.textContent,
+            isEdited: target.textContent.length > 0,
+          },
+        },
+        invalidFields: invalidFields,
+      };
     });
   };
 
@@ -403,12 +421,19 @@ class PersonCardComponent extends React.PureComponent {
           file: file,
         },
       }).then((response) => {
-        this.setState({
-          avatar: {
-            id: response.data.uploadFile.id,
-            url: response.data.uploadFile.url,
-          },
-          isAvatarLoading: false,
+        this.setState((prevState) => {
+
+          return {
+            ...prevState,
+            updatedPerson: {
+              ...prevState.updatedPerson,
+              avatar: {
+                id: response.data.uploadFile.id,
+                url: response.data.uploadFile.url,
+              },
+            },
+            isAvatarLoading: false,
+          };
         });
       });
 
@@ -419,8 +444,14 @@ class PersonCardComponent extends React.PureComponent {
   };
 
   handleRemoveAvatarClick = () => {
-    this.setState({
-      avatar: null,
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        updatedPerson: {
+          ...prevState.updatedPerson,
+          avatar: null,
+        },
+      };
     });
   };
 
@@ -433,15 +464,39 @@ class PersonCardComponent extends React.PureComponent {
   };
 
   handleEditButtonClick = () => {
-    this.setState({ isEditing: true });
-
     const editableName = document.querySelector(`#${this.props.id}-editable-name`);
     const editablePosition = document.querySelector(`#${this.props.id}-editable-position`);
     const editableDescription = document.querySelector(`#${this.props.id}-editable-description`);
 
-    editableName.innerHTML = this.state.name.content;
-    editablePosition.innerHTML = this.state.position.content;
-    editableDescription.innerHTML = this.state.description.content;
+    this.setState((prevState) => {
+      editableName.innerHTML = prevState.person.name.content;
+      editablePosition.innerHTML = prevState.person.position.content;
+      editableDescription.innerHTML = prevState.person.description.content;
+
+      return {
+        ...prevState,
+        updatedPerson: {
+          id: this.props.id,
+          avatar: {
+            url: this.props.avatar,
+          },
+          name: {
+            content: this.props.name,
+            isEdited: false,
+          },
+          position: {
+            content: this.props.position,
+            isEdited: false,
+          },
+          description: {
+            content: this.props.description,
+            isEdited: false,
+          },
+        },
+        invalidFields: [],
+        isEditing: true,
+      };
+    });
   };
 
   handleCancelButtonClick = () => {
@@ -455,25 +510,15 @@ class PersonCardComponent extends React.PureComponent {
     this.setState((prevState) => {
       const state = { ...prevState };
 
-      const fields = ['name', 'position', 'description'];
-
-      const invalidFields = [];
-
-      fields.forEach((field) => {
-        if (state[field].content.length === 0) {
-          invalidFields.push(field);
-        }
-      });
-
-      if (invalidFields.length === 0) {
+      if (prevState.invalidFields.length === 0) {
         const person = {
-          name: state.name.content,
-          position: state.position.content,
-          description: state.description.content,
+          name: state.updatedPerson.name.content,
+          position: state.updatedPerson.position.content,
+          description: state.updatedPerson.description.content,
         };
 
-        if (state.avatar) {
-          person.avatar = state.avatar.id;
+        if (state.updatedPerson.avatar && state.updatedPerson.avatar.id) {
+          person.avatar = state.updatedPerson.avatar.id;
         }
 
         if (state.isEditing) {
@@ -489,10 +534,6 @@ class PersonCardComponent extends React.PureComponent {
 
           state.isCreating = false;
         }
-      } else {
-        invalidFields.forEach((invalidField) => {
-          state[invalidField].isInvalid = true;
-        });
       }
 
       return state;
@@ -501,30 +542,29 @@ class PersonCardComponent extends React.PureComponent {
 
   static getDerivedStateFromProps = (props, state) => {
     if (!state.isCreating && !state.isEditing) {
-      if (props.name) {
-        state.name.content = props.name;
-      }
-      if (props.position) {
-        state.position.content = props.position;
-      }
-      if (props.description) {
-        state.description.content = props.description;
-      }
+      state.person.name.content = props.name;
+      state.person.position.content = props.position;
+      state.person.description.content = props.description;
     }
 
     return state;
   };
 
   render() {
-    let name = this.state.name.content.length > 0 ? this.state.name.content : this.props.name;
-    let position = this.state.position.content.length > 0 ? this.state.position.content : this.props.position;
-    let description = this.state.description.content.length > 0 ? this.state.description.content : this.props.description;
-    let avatar = this.state.avatar && this.state.avatar.url ? this.state.avatar.url : this.props.avatar;
+    let name = this.state.person && this.state.person.name ? this.state.person.name.content : this.props.name;
+    let position = this.state.person && this.state.person.position ? this.state.person.position.content : this.props.position;
+    let description = this.state.person && this.state.person.description ? this.state.person.description.content : this.props.description;
+    let avatar = this.state.person && this.state.person.avatar && this.state.person.avatar.url ? this.state.person.avatar.url : this.props.avatar;
 
     if (this.state.isCreating || this.state.isEditing) {
-      name = this.state.name.content.length > 0 ? this.state.name.content : 'John Doe';
-      position = this.state.position.content.length > 0 ? this.state.position.content : 'Buddy';
-      description = this.state.description.content.length > 0 ? this.state.description.content : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
+      name = this.state.updatedPerson.name.content.length > 0 ? this.state.updatedPerson.name.content : 'John Doe';
+      position = this.state.updatedPerson.position.content.length > 0 ? this.state.updatedPerson.position.content : 'Buddy';
+      description = this.state.updatedPerson.description.content.length > 0 ? this.state.updatedPerson.description.content : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
+      avatar = this.state.updatedPerson.avatar && this.state.updatedPerson.avatar.url ? this.state.updatedPerson.avatar.url : null;
+    }
+
+    if (!description) {
+      description = 'No description';
     }
 
     let karmaStatus;
@@ -586,8 +626,7 @@ class PersonCardComponent extends React.PureComponent {
             tag={ 'h2' }
             type={ 'title' }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.name.isEdited }
-            invalid={ this.state.name.isInvalid }
+            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.name.isEdited }
           >
             { name }
           </Name>
@@ -596,7 +635,7 @@ class PersonCardComponent extends React.PureComponent {
             tag={ 'h2' }
             type={ 'title' }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.name.isEdited }
+            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.name.isEdited }
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'name') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
@@ -606,15 +645,14 @@ class PersonCardComponent extends React.PureComponent {
         <ContentEditableWrapper>
           <Position
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.position.isEdited }
-            invalid={ this.state.position.isInvalid }
+            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.position.isEdited }
           >
             { position }
           </Position>
           <EditablePosition
             id={ this.props.id && `${this.props.id}-editable-position` }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.position.isEdited }
+            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.position.isEdited }
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'position') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
@@ -626,15 +664,14 @@ class PersonCardComponent extends React.PureComponent {
         <ContentEditableWrapper fullHeight>
           <Description
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.description.isEdited }
-            invalid={ this.state.description.isInvalid }
+            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.description.isEdited }
           >
             { description }
           </Description>
           <EditableDescription
             id={ this.props.id && `${this.props.id}-editable-description` }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.description.isEdited }
+            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.description.isEdited }
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'description') }
             onKeyPress={ (e) => this.handleKeyPress(e, true) }
@@ -688,9 +725,16 @@ class PersonCardComponent extends React.PureComponent {
                 </FooterLeftSide>
 
                 <FooterRightSide>
-                  <Button type={ 'flat' } onClick={ this.handleCancelButtonClick }>Cancel</Button>
                   <Button
+                    type={ 'flat' }
                     disabled={ this.state.isAvatarLoading }
+                    onClick={ this.handleCancelButtonClick }
+                  >
+                    Cancel
+                  </Button>
+
+                  <Button
+                    disabled={ this.state.isAvatarLoading || !!this.state.invalidFields.length }
                     onClick={ this.handleSaveButtonClick }
                   >
                     Save
@@ -712,7 +756,7 @@ PersonCardComponent.propTypes = {
   name: PropTypes.string,
   position: PropTypes.string,
   karma: PropTypes.number,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.string,
   create: PropTypes.bool,
   authorNickname: PropTypes.string,
   onCancelButtonClick: PropTypes.func,
