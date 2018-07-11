@@ -483,6 +483,14 @@ export class PersonPage extends React.Component {
     }
   };
 
+  handlePaste = (e) => {
+    e.preventDefault();
+
+    const text = e.clipboardData.getData('text/plain');
+
+    document.execCommand('insertHTML', false, text);
+  };
+
   handleEditPersonInfoButtonClick = () => {
     const editableName = document.querySelector('#editable-name');
     const editablePosition = document.querySelector('#editable-position');
@@ -762,6 +770,7 @@ export class PersonPage extends React.Component {
                       contentEditable={ this.state.isPersonInfoEditing }
                       onInput={ (e) => this.handleInput(e, 'name') }
                       onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                      onPaste={ (e) => this.handlePaste(e) }
                     />
                   </ContentEditableWrapper>
 
@@ -779,6 +788,7 @@ export class PersonPage extends React.Component {
                       contentEditable={ this.state.isPersonInfoEditing }
                       onInput={ (e) => this.handleInput(e, 'position') }
                       onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                      onPaste={ (e) => this.handlePaste(e) }
                     />
                   </ContentEditableWrapper>
 

@@ -412,6 +412,14 @@ class PersonCardComponent extends React.PureComponent {
     }
   };
 
+  handlePaste = (e) => {
+    e.preventDefault();
+
+    const text = e.clipboardData.getData('text/plain');
+    
+    document.execCommand('insertHTML', false, text);
+  };
+
   handleFileInputChange = (e, uploadFile) => {
     const file = e.currentTarget.files[0];
 
@@ -639,6 +647,7 @@ class PersonCardComponent extends React.PureComponent {
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'name') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
+            onPaste={ (e) => this.handlePaste(e) }
           />
         </ContentEditableWrapper>
 
@@ -656,6 +665,7 @@ class PersonCardComponent extends React.PureComponent {
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'position') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
+            onPaste={ (e) => this.handlePaste(e) }
           />
         </ContentEditableWrapper>
 
@@ -675,6 +685,7 @@ class PersonCardComponent extends React.PureComponent {
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'description') }
             onKeyPress={ (e) => this.handleKeyPress(e, true) }
+            onPaste={ (e) => this.handlePaste(e) }
           />
         </ContentEditableWrapper>
 

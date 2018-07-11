@@ -525,6 +525,14 @@ export class ActionCardComponent extends React.Component {
     }
   };
 
+  handlePaste = (e) => {
+    e.preventDefault();
+
+    const text = e.clipboardData.getData('text/plain');
+
+    document.execCommand('insertHTML', false, text);
+  };
+
   handleSelectChange = (e, side) => {
     const value = e.currentTarget.value;
 
@@ -763,6 +771,7 @@ export class ActionCardComponent extends React.Component {
                     contentEditable={ this.state.isCreating || this.state.isEditing }
                     onInput={ (e) => this.handleInput(e, 'title') }
                     onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                    onPaste={ (e) => this.handlePaste(e) }
                   />
                 </ContentEditableWrapper>
 
@@ -782,6 +791,7 @@ export class ActionCardComponent extends React.Component {
                     contentEditable={ this.state.isCreating || this.state.isEditing }
                     onInput={ (e) => this.handleInput(e, 'date') }
                     onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                    onPaste={ (e) => this.handlePaste(e) }
                   />
                 </ContentEditableWrapper>
               </HeaderLeftSide>
@@ -845,6 +855,7 @@ export class ActionCardComponent extends React.Component {
                 contentEditable={ this.state.isCreating || this.state.isEditing }
                 onInput={ (e) => this.handleInput(e, 'description') }
                 onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                onPaste={ (e) => this.handlePaste(e) }
               />
             </ContentEditableWrapper>
 
