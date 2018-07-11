@@ -646,6 +646,10 @@ export class PersonPage extends React.Component {
       avatar = this.state.updatedPerson.avatar && this.state.updatedPerson.avatar.url ? this.state.updatedPerson.avatar.url : null;
     }
 
+    if (!description) {
+      description = 'No description';
+    }
+
     let karmaStatus;
     let karma;
 
