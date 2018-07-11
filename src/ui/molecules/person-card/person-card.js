@@ -288,10 +288,16 @@ const ContentEditableWrapper = styled.div`
 
 const DeletePersonButton = styled(Button)`
   background-color: ${color.error};
-  
-  &:hover {
-    background-color: ${lighten(0.15, color.error)};
-  }
+    
+  ${p => css`
+
+    ${!p.disabled && css`
+
+      &:hover {
+        background-color: ${lighten(0.15, color.error)};
+      }
+    `}
+  `}
 `;
 
 const FooterLeftSide = styled.div`
