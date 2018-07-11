@@ -477,9 +477,9 @@ export class PersonPage extends React.Component {
     if (e.which === 13) {
       e.preventDefault();
 
-      if (canBeLineBroken) {
-        document.execCommand('insertHTML', false, '<br><br>');
-      }
+      // if (canBeLineBroken) {
+      //   document.execCommand('insertHTML', false, '<br><br>');
+      // }
     }
   };
 

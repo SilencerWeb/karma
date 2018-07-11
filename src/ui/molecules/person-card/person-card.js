@@ -406,9 +406,9 @@ class PersonCardComponent extends React.PureComponent {
     if (e.which === 13) {
       e.preventDefault();
 
-      if (canBeLineBroken) {
-        document.execCommand('insertHTML', false, '<br><br>');
-      }
+      // if (canBeLineBroken) {
+      //   document.execCommand('insertHTML', false, '<br><br>');
+      // }
     }
   };
 
@@ -416,7 +416,7 @@ class PersonCardComponent extends React.PureComponent {
     e.preventDefault();
 
     const text = e.clipboardData.getData('text/plain');
-    
+
     document.execCommand('insertHTML', false, text);
   };
 
@@ -527,6 +527,8 @@ class PersonCardComponent extends React.PureComponent {
 
         if (state.updatedPerson.avatar && state.updatedPerson.avatar.id) {
           person.avatar = state.updatedPerson.avatar.id;
+        } else {
+          person.deleteAvatar = true;
         }
 
         if (state.isEditing) {
