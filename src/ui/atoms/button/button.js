@@ -39,24 +39,33 @@ const WrapperAsButton = styled.button`
       color: ${color.text.secondary};
       box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
       
-      &:hover {
-        box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.44);
-      }
+      ${!p.disabled && css`
+
+        &:hover {
+          box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.44);
+        }
+      `}
       
       ${p.theme === 'primary' && css`
         background-color: ${color.primary};
         
-        &:hover {
-          background-color: ${lighten(0.15, color.primary)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${lighten(0.15, color.primary)}
+          }
+        `}
       `}
       
       ${p.theme === 'secondary' && css`
         background-color: ${color.secondary};
         
-        &:hover {
-          background-color: ${lighten(0.15, color.secondary)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${lighten(0.15, color.secondary)}
+          }
+        `}
       `}
     `}
   
@@ -66,17 +75,23 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'primary' && css`
         color: ${color.primary};
         
-        &:hover {
-          background-color: ${rgba(color.primary, 0.1)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${rgba(color.primary, 0.1)}
+          }
+        `}
       `}
       
       ${p.theme === 'secondary' && css`
         color: ${color.secondary};
         
-        &:hover {
-          background-color: ${rgba(color.secondary, 0.1)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${rgba(color.secondary, 0.1)}
+          }
+        `}
       `}
     `}
     
@@ -91,33 +106,45 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'primary' && css`
         color: ${color.primary};
         
-        &:hover {
-          background-color: ${rgba(color.primary, 0.1)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${rgba(color.primary, 0.1)}
+          }
+        `}
       `}
       
       ${p.theme === 'secondary' && css`
         color: ${color.secondary};
         
-        &:hover {
-          background-color: ${rgba(color.secondary, 0.1)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${rgba(color.secondary, 0.1)}
+          }
+        `}
       `}
       
       ${p.theme === 'gray' && css`
         color: #3c4858;
         
-        &:hover {
-          background-color: ${rgba('#3c4858', 0.1)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${rgba('#3c4858', 0.1)}
+          }
+        `}
       `}
       
       ${p.theme === 'white' && css`
         color: #ffffff;
         
-        &:hover {
-          background-color: ${rgba('#ffffff', 0.1)}
-        }
+        ${!p.disabled && css`
+
+          &:hover {
+            background-color: ${rgba('#ffffff', 0.1)}
+          }
+        `}
       `}
     `}
     
