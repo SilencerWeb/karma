@@ -12,7 +12,7 @@ import { shortLeftArrow, user, trashCan, upload } from 'ui/outlines';
 import { font, color, transition } from 'ui/theme';
 
 import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
-import { UPLOAD_FILE } from 'graphql/mutations/file';
+import { UPLOAD_FILE, DELETE_FILE } from 'graphql/mutations/file';
 
 
 const UploadAvatar = styled.label`
@@ -726,6 +726,7 @@ class PersonCardComponent extends React.PureComponent {
                         <DeletePersonButton
                           icon={ trashCan }
                           iconPosition={ 'left' }
+                          disabled={ this.state.isAvatarLoading }
                           onClick={ () => this.handleDeleteButtonClick(deletePerson) }
                         >
                           Delete
