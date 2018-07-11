@@ -516,10 +516,16 @@ class PersonCardComponent extends React.PureComponent {
   };
 
   render() {
-    const name = this.state.name.content.length > 0 ? this.state.name.content : this.props.name;
-    const position = this.state.position.content.length > 0 ? this.state.position.content : this.props.position;
-    const description = this.state.description.content.length > 0 ? this.state.description.content : this.props.description;
-    const avatar = this.state.avatar && this.state.avatar.url ? this.state.avatar.url : this.props.avatar;
+    let name = this.state.name.content.length > 0 ? this.state.name.content : this.props.name;
+    let position = this.state.position.content.length > 0 ? this.state.position.content : this.props.position;
+    let description = this.state.description.content.length > 0 ? this.state.description.content : this.props.description;
+    let avatar = this.state.avatar && this.state.avatar.url ? this.state.avatar.url : this.props.avatar;
+
+    if (this.state.isCreating || this.state.isEditing) {
+      name = this.state.name.content.length > 0 ? this.state.name.content : 'John Doe';
+      position = this.state.position.content.length > 0 ? this.state.position.content : 'Buddy';
+      description = this.state.description.content.length > 0 ? this.state.description.content : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
+    }
 
     let karmaStatus;
     let karma = this.props.karma;
@@ -580,7 +586,7 @@ class PersonCardComponent extends React.PureComponent {
             tag={ 'h2' }
             type={ 'title' }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.name.isEdited || this.state.isEditing }
+            edited={ this.state.name.isEdited }
             invalid={ this.state.name.isInvalid }
           >
             { name }
@@ -590,7 +596,7 @@ class PersonCardComponent extends React.PureComponent {
             tag={ 'h2' }
             type={ 'title' }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.name.isEdited || this.state.isEditing }
+            edited={ this.state.name.isEdited }
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'name') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
@@ -600,7 +606,7 @@ class PersonCardComponent extends React.PureComponent {
         <ContentEditableWrapper>
           <Position
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.position.isEdited || this.state.isEditing }
+            edited={ this.state.position.isEdited }
             invalid={ this.state.position.isInvalid }
           >
             { position }
@@ -608,7 +614,7 @@ class PersonCardComponent extends React.PureComponent {
           <EditablePosition
             id={ this.props.id && `${this.props.id}-editable-position` }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.position.isEdited || this.state.isEditing }
+            edited={ this.state.position.isEdited }
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'position') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
@@ -620,7 +626,7 @@ class PersonCardComponent extends React.PureComponent {
         <ContentEditableWrapper fullHeight>
           <Description
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.description.isEdited || this.state.isEditing }
+            edited={ this.state.description.isEdited }
             invalid={ this.state.description.isInvalid }
           >
             { description }
@@ -628,7 +634,7 @@ class PersonCardComponent extends React.PureComponent {
           <EditableDescription
             id={ this.props.id && `${this.props.id}-editable-description` }
             creating={ this.state.isCreating || this.state.isEditing }
-            edited={ this.state.description.isEdited || this.state.isEditing }
+            edited={ this.state.description.isEdited }
             contentEditable={ this.state.isCreating || this.state.isEditing }
             onInput={ (e) => this.handleInput(e, 'description') }
             onKeyPress={ (e) => this.handleKeyPress(e, true) }
@@ -685,7 +691,7 @@ class PersonCardComponent extends React.PureComponent {
                   <Button type={ 'flat' } onClick={ this.handleCancelButtonClick }>Cancel</Button>
                   <Button
                     disabled={ this.state.isAvatarLoading }
-                    onClick={ !this.state.isAvatarLoading ? this.handleSaveButtonClick : null }
+                    onClick={ this.handleSaveButtonClick }
                   >
                     Save
                   </Button>
@@ -703,9 +709,9 @@ PersonCardComponent.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
   avatar: PropTypes.string,
-  name: PropTypes.string.isRequired,
-  position: PropTypes.string.isRequired,
-  karma: PropTypes.number.isRequired,
+  name: PropTypes.string,
+  position: PropTypes.string,
+  karma: PropTypes.number,
   description: PropTypes.string.isRequired,
   create: PropTypes.bool,
   authorNickname: PropTypes.string,

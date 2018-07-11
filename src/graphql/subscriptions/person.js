@@ -27,6 +27,7 @@ export const UPDATE_PERSON_SUBSCRIPTION = gql`
       node {
         id
         avatar {
+          id
           url
         }
         name

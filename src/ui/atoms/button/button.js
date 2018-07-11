@@ -179,7 +179,7 @@ export const Button = (props) => {
       iconRotation={ props.iconRotation }
       { ...props.attributes }
       disabled={ props.disabled }
-      onClick={ props.onClick }
+      onClick={ !props.disabled ? props.onClick : null }
     >
       { props.icon && props.iconPosition === 'left' && icon }
       <span>
@@ -187,7 +187,7 @@ export const Button = (props) => {
       </span>
       { props.icon && props.iconPosition === 'right' && icon }
 
-      { !props.withoutRipple && <Ink/> }
+      { !props.withoutRipple && !props.disabled && <Ink/> }
     </Wrapper>
   );
 };

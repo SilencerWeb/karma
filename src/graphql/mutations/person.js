@@ -28,17 +28,25 @@ export const CREATE_PERSON = gql`
 export const UPDATE_PERSON = gql`
   mutation updatePerson(
     $id: ID!,
+    $avatar: ID,
+    $deleteAvatar: Boolean,
     $name: String, 
     $position: String, 
     $description: String
   ) {
     updatePerson(
       id: $id,
+      avatar: $avatar,
+      deleteAvatar: $deleteAvatar,
       name: $name,
       position: $position,
       description: $description,
     ) {
       id
+      avatar {
+        id
+        url
+      }
       name
       position
       description

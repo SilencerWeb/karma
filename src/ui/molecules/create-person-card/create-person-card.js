@@ -59,10 +59,6 @@ export class CreatePersonCard extends React.Component {
   };
 
   render() {
-    const placeholderName = 'John Doe';
-    const placeholderPosition = 'Buddy';
-    const placeholderDescription = 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
-
     return (
       <React.Fragment>
         {
@@ -76,10 +72,7 @@ export class CreatePersonCard extends React.Component {
                 <Mutation mutation={ CREATE_PERSON }>
                   { (createPerson) => (
                     <PersonCard
-                      name={ placeholderName }
-                      position={ placeholderPosition }
                       karma={ 0 }
-                      description={ placeholderDescription }
                       create
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (person) => {
