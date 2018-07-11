@@ -15,6 +15,7 @@ export const CREATE_PERSON = gql`
     ) {
       id
       avatar {
+        id
         url
       }
       name

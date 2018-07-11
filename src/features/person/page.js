@@ -169,6 +169,7 @@ const PersonAvatar = styled.div`
   }
       
   img {
+    max-width: 100%;
     width: 100%;
   }
   
@@ -606,8 +607,14 @@ export class PersonPage extends React.Component {
     }
   };
 
-  handleRemoveAvatarClick = () => {
+  handleRemoveAvatarClick = (deleteFile) => {
     this.setState((prevState) => {
+      deleteFile({
+        variables: {
+          id: prevState.updatedPerson.avatar.id,
+        },
+      });
+
       return {
         ...prevState,
         updatedPerson: {

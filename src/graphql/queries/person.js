@@ -5,6 +5,7 @@ export const GET_PERSONS = gql`
     persons {
       id
       avatar {
+        id
         url
       }
       name
@@ -23,6 +24,7 @@ export const GET_PERSON = gql`
     person(id: $id) {
       id
       avatar {
+        id
         url
       }
       name

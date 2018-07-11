@@ -88,6 +88,7 @@ const Avatar = styled.div`
 
   img {
     max-width: 100%;
+    width: 100%;
   }
   
   ${p => css`
@@ -451,8 +452,16 @@ class PersonCardComponent extends React.PureComponent {
     }
   };
 
-  handleRemoveAvatarClick = () => {
+  handleRemoveAvatarClick = (deleteFile) => {
     this.setState((prevState) => {
+      if (prevState.isCreating) {
+        deleteFile({
+          variables: {
+            id: prevState.updatedPerson.avatar.id,
+          },
+        });
+      }
+
       return {
         ...prevState,
         updatedPerson: {
@@ -485,9 +494,7 @@ class PersonCardComponent extends React.PureComponent {
         ...prevState,
         updatedPerson: {
           id: this.props.id,
-          avatar: {
-            url: this.props.avatar,
-          },
+          avatar: this.props.avatar,
           name: {
             content: this.props.name,
             isEdited: false,
@@ -564,7 +571,11 @@ class PersonCardComponent extends React.PureComponent {
     let name = this.state.person && this.state.person.name ? this.state.person.name.content : this.props.name;
     let position = this.state.person && this.state.person.position ? this.state.person.position.content : this.props.position;
     let description = this.state.person && this.state.person.description ? this.state.person.description.content : this.props.description;
-    let avatar = this.state.person && this.state.person.avatar && this.state.person.avatar.url ? this.state.person.avatar.url : this.props.avatar;
+    let avatar = this.state.person && this.state.person.avatar && this.state.person.avatar.url ? this.state.person.avatar.url : null;
+
+    if (!avatar && this.props.avatar && this.props.avatar.url) {
+      avatar = this.props.avatar.url;
+    }
 
     if (this.state.isCreating || this.state.isEditing) {
       name = this.state.updatedPerson.name.content.length > 0 ? this.state.updatedPerson.name.content : 'John Doe';
@@ -613,9 +624,14 @@ class PersonCardComponent extends React.PureComponent {
                       avatar ?
                         <React.Fragment>
                           <img src={ avatar } alt={ name }/>
-                          <RemoveAvatar onClick={ this.handleRemoveAvatarClick }>
-                            Delete
-                          </RemoveAvatar>
+
+                          <Mutation mutation={ DELETE_FILE }>
+                            { (deleteFile) => (
+                              <RemoveAvatar onClick={ () => this.handleRemoveAvatarClick(deleteFile) }>
+                                Delete
+                              </RemoveAvatar>
+                            ) }
+                          </Mutation>
                         </React.Fragment>
                         :
                         <UploadAvatar>
@@ -766,7 +782,10 @@ class PersonCardComponent extends React.PureComponent {
 PersonCardComponent.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
-  avatar: PropTypes.string,
+  avatar: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+  }),
   name: PropTypes.string,
   position: PropTypes.string,
   karma: PropTypes.number,

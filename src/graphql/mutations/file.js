@@ -8,3 +8,12 @@ export const UPLOAD_FILE = gql`
     }
   }
 `;
+
+export const DELETE_FILE = gql`
+  mutation deleteFile($id: ID!) {
+    deleteFile(id: $id) {
+      id
+      url
+    }
+  }
+`;
