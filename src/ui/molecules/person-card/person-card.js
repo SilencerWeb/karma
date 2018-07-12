@@ -1,123 +1,23 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { lighten, rgba } from 'polished';
+import { lighten } from 'polished';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Mutation, graphql } from 'react-apollo';
 
-import { Button, RetinaImage, Heading, Icon } from 'ui/atoms';
+import { Button, Heading } from 'ui/atoms';
 
-import { shortLeftArrow, user, trashCan, upload } from 'ui/outlines';
+import { Avatar } from 'ui/molecules';
+
+import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
 import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
-import { UPLOAD_FILE, DELETE_FILE } from 'graphql/mutations/file';
 
 
-const UploadAvatar = styled.label`
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background: ${color.primary};
-  border-radius: 50%;
-  opacity: 0;
-  visibility: hidden;
-  transition: ${transition};
-  cursor: pointer;
-  
-  input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 0;
-    opacity: 0;
-  }
-`;
-
-const LoadingAvatar = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-family: ${font.family.secondary};
-  font-size: 1.8rem;
-  text-transform: uppercase;
-  color: ${color.text.secondary};
-  background-color: ${color.primary};
-  border-radius: 50%;
-  transition: ${transition};
-`;
-
-const RemoveAvatar = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-family: ${font.family.secondary};
-  font-size: 1.8rem;
-  text-transform: uppercase;
-  color: ${color.text.secondary};
-  background-color: ${rgba(color.primary, 0.8)};
-  border-radius: 50%;
-  cursor: pointer;
-  opacity: 0;
-  visibility: hidden;
-  transition: ${transition};
-`;
-
-const Avatar = styled.div`
-  position: relative;
-  width: 15rem;
-  height: 15rem;
-  border-radius: 50%;
+const StyledAvatar = styled(Avatar)`
   margin-bottom: 0.8rem;
-
-  img {
-    max-width: 100%;
-    width: 100%;
-  }
-  
-  ${p => css`
-    
-    ${p.new && css`
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: ${color.primary};
-
-      &:hover {
-      
-        ${UploadAvatar} {
-          opacity: 1;
-          visibility: visible;
-        }
-      
-        ${RemoveAvatar} {
-          opacity: 1;
-          visibility: visible;
-        }
-      }
-
-      svg {
-        font-size: 4.6rem;
-        color: #ffffff;
-      }
-    `}
-  `}
 `;
 
 const Name = Heading.extend`
@@ -609,49 +509,14 @@ class PersonCardComponent extends React.PureComponent {
 
     return (
       <Wrapper className={ this.props.className }>
-        {
-          !this.state.isCreating && !this.state.isEditing && avatar ?
-            <Avatar>
-              <img src={ avatar } alt={ name }/>
-            </Avatar>
-            :
-            <Avatar new>
-              { !avatar && <Icon icon={ user }/> }
-
-              {
-                (this.state.isCreating || this.state.isEditing) &&
-                <Mutation mutation={ UPLOAD_FILE }>
-                  { (uploadFile, { loading }) => {
-                    if (loading) {
-                      return <LoadingAvatar>Loading...</LoadingAvatar>;
-                    }
-
-                    return (
-                      avatar ?
-                        <React.Fragment>
-                          <img src={ avatar } alt={ name }/>
-
-                          <Mutation mutation={ DELETE_FILE }>
-                            { (deleteFile) => (
-                              <RemoveAvatar onClick={ () => this.handleRemoveAvatarClick(deleteFile) }>
-                                Delete
-                              </RemoveAvatar>
-                            ) }
-                          </Mutation>
-                        </React.Fragment>
-                        :
-                        <UploadAvatar>
-                          <Icon icon={ upload }/>
-
-                          <input type={ 'file' } onChange={ (e) => this.handleFileInputChange(e, uploadFile) }/>
-                        </UploadAvatar>
-
-                    );
-                  } }
-                </Mutation>
-              }
-            </Avatar>
-        }
+        <StyledAvatar
+          url={ avatar }
+          alt={ name }
+          icon={ user }
+          edit={ this.state.isCreating || this.state.isEditing }
+          onRemoveAvatarClick={ this.handleRemoveAvatarClick }
+          onFileInputChange={ this.handleFileInputChange }
+        />
 
         <ContentEditableWrapper>
           <Name

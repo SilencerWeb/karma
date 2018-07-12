@@ -6,9 +6,9 @@ import { Mutation, graphql } from 'react-apollo';
 
 import { AppConsumer } from 'index';
 
-import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
+import { Heading, Button, Icon } from 'ui/atoms';
 
-// import { OutsideAlerter } from 'ui/molecules';
+import { Avatar } from 'ui/molecules';
 
 import { handsUpHuman, longLeftArrow, plus, trashCan } from 'ui/outlines';
 
@@ -165,41 +165,29 @@ const EditableDescription = styled(Description)`
   `}
 `;
 
-const Avatar = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 4rem;
-  height: 4rem;
+const StyledAvatar = styled(Avatar)`
   font-family: ${font.family.secondary};
   font-weight: 700;
   color: ${color.primary};
   background-color: #ffffff;
-  border-radius: 50%;
   box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.24);
+  margin-left: -2rem;
+  overflow: hidden;
+  transition: ${transition};
 
-  img {
-    width: 100%;
-    max-width: 100%;
+  &:hover {
+    box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44);
+  }
+  
+  &:first-child {
+    margin-left: 0;
   }
 
   ${p => css`
 
     ${p.new && css`
-      display: flex;
-      justify-content: center;
-      align-items: center;
       background-color: ${color.primary};
       cursor: pointer;
-      
-      &:hover {
-        transform: scale(1.2);
-      }
-
-      svg {
-        font-size: 1.6rem;
-        color: #ffffff;
-      }
 
       ${p.white && css`
         background-color: #ffffff;
@@ -224,23 +212,12 @@ const Members = styled.div`
   
   &:hover {
   
-    ${Avatar} {
-      margin-left: 0;
-    }
-  }
-  
-  ${Avatar} {
-    position: relative;
-    margin-left: -2rem;
-    transition: ${transition};
-    overflow: hidden;
-    
-    &:hover {
-      box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44);
-    }
-    
-    &:first-child {
-      margin-left: 0;
+    > div {
+      margin-left: 0.4rem;
+      
+      &:first-child {
+        margin-left: 0;
+      }
     }
   }
 `;
@@ -537,10 +514,8 @@ export class ActionCardComponent extends React.Component {
     const value = e.currentTarget.value;
 
     this.setState((prevState) => {
-      const state = { ...prevState };
-
-      const members = state.members && state.members.length ? [...state.members] : [];
-      const persons = [...state.persons];
+      const members = prevState.members && prevState.members.length ? [...prevState.members] : [];
+      const persons = [...prevState.persons];
 
       const newMember = persons.find((person) => {
         return person.id === value;
@@ -876,14 +851,13 @@ export class ActionCardComponent extends React.Component {
                           }).join('');
 
                           return (
-                            <Avatar key={ i }>
-                              {
-                                person.avatar && person.avatar.url ?
-                                  <img src={ person.avatar.url } alt={ member.name }/>
-                                  :
-                                  nameFirstLetters
-                              }
-                            </Avatar>
+                            <StyledAvatar
+                              size={ 'xs' }
+                              url={ person.avatar ? person.avatar.url : null }
+                              key={ i }
+                            >
+                              { !person.avatar ? nameFirstLetters : null }
+                            </StyledAvatar>
                           );
                         })
                       }
@@ -891,7 +865,8 @@ export class ActionCardComponent extends React.Component {
                       {
                         (this.state.isCreating || this.state.isEditing) && leftSelectOptions.length > 0 &&
                         <React.Fragment>
-                          <Avatar
+                          <StyledAvatar
+                            size={ 'xs' }
                             new
                             // white={ this.state.isLeftSelectOpened }
                             // onClick={ () => this.toggleSelect('left') }
@@ -901,7 +876,7 @@ export class ActionCardComponent extends React.Component {
                             <Select onChange={ (e) => this.handleSelectChange(e, 'left') }>
                               { leftSelectOptions }
                             </Select>
-                          </Avatar>
+                          </StyledAvatar>
 
                           {
                             // this.state.isLeftSelectOpened &&
@@ -945,14 +920,13 @@ export class ActionCardComponent extends React.Component {
                           }).join('');
 
                           return (
-                            <Avatar key={ i }>
-                              {
-                                person.avatar && person.avatar.url ?
-                                  <img src={ person.avatar.url } alt={ member.name }/>
-                                  :
-                                  nameFirstLetters
-                              }
-                            </Avatar>
+                            <StyledAvatar
+                              url={ person.avatar ? person.avatar.url : null }
+                              size={ 'xs' }
+                              key={ i }
+                            >
+                              { !person.avatar ? nameFirstLetters : null }
+                            </StyledAvatar>
                           );
                         })
                       }
@@ -960,17 +934,14 @@ export class ActionCardComponent extends React.Component {
                       {
                         (this.state.isCreating || this.state.isEditing) && rightSelectOptions.length > 0 &&
                         <React.Fragment>
-                          <Avatar
+                          <StyledAvatar
+                            size={ 'xs' }
                             new
                             // white={ this.state.isRightSelectOpened }
                             // onClick={ () => this.toggleSelect('right') }
                           >
                             <Icon icon={ plus }/>
-
-                            <Select onChange={ (e) => this.handleSelectChange(e, 'right') }>
-                              { rightSelectOptions }
-                            </Select>
-                          </Avatar>
+                          </StyledAvatar>
 
                           {
                             // this.state.isRightSelectOpened &&

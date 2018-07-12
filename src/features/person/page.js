@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { rgba } from 'polished';
 import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
 import { Redirect } from 'react-router-dom';
@@ -8,18 +7,17 @@ import deepEqual from 'deep-equal';
 
 import { AppConsumer } from 'index';
 
-import { Heading, Button, Icon, RetinaImage } from 'ui/atoms';
+import { Heading, Button, Icon } from 'ui/atoms';
 
-import { ActionCardList } from 'ui/molecules';
+import { ActionCardList, Avatar } from 'ui/molecules';
 
 import { CommonTemplate } from 'ui/templates';
 
-import { pencil, user, trashCan, upload } from 'ui/outlines';
+import { pencil, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
 import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
-import { UPLOAD_FILE } from 'graphql/mutations/file';
 
 
 const HeaderBackground = styled.div`
@@ -77,116 +75,10 @@ const SavePersonInfoButton = styled(Button)`
   z-index: 1;
 `;
 
-const UploadAvatar = styled.label`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background: ${color.primary};
-  border-radius: 50%;
-  opacity: 0;
-  visibility: hidden;
-  transition: ${transition};
-  cursor: pointer;
-  
-  input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 0;
-    opacity: 0;
-  }
-`;
-
-const LoadingAvatar = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-family: ${font.family.secondary};
-  font-size: 2.8rem;
-  text-transform: uppercase;
-  color: ${color.text.secondary};
-  background-color: ${color.primary};
-  border-radius: 50%;
-  transition: ${transition};
-`;
-
-const RemoveAvatar = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-family: ${font.family.secondary};
-  font-size: 2.8rem;
-  text-transform: uppercase;
-  color: ${color.text.secondary};
-  background-color: ${rgba(color.primary, 0.8)};
-  border-radius: 50%;
-  cursor: pointer;
-  opacity: 0;
-  visibility: hidden;
-  transition: ${transition};
-`;
-
-const PersonAvatar = styled.div`
-  position: relative;
-  z-index: 1;
-  width: 30rem;
-  height: 30rem;
-  border-radius: 50%;
+const PersonAvatar = styled(Avatar)`
   margin-right: auto;
   margin-left: auto;
   margin-bottom: 2.4rem;
-
-
-  &:hover {
-  
-    ${UploadAvatar} {
-      opacity: 1;
-      visibility: visible;
-    }
-  
-    ${RemoveAvatar} {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-      
-  img {
-    max-width: 100%;
-    width: 100%;
-  }
-  
-  ${p => css`
-    
-    ${p.new && css`
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: ${color.primary};
-
-      svg {
-        font-size: 10rem;
-        color: #ffffff;
-      }
-    `}
-  `}
 `;
 
 const Name = Heading.extend`
@@ -799,45 +691,15 @@ export class PersonPage extends React.Component {
                 </HeaderBackground>
 
                 <PersonInfo>
-                  {
-                    !this.state.isPersonInfoEditing ?
-                      <PersonAvatar new={ !avatar }>
-                        {
-                          !avatar ?
-                            <Icon icon={ user }/>
-                            :
-                            <img src={ avatar } alt={ name }/>
-                        }
-                      </PersonAvatar>
-                      :
-                      <PersonAvatar new>
-                        { !avatar && <Icon icon={ user }/> }
-
-                        <Mutation mutation={ UPLOAD_FILE }>
-                          { (uploadFile, { loading }) => {
-                            if (loading) {
-                              return <LoadingAvatar>Loading...</LoadingAvatar>;
-                            }
-
-                            return (
-                              avatar ?
-                                <React.Fragment>
-                                  <img src={ avatar } alt={ name }/>
-                                  <RemoveAvatar onClick={ this.handleRemoveAvatarClick }>
-                                    Delete
-                                  </RemoveAvatar>
-                                </React.Fragment>
-                                :
-                                <UploadAvatar>
-                                  <Icon icon={ upload }/>
-
-                                  <input type={ 'file' } onChange={ (e) => this.handleFileInputChange(e, uploadFile) }/>
-                                </UploadAvatar>
-                            );
-                          } }
-                        </Mutation>
-                      </PersonAvatar>
-                  }
+                  <PersonAvatar
+                    url={ avatar }
+                    alt={ name }
+                    size={ 'lg' }
+                    icon={ user }
+                    edit={ this.state.isPersonInfoEditing }
+                    onRemoveAvatarClick={ this.handleRemoveAvatarClick }
+                    onFileInputChange={ this.handleFileInputChange }
+                  />
 
                   <ContentEditableWrapper>
                     <Name

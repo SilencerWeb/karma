@@ -1,3 +1,4 @@
+export { Avatar } from './avatar/avatar';
 export { FormField } from './form-field/form-field';
 export { PersonCard } from './person-card/person-card';
 export { CreatePersonCard } from './create-person-card/create-person-card';
