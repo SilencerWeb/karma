@@ -292,6 +292,7 @@ const EditablePosition = styled(Position)`
 
 const Description = styled.p`
   width: 100%;
+  min-height: 6.3rem;
   text-align: justify;
   margin-top: 0;
   margin-bottom: 4rem;
@@ -386,7 +387,7 @@ const Header = styled.div`
 
 const Subtitle = Heading.withComponent('h2');
 
-const EditAboutButton = styled(Button)`
+const EditDescriptionButton = styled(Button)`
 
   svg {
     font-size: 1.8rem;
@@ -402,6 +403,14 @@ const AboutHeader = styled.div`
 
 const About = styled.div`
   margin-bottom: 4rem;
+  
+  button {
+    margin-right: 0.8rem;
+    
+    &:last-child {
+      margin-right: 0;
+    }
+  }
   
   p {
     margin-top: 0;
@@ -448,17 +457,19 @@ export class PersonPage extends React.Component {
     const target = e.currentTarget;
 
     this.setState((prevState) => {
-      const fields = ['name', 'position'];
-
       const invalidFields = [];
 
-      fields.forEach((field) => {
-        const content = field === element ? target.textContent : prevState.updatedPerson[field].content;
+      if (prevState.isPersonInfoEditing) {
+        const fields = ['name', 'position'];
 
-        if (content.length === 0) {
-          invalidFields.push(field);
-        }
-      });
+        fields.forEach((field) => {
+          const content = field === element ? target.textContent : prevState.updatedPerson[field].content;
+
+          if (content.length === 0) {
+            invalidFields.push(field);
+          }
+        });
+      }
 
       return {
         ...prevState,
@@ -625,6 +636,69 @@ export class PersonPage extends React.Component {
     });
   };
 
+  handleEditDescriptionButtonClick = () => {
+    const editableDescription = document.querySelector('#editable-description');
+
+    this.setState((prevState) => {
+      editableDescription.innerHTML = prevState.person.description;
+
+      const person = {
+        ...prevState.person,
+      };
+
+      return {
+        ...prevState,
+        updatedPerson: {
+          id: person.id,
+          description: {
+            content: person.description,
+            isEdited: false,
+          },
+        },
+        isDescriptionEditing: true,
+      };
+    });
+  };
+
+  handleCancelDescriptionButtonClick = () => {
+    this.setState((prevState) => {
+      const person = {
+        ...prevState.person,
+      };
+
+      return {
+        ...prevState,
+        updatedPerson: {
+          id: person.id,
+          description: {
+            content: person.description,
+            isEdited: false,
+          },
+        },
+        isDescriptionEditing: false,
+      };
+    });
+  };
+
+  handleSaveDescriptionButtonClick = (updatePerson) => {
+
+    this.setState((prevState) => {
+      const person = {
+        id: prevState.updatedPerson.id,
+        description: prevState.updatedPerson.description.content,
+      };
+
+      updatePerson({
+        variables: person,
+      });
+
+      return {
+        ...prevState,
+        isDescriptionEditing: false,
+      };
+    });
+  };
+
   handleAddActionButtonClick = () => {
     window.scrollTo(0, document.body.scrollHeight);
 
@@ -659,6 +733,10 @@ export class PersonPage extends React.Component {
       name = this.state.updatedPerson.name.content.length > 0 ? this.state.updatedPerson.name.content : 'John Doe';
       position = this.state.updatedPerson.position.content.length > 0 ? this.state.updatedPerson.position.content : 'Buddy';
       avatar = this.state.updatedPerson.avatar && this.state.updatedPerson.avatar.url ? this.state.updatedPerson.avatar.url : null;
+    }
+
+    if (this.state.isDescriptionEditing) {
+      description = this.state.updatedPerson.description.content.length > 0 ? this.state.updatedPerson.description.content : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
     }
 
     if (!description) {
@@ -843,12 +921,54 @@ export class PersonPage extends React.Component {
                     About
                   </Subtitle>
 
-                  <EditAboutButton type={ 'icon' } theme={ 'gray' }>
-                    <Icon icon={ pencil }/>
-                  </EditAboutButton>
+                  {
+                    !this.state.isDescriptionEditing ?
+                      <EditDescriptionButton
+                        type={ 'icon' }
+                        theme={ 'gray' }
+                        onClick={ this.handleEditDescriptionButtonClick }
+                      >
+                        <Icon icon={ pencil }/>
+                      </EditDescriptionButton>
+                      :
+                      <div>
+                        <Button
+                          type={ 'flat' }
+                          onClick={ this.handleCancelDescriptionButtonClick }
+                        >
+                          Cancel
+                        </Button>
+
+                        <Mutation mutation={ UPDATE_PERSON }>
+                          { (updatePerson) => (
+                            <Button
+                              onClick={ () => this.handleSaveDescriptionButtonClick(updatePerson) }
+                            >
+                              Save
+                            </Button>
+                          ) }
+                        </Mutation>
+                      </div>
+                  }
                 </AboutHeader>
 
-                <p> { description }</p>
+                <ContentEditableWrapper>
+                  <Description
+                    creating={ this.state.isDescriptionEditing }
+                    edited={ this.state.isDescriptionEditing && this.state.updatedPerson.description.isEdited }
+                  >
+                    { description }
+                  </Description>
+                  <EditableDescription
+                    id={ 'editable-description' }
+                    creating={ this.state.isDescriptionEditing }
+                    edited={ this.state.isDescriptionEditing && this.state.updatedPerson.description.isEdited }
+                    contentEditable={ this.state.isDescriptionEditing }
+                    onInput={ (e) => this.handleInput(e, 'description') }
+                    onKeyPress={ (e) => this.handleKeyPress(e, true) }
+                    onPaste={ (e) => this.handlePaste(e) }
+                  />
+                </ContentEditableWrapper>
               </About>
 
               <div>
