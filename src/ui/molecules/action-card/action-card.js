@@ -165,6 +165,33 @@ const EditableDescription = styled(Description)`
   `}
 `;
 
+const ContentEditableWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  
+  ${p => css`
+    
+    ${p.fullHeight && css`
+      flex-grow: 1;
+    `}
+  `}
+`;
+
+const HeaderLeftSide = styled.div`
+  display: flex;
+  flex-direction: column;
+  
+  ${ContentEditableWrapper} {
+    width: max-content;
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2.4rem;
+`;
+
 const StyledAvatar = styled(Avatar)`
   font-family: ${font.family.secondary};
   font-weight: 700;
@@ -206,34 +233,6 @@ const StyledAvatar = styled(Avatar)`
   `}
 `;
 
-const Members = styled.div`
-  position: relative;
-  display: flex;
-  
-  &:hover {
-  
-    > div {
-      margin-left: 0.4rem;
-      
-      &:first-child {
-        margin-left: 0;
-      }
-    }
-  }
-`;
-
-const ContentEditableWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  
-  ${p => css`
-    
-    ${p.fullHeight && css`
-      flex-grow: 1;
-    `}
-  `}
-`;
-
 // const StyledSelect = styled(Select)`
 //   position: absolute;
 //   bottom: 0;
@@ -257,6 +256,22 @@ const Select = styled.select`
   height: 100%;
   opacity: 0;
   cursor: pointer;
+`;
+
+const Members = styled.div`
+  position: relative;
+  display: flex;
+  
+  &:hover {
+  
+    > div {
+      margin-left: 0.4rem;
+      
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
 `;
 
 const ExecutorsButton = styled(Button)`
@@ -290,15 +305,6 @@ const ExecutorsButton = styled(Button)`
   }
 `;
 
-const HeaderLeftSide = styled.div`
-  display: flex;
-  flex-direction: column;
-  
-  ${ContentEditableWrapper} {
-    width: max-content;
-  }
-`;
-
 const FooterLeftSide = styled.div`
   display: flex;
   align-items: center;
@@ -313,12 +319,6 @@ const FooterRightSide = styled.div`
       margin-right: 0;
     }
   }
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2.4rem;
 `;
 
 const Footer = styled.div`
