@@ -26,7 +26,7 @@ export const ActionCardList = (props) => {
             {
               context.actions && context.actions.filter((action) => {
                 return action.members.some((member) => {
-                  return member.isUser ? member.user.id === props.memberId : member.person.id === props.memberId;
+                  return member.isUser ? member.user.id === props.activeMemberId : member.person.id === props.activeMemberId;
                 });
               }).map((action) => {
                 const members = action.members.map((member) => {
@@ -56,6 +56,7 @@ export const ActionCardList = (props) => {
             }
 
             <CreateActionCard
+              activeMemberId={ props.activeMemberId }
               isCreating={ props.isActionCreating }
               onCancelButtonClick={ props.onCancelButtonClick }
               onSaveButtonClick={ props.onSaveButtonClick }
@@ -70,6 +71,7 @@ export const ActionCardList = (props) => {
 
 ActionCardList.propTypes = {
   className: PropTypes.string,
+  activeMemberId: PropTypes.string,
   isActionCreating: PropTypes.bool,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,

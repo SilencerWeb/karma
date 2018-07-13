@@ -11,7 +11,6 @@ import { plus } from 'ui/outlines';
 
 import { color, transition } from 'ui/theme';
 
-import { GET_PERSONS } from 'graphql/queries/person';
 import { CREATE_PERSON } from 'graphql/mutations/person';
 
 
@@ -78,7 +77,6 @@ export class CreatePersonCard extends React.Component {
                       onSaveButtonClick={ (person) => {
                         createPerson({
                           variables: person,
-                          refetchQueries: [{ query: GET_PERSONS }],
                         });
 
                         this.setState({

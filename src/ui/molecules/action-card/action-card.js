@@ -698,8 +698,8 @@ export class ActionCardComponent extends React.Component {
   static getDerivedStateFromProps = (props, state) => {
     if (!state.action || (!state.isCreating && !state.isEditing)) {
       const persons = props.context.persons.map((person) => {
-        const isSelected = props.members && props.members.some((member) => {
-          return person.id === member.personId;
+        let isSelected = props.members && props.members.some((member) => {
+          return member.personId === person.id;
         });
 
         let side;
@@ -712,6 +712,11 @@ export class ActionCardComponent extends React.Component {
           side = selectedMember.side;
         }
 
+        if (person.id === props.activeMemberId) {
+          isSelected = true;
+          side = 'left';
+        }
+
         return {
           id: person.id,
           name: person.name,
@@ -721,13 +726,26 @@ export class ActionCardComponent extends React.Component {
         };
       });
 
+      const defaultSelectedPerson = persons.find((person) => {
+        return person.id === props.activeMemberId;
+      });
+
+      const defaultActiveMember = defaultSelectedPerson && {
+        personId: defaultSelectedPerson.id,
+        name: defaultSelectedPerson.name,
+        isUser: defaultSelectedPerson.isUser,
+        side: defaultSelectedPerson.side,
+      };
+
+      const defaultMembers = defaultActiveMember ? [defaultActiveMember] : [];
+
       const action = {
         title: props.title || 'Action title',
         date: props.date || '12.05.2018',
         description: props.description || 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
         karma: props.karma || 'neutral',
         executors: props.executors || 'left',
-        members: props.members || [],
+        members: props.members || defaultMembers,
         persons: persons,
       };
 
@@ -774,7 +792,7 @@ export class ActionCardComponent extends React.Component {
       const persons = isCreatingOrEditing ? updatedAction.persons : action.persons;
 
       leftSelectOptions = persons.filter((person) => {
-        return !person.isSelected && person.side !== 'right';
+        return !person.isSelected && person.side !== 'right' && person.id !== this.props.activeMemberId;
       }).map((person) => {
         return (
           <option value={ person.id } key={ person.id }>
@@ -943,7 +961,7 @@ export class ActionCardComponent extends React.Component {
                           </MemberAvatar>
 
                           {
-                            isCreatingOrEditing &&
+                            person.id !== this.props.activeMemberId && isCreatingOrEditing &&
                             <RemoveMember onClick={ () => this.handleRemoveMemberButtonClick(member.personId) }>
                               <Icon icon={ close }/>
                             </RemoveMember>
@@ -1020,7 +1038,7 @@ export class ActionCardComponent extends React.Component {
                           </MemberAvatar>
 
                           {
-                            isCreatingOrEditing &&
+                            person.id !== this.props.activeMemberId && isCreatingOrEditing &&
                             <RemoveMember onClick={ () => this.handleRemoveMemberButtonClick(member.personId) }>
                               <Icon icon={ close }/>
                             </RemoveMember>
@@ -1131,6 +1149,7 @@ ActionCardComponent.propTypes = {
       side: PropTypes.string.isRequired,
     }),
   ),
+  activeMemberId: PropTypes.string,
   create: PropTypes.bool,
   onForgiveButtonClick: PropTypes.func,
   onMoreButtonClick: PropTypes.func,

@@ -11,7 +11,6 @@ import { plus } from 'ui/outlines';
 
 import { color, transition } from 'ui/theme';
 
-import { GET_ACTIONS } from 'graphql/queries/action';
 import { CREATE_ACTION } from 'graphql/mutations/action';
 
 
@@ -81,6 +80,7 @@ export class CreateActionCard extends React.Component {
                 <Mutation mutation={ CREATE_ACTION }>
                   { (createAction) => (
                     <ActionCard
+                      activeMemberId={ this.props.activeMemberId }
                       create
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (action) => {
@@ -109,6 +109,7 @@ export class CreateActionCard extends React.Component {
 CreateActionCard.propTypes = {
   className: PropTypes.string,
   isCreating: PropTypes.bool,
+  activeMemberId: PropTypes.string,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
 };

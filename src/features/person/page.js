@@ -843,7 +843,7 @@ export class PersonPage extends React.Component {
                 </ActionsHeader>
 
                 <ActionCardList
-                  memberId={ this.state.person && this.state.person.id }
+                  activeMemberId={ this.state.person && this.state.person.id }
                   isActionCreating={ this.state.isActionCreating }
                   onCancelButtonClick={ this.handleCancelButtonClick }
                   onSaveButtonClick={ this.handleSaveButtonClick }
