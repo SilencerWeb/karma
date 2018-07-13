@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { lighten } from 'polished';
+import { lighten, rgba } from 'polished';
 import PropTypes from 'prop-types';
 import { Mutation, graphql } from 'react-apollo';
 
@@ -10,7 +10,7 @@ import { Heading, Button, Icon } from 'ui/atoms';
 
 import { Avatar } from 'ui/molecules';
 
-import { handsUpHuman, longLeftArrow, plus, trashCan } from 'ui/outlines';
+import { handsUpHuman, longLeftArrow, plus, trashCan, close } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
@@ -192,23 +192,11 @@ const Header = styled.div`
   margin-bottom: 2.4rem;
 `;
 
-const StyledAvatar = styled(Avatar)`
+const MemberAvatar = styled(Avatar)`
   font-family: ${font.family.secondary};
   font-weight: 700;
   color: ${color.primary};
   background-color: #ffffff;
-  box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.24);
-  margin-left: -2rem;
-  overflow: hidden;
-  transition: ${transition};
-
-  &:hover {
-    box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44);
-  }
-  
-  &:first-child {
-    margin-left: 0;
-  }
 
   ${p => css`
 
@@ -231,6 +219,55 @@ const StyledAvatar = styled(Avatar)`
       `}
     `}
   `}
+`;
+
+const RemoveMember = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-family: ${font.family.secondary};
+  color: #ffffff;
+  background: ${rgba(color.primary, 0.8)};
+  border: none;
+  border-radius: 50%;
+  padding-top: 0.4rem;
+  padding-right: 0.4rem;
+  padding-bottom: 0.4rem;
+  padding-left: 0.4rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: ${transition};
+  cursor: pointer;
+  
+  svg {
+    font-size: 1.4rem;
+  }
+`;
+
+const MemberAvatarWrapper = styled.div`
+  position: relative;
+  border-radius: 50%;
+  margin-left: -2rem;
+  box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.24);
+  transition: ${transition};
+  
+  &:first-child {
+    margin-left: 0;
+  }
+  
+  &:hover {
+    box-shadow: 0 0.8rem 1.6rem rgba(176, 190, 197, 0.44);
+  
+    ${RemoveMember} {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
 `;
 
 // const StyledSelect = styled(Select)`
@@ -264,7 +301,7 @@ const Members = styled.div`
   
   &:hover {
   
-    > div {
+    ${MemberAvatarWrapper} {
       margin-left: 0.4rem;
       
       &:first-child {
@@ -428,67 +465,30 @@ const Wrapper = styled.div`
 
 export class ActionCardComponent extends React.Component {
   state = {
-    isCreating: this.props.create || false,
+    isCreating: false,
     isEditing: false,
-    title: {
-      content: '',
-      isEdited: false,
-      isInvalid: false,
-    },
-    date: {
-      content: '',
-      isEdited: false,
-      isInvalid: false,
-    },
-    description: {
-      content: '',
-      isEdited: false,
-      isInvalid: false,
-    },
-    karma: this.props.karma,
-    executors: this.props.executors,
-    members: this.props.members,
-    persons: [],
+    action: null,
+    updatedAction: null,
+    fieldsEditedInfo: {},
     // isLeftSelectOpened: false,
     // isRightSelectOpened: false,
-  };
-
-  generatePersonsForSelect = (persons, userId) => {
-    const generatedPersons = persons.map((person) => {
-      const isSelected = this.state.members && this.state.members.some((member) => {
-        return person.id === member.personId;
-      });
-
-      let side;
-
-      if (isSelected) {
-        const selectedMember = this.state.members.find((member) => {
-          return person.id === member.personId;
-        });
-
-        side = selectedMember.side;
-      }
-
-      return {
-        id: person.id,
-        name: person.name,
-        isUser: person.id === userId,
-        isSelected: isSelected,
-        side: isSelected ? side : null,
-      };
-    });
-
-    this.setState({ persons: generatedPersons });
   };
 
   handleInput = (e, element) => {
     const target = e.currentTarget;
 
-    this.setState({
-      [element]: {
-        content: target.textContent,
-        isEdited: target.textContent.length > 0,
-      },
+    this.setState((prevState) => {
+      return {
+        ...prevState,
+        updatedAction: {
+          ...prevState.updatedAction,
+          [element]: target.textContent,
+        },
+        fieldsEditedInfo: {
+          ...prevState.fieldsEditedInfo,
+          [element]: target.textContent.length > 0,
+        },
+      };
     });
   };
 
@@ -514,8 +514,8 @@ export class ActionCardComponent extends React.Component {
     const value = e.currentTarget.value;
 
     this.setState((prevState) => {
-      const members = prevState.members && prevState.members.length ? [...prevState.members] : [];
-      const persons = [...prevState.persons];
+      const members = prevState.updatedAction.members ? [...prevState.updatedAction.members] : [];
+      const persons = [...prevState.updatedAction.persons];
 
       const newMember = persons.find((person) => {
         return person.id === value;
@@ -539,8 +539,11 @@ export class ActionCardComponent extends React.Component {
 
       return {
         ...prevState,
-        members: members,
-        persons: newPersons,
+        updatedAction: {
+          ...prevState.updatedAction,
+          members: members,
+          persons: newPersons,
+        },
       };
     });
   };
@@ -550,7 +553,10 @@ export class ActionCardComponent extends React.Component {
     this.setState((prevState) => {
       return {
         ...prevState,
-        karma: prevState.karma === 'positive' ? 'negative' : 'positive',
+        updatedAction: {
+          ...prevState.updatedAction,
+          karma: prevState.updatedAction.karma === 'positive' ? 'negative' : 'positive',
+        },
       };
     });
   };
@@ -560,7 +566,10 @@ export class ActionCardComponent extends React.Component {
     this.setState((prevState) => {
       return {
         ...prevState,
-        executors: prevState.executors === 'left' ? 'right' : 'left',
+        updatedAction: {
+          ...prevState.updatedAction,
+          executors: prevState.updatedAction.executors === 'left' ? 'right' : 'left',
+        },
       };
     });
   };
@@ -572,9 +581,9 @@ export class ActionCardComponent extends React.Component {
     const editableDate = document.querySelector(`#${actionId}-editable-date`);
     const editableDescription = document.querySelector(`#${actionId}-editable-description`);
 
-    editableTitle.innerHTML = this.state.title.content;
-    editableDate.innerHTML = this.state.date.content;
-    editableDescription.innerHTML = this.state.description.content;
+    editableTitle.innerHTML = this.state.action.title;
+    editableDate.innerHTML = this.state.action.date;
+    editableDescription.innerHTML = this.state.action.description;
   };
 
   handleDeleteButtonClick = (deleteAction) => {
@@ -582,6 +591,39 @@ export class ActionCardComponent extends React.Component {
       variables: {
         id: this.props.id,
       },
+    });
+  };
+
+  handleRemoveMemberButtonClick = (personId) => {
+
+    this.setState((prevState) => {
+      const members = [...prevState.updatedAction.members];
+      const persons = [...prevState.updatedAction.persons];
+
+      const memberForDeleteIndex = members.findIndex((member) => {
+        return member.personId === personId;
+      });
+
+      members.splice(memberForDeleteIndex, 1);
+
+      const personIndex = persons.findIndex((person) => {
+        return person.id === personId;
+      });
+
+      persons[personIndex] = {
+        ...persons[personIndex],
+        isSelected: false,
+        side: null,
+      };
+
+      return {
+        ...prevState,
+        updatedAction: {
+          ...prevState.updatedAction,
+          members: members,
+          persons: persons,
+        },
+      };
     });
   };
 
@@ -594,32 +636,30 @@ export class ActionCardComponent extends React.Component {
   handleSaveButtonClick = () => {
 
     this.setState((prevState) => {
-      const state = { ...prevState };
-
-      const fields = ['title', 'date', 'description'];
+      const fields = ['title', 'date'];
 
       const invalidFields = [];
 
       fields.forEach((field) => {
-        if (state[field].content.length === 0) {
+        if (prevState.updatedAction[field].length === 0) {
           invalidFields.push(field);
         }
       });
 
       const isValid = invalidFields.length === 0 &&
-        state.karma !== 'neutral' &&
-        state.executors &&
-        state.members.length > 0;
+        prevState.updatedAction.karma !== 'neutral' &&
+        prevState.updatedAction.executors &&
+        prevState.updatedAction.members.length > 0;
 
       if (isValid) {
-        const members = state.members.map((member) => {
+        const members = prevState.updatedAction.members.map((member) => {
           const newMember = {
             personId: member.personId,
             isUser: member.isUser,
             side: member.side,
           };
 
-          if (state.isEditing) {
+          if (prevState.isEditing) {
             newMember.id = member.id;
           }
 
@@ -627,387 +667,448 @@ export class ActionCardComponent extends React.Component {
         });
 
         const action = {
-          title: state.title.content,
-          date: state.date.content,
-          description: state.description.content,
-          karma: state.karma,
-          executors: state.executors,
+          title: prevState.updatedAction.title,
+          date: prevState.updatedAction.date,
+          description: prevState.updatedAction.description,
+          karma: prevState.updatedAction.karma,
+          executors: prevState.updatedAction.executors,
           members: members,
         };
 
-        if (state.isEditing) {
+        if (prevState.isEditing) {
           action.id = this.props.id;
 
           this.props.updateAction({
             variables: action,
           });
-
-          state.isEditing = false;
         } else {
           this.props.onSaveButtonClick(action);
-
-          state.isCreating = false;
         }
-      } else {
-        invalidFields.forEach((invalidField) => {
-          state[invalidField].isInvalid = true;
-        });
-      }
 
-      return state;
+        return {
+          ...prevState,
+          isCreating: false,
+          isEditing: false,
+        };
+      }
     });
   };
 
 
   static getDerivedStateFromProps = (props, state) => {
-    if (!state.isCreating && !state.isEditing) {
-      if (props.title) {
-        state.title.content = props.title;
-      }
-      if (props.date) {
-        state.date.content = props.date;
-      }
-      if (props.description) {
-        state.description.content = props.description;
-      }
-      if (props.karma) {
-        state.karma = props.karma;
-      }
-      if (props.executors) {
-        state.executors = props.executors;
-      }
-      if (props.members) {
-        state.members = props.members;
-      }
+    if (!state.action || (!state.isCreating && !state.isEditing)) {
+      const persons = props.context.persons.map((person) => {
+        const isSelected = props.members && props.members.some((member) => {
+          return person.id === member.personId;
+        });
+
+        let side;
+
+        if (isSelected) {
+          const selectedMember = props.members.find((member) => {
+            return person.id === member.personId;
+          });
+
+          side = selectedMember.side;
+        }
+
+        return {
+          id: person.id,
+          name: person.name,
+          isUser: person.id === props.context.user.id,
+          isSelected: isSelected,
+          side: isSelected ? side : null,
+        };
+      });
+
+      const action = {
+        title: props.title || 'Action title',
+        date: props.date || '12.05.2018',
+        description: props.description || 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
+        karma: props.karma || 'neutral',
+        executors: props.executors || 'left',
+        members: props.members || [],
+        persons: persons,
+      };
+
+      state.action = action;
+      state.updatedAction = action;
     }
+
+    state.isCreating = props.create;
 
     return state;
   };
 
   render() {
-    const title = this.state.title.content.length > 0 ? this.state.title.content : this.props.title;
-    const date = this.state.date.content.length > 0 ? this.state.date.content : this.props.date;
-    const description = this.state.description.content.length > 0 ? this.state.description.content : this.props.description;
+    let isCreating = this.state.isCreating;
+    let isEditing = this.state.isEditing;
+    let isCreatingOrEditing = isCreating || isEditing;
 
-    const leftSelectOptions = this.state.persons.filter((person) => {
-      return !person.isSelected && person.side !== 'right';
-    }).map((person) => {
-      return (
-        <option value={ person.id } key={ person.id }>
-          { person.name }
-        </option>
-      );
-    });
 
-    const rightSelectOptions = this.state.persons.filter((person) => {
-      return !person.isSelected && person.side !== 'left';
-    }).map((person) => {
-      return (
-        <option value={ person.id } key={ person.id }>
-          { person.name }
-        </option>
-      );
-    });
+    let action = this.state.action;
+    let updatedAction = this.state.updatedAction;
 
-    const leftSideMembers = this.state.members && this.state.members.length && this.state.members.filter((member) => {
-      return member.side === 'left';
-    });
 
-    const rightSideMembers = this.state.members && this.state.members.length && this.state.members.filter((member) => {
-      return member.side === 'right';
-    });
+    let title;
+    let date;
+    let description;
+    let karma;
+    let executors;
+    let members;
+
+    if (action || isCreatingOrEditing) {
+      title = isCreatingOrEditing ? updatedAction.title : action.title;
+      date = isCreatingOrEditing ? updatedAction.date : action.date;
+      description = isCreatingOrEditing ? updatedAction.description : action.description;
+      karma = isCreatingOrEditing ? updatedAction.karma : action.karma;
+      executors = isCreatingOrEditing ? updatedAction.executors : action.executors;
+      members = isCreatingOrEditing ? updatedAction.members : action.members;
+    }
+
+
+    let leftSelectOptions;
+    let rightSelectOptions;
+
+    if (action || isCreatingOrEditing) {
+      const persons = isCreatingOrEditing ? updatedAction.persons : action.persons;
+
+      leftSelectOptions = persons.filter((person) => {
+        return !person.isSelected && person.side !== 'right';
+      }).map((person) => {
+        return (
+          <option value={ person.id } key={ person.id }>
+            { person.name }
+          </option>
+        );
+      });
+
+      rightSelectOptions = persons.filter((person) => {
+        return !person.isSelected && person.side !== 'left';
+      }).map((person) => {
+        return (
+          <option value={ person.id } key={ person.id }>
+            { person.name }
+          </option>
+        );
+      });
+    }
+
+
+    let leftSideMembers;
+    let rightSideMembers;
+
+    if (action || isCreatingOrEditing) {
+      const members = isCreatingOrEditing ? updatedAction.members : action.members;
+
+      leftSideMembers = members.filter((member) => {
+        return member.side === 'left';
+      });
+
+      rightSideMembers = members.filter((member) => {
+        return member.side === 'right';
+      });
+    }
 
     return (
-      <AppConsumer>
-        { (context) => (
-          <Wrapper className={ this.props.className }>
-            {
-              (this.props.create || this.state.isEditing) && !this.state.persons.length && context.persons && context.user &&
-              this.generatePersonsForSelect([...context.persons, context.user], context.user.id)
-            }
-
-            <Header>
-              <HeaderLeftSide>
-                <ContentEditableWrapper>
-                  <Title
-                    tag={ 'h3' }
-                    creating={ this.state.isCreating || this.state.isEditing }
-                    edited={ this.state.title.isEdited || this.state.isEditing }
-                    invalid={ this.state.title.isInvalid }
-                  >
-                    { title }
-                  </Title>
-
-                  <EditableTitle
-                    id={ `${this.props.id}-editable-title` }
-                    tag={ 'h3' }
-                    creating={ this.state.isCreating || this.state.isEditing }
-                    edited={ this.state.title.isEdited || this.state.isEditing }
-                    contentEditable={ this.state.isCreating || this.state.isEditing }
-                    onInput={ (e) => this.handleInput(e, 'title') }
-                    onKeyPress={ (e) => this.handleKeyPress(e, false) }
-                    onPaste={ (e) => this.handlePaste(e) }
-                  />
-                </ContentEditableWrapper>
-
-                <ContentEditableWrapper>
-                  <Date
-                    creating={ this.state.isCreating || this.state.isEditing }
-                    edited={ this.state.date.isEdited || this.state.isEditing }
-                    invalid={ this.state.date.isInvalid }
-                  >
-                    { date }
-                  </Date>
-
-                  <EditableDate
-                    id={ `${this.props.id}-editable-date` }
-                    creating={ this.state.isCreating || this.state.isEditing }
-                    edited={ this.state.date.isEdited || this.state.isEditing }
-                    contentEditable={ this.state.isCreating || this.state.isEditing }
-                    onInput={ (e) => this.handleInput(e, 'date') }
-                    onKeyPress={ (e) => this.handleKeyPress(e, false) }
-                    onPaste={ (e) => this.handlePaste(e) }
-                  />
-                </ContentEditableWrapper>
-              </HeaderLeftSide>
-
-              {
-                !this.state.isCreating && !this.state.isEditing && this.state.karma === 'negative' && this.state.executors === 'right' &&
-                <div>
-                  <Button
-                    icon={ handsUpHuman }
-                    iconPosition={ 'right' }
-                    onClick={ this.props.onForgiveButtonClick }
-                  >
-                    Forgive
-                  </Button>
-                </div>
-              }
-
-              {
-                this.state.isEditing &&
-                <div>
-                  <Mutation
-                    mutation={ DELETE_ACTION }
-                    refetchQueries={ [{ query: GET_ACTIONS }] }
-                  >
-                    { (deleteAction, { loading, error }) => {
-                      if (error) {
-                        return <div>mutation DELETE_ACTION got error: ${ error.message }</div>;
-                      } else if (loading) {
-                        return <div>mutation DELETE_ACTION is loading...</div>;
-                      }
-
-                      return (
-                        <DeleteActionButton
-                          icon={ trashCan }
-                          iconPosition={ 'left' }
-                          onClick={ () => this.handleDeleteButtonClick(deleteAction) }
-                        >
-                          Delete
-                        </DeleteActionButton>
-                      );
-                    }
-                    }
-                  </Mutation>
-                </div>
-              }
-            </Header>
-
-            <ContentEditableWrapper fullHeight>
-              <Description
-                creating={ this.state.isCreating || this.state.isEditing }
-                edited={ this.state.description.isEdited || this.state.isEditing }
-                invalid={ this.state.description.isInvalid }
+      <Wrapper className={ this.props.className }>
+        <Header>
+          <HeaderLeftSide>
+            <ContentEditableWrapper>
+              <Title
+                tag={ 'h3' }
+                creating={ isCreatingOrEditing }
+                edited={ this.state.fieldsEditedInfo.title || isEditing }
               >
-                { description }
-              </Description>
+                { title }
+              </Title>
 
-              <EditableDescription
-                id={ `${this.props.id}-editable-description` }
-                creating={ this.state.isCreating || this.state.isEditing }
-                edited={ this.state.description.isEdited || this.state.isEditing }
-                contentEditable={ this.state.isCreating || this.state.isEditing }
-                onInput={ (e) => this.handleInput(e, 'description') }
+              <EditableTitle
+                id={ `${this.props.id}-editable-title` }
+                tag={ 'h3' }
+                creating={ isCreatingOrEditing }
+                edited={ this.state.fieldsEditedInfo.title || isEditing }
+                contentEditable={ isCreatingOrEditing }
+                onInput={ (e) => this.handleInput(e, 'title') }
                 onKeyPress={ (e) => this.handleKeyPress(e, false) }
                 onPaste={ (e) => this.handlePaste(e) }
               />
             </ContentEditableWrapper>
 
-            <Footer>
-              <FooterLeftSide>
-                {
-                  (this.state.members || this.state.isCreating || this.state.isEditing) &&
-                  <React.Fragment>
-                    <Members>
-                      {
-                        leftSideMembers && leftSideMembers.length > 0 && leftSideMembers.map((member, i) => {
-                          const person = context.persons.find((person) => {
-                            return person.id === member.personId;
-                          });
+            <ContentEditableWrapper>
+              <Date
+                creating={ isCreatingOrEditing }
+                edited={ this.state.fieldsEditedInfo.date || isEditing }
+              >
+                { date }
+              </Date>
 
-                          const nameFirstLetters = member.name.split(' ').map((word) => {
-                            return word[0];
-                          }).join('');
+              <EditableDate
+                id={ `${this.props.id}-editable-date` }
+                creating={ isCreatingOrEditing }
+                edited={ this.state.fieldsEditedInfo.date || isEditing }
+                contentEditable={ isCreatingOrEditing }
+                onInput={ (e) => this.handleInput(e, 'date') }
+                onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                onPaste={ (e) => this.handlePaste(e) }
+              />
+            </ContentEditableWrapper>
+          </HeaderLeftSide>
 
-                          return (
-                            <StyledAvatar
-                              size={ 'xs' }
-                              url={ person.avatar ? person.avatar.url : null }
-                              key={ i }
-                            >
-                              { !person.avatar ? nameFirstLetters : null }
-                            </StyledAvatar>
-                          );
-                        })
-                      }
+          {
+            !isCreating && !isEditing && karma === 'negative' && executors === 'right' &&
+            <div>
+              <Button
+                icon={ handsUpHuman }
+                iconPosition={ 'right' }
+                onClick={ this.props.onForgiveButtonClick }
+              >
+                Forgive
+              </Button>
+            </div>
+          }
 
-                      {
-                        (this.state.isCreating || this.state.isEditing) && leftSelectOptions.length > 0 &&
-                        <React.Fragment>
-                          <StyledAvatar
+          {
+            isEditing &&
+            <div>
+              <Mutation
+                mutation={ DELETE_ACTION }
+                refetchQueries={ [{ query: GET_ACTIONS }] }
+              >
+                { (deleteAction, { loading, error }) => {
+                  if (error) {
+                    return <div>mutation DELETE_ACTION got error: ${ error.message }</div>;
+                  } else if (loading) {
+                    return <div>mutation DELETE_ACTION is loading...</div>;
+                  }
+
+                  return (
+                    <DeleteActionButton
+                      icon={ trashCan }
+                      iconPosition={ 'left' }
+                      onClick={ () => this.handleDeleteButtonClick(deleteAction) }
+                    >
+                      Delete
+                    </DeleteActionButton>
+                  );
+                }
+                }
+              </Mutation>
+            </div>
+          }
+        </Header>
+
+        <ContentEditableWrapper fullHeight>
+          <Description
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.descrption || isEditing }
+          >
+            { description }
+          </Description>
+
+          <EditableDescription
+            id={ `${this.props.id}-editable-description` }
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.descrption || isEditing }
+            contentEditable={ isCreatingOrEditing }
+            onInput={ (e) => this.handleInput(e, 'description') }
+            onKeyPress={ (e) => this.handleKeyPress(e, false) }
+            onPaste={ (e) => this.handlePaste(e) }
+          />
+        </ContentEditableWrapper>
+
+        <Footer>
+          <FooterLeftSide>
+            {
+              (members || isCreatingOrEditing) &&
+              <React.Fragment>
+                <Members>
+                  {
+                    leftSideMembers && leftSideMembers.length > 0 && leftSideMembers.map((member) => {
+                      const person = this.props.context.persons.find((person) => {
+                        return person.id === member.personId;
+                      });
+
+                      const nameFirstLetters = member.name.split(' ').map((word) => {
+                        return word[0];
+                      }).join('');
+
+                      return (
+                        <MemberAvatarWrapper key={ member.personId }>
+                          <MemberAvatar
                             size={ 'xs' }
-                            new
-                            // white={ this.state.isLeftSelectOpened }
-                            // onClick={ () => this.toggleSelect('left') }
+                            url={ person.avatar ? person.avatar.url : null }
                           >
-                            <Icon icon={ plus }/>
-
-                            <Select onChange={ (e) => this.handleSelectChange(e, 'left') }>
-                              { leftSelectOptions }
-                            </Select>
-                          </StyledAvatar>
+                            { !person.avatar ? nameFirstLetters : null }
+                          </MemberAvatar>
 
                           {
-                            // this.state.isLeftSelectOpened &&
-                            // <OutsideAlerter onClick={ () => this.toggleSelect('left') }>
-                            //   <StyledSelect
-                            //     options={ leftSelectOptions }
-                            //     type={ 'multi' }
-                            //     theme={ 'avatar' }
-                            //     menuIsOpen
-                            //     onChange={ (data) => this.handleSelectChange(data, 'left') }
-                            //   />
-                            // </OutsideAlerter>
+                            isCreatingOrEditing &&
+                            <RemoveMember onClick={ () => this.handleRemoveMemberButtonClick(member.personId) }>
+                              <Icon icon={ close }/>
+                            </RemoveMember>
                           }
-                        </React.Fragment>
-                      }
-                    </Members>
+                        </MemberAvatarWrapper>
+                      );
+                    })
+                  }
 
-                    {
-                      (this.state.isCreating || this.state.isEditing || (rightSideMembers && rightSideMembers.length > 0)) &&
-                      <ExecutorsButton
-                        type={ 'icon' }
-                        theme={ this.state.executors === 'left' ? 'primary' : 'secondary' }
-                        executors={ this.state.executors }
-                        hoverable={ this.state.isCreating || this.state.isEditing }
-                        withoutRipple={ !(this.state.isCreating || this.state.isEditing) }
-                        onClick={ this.state.isCreating || this.state.isEditing ? this.handleExecutorsButtonClick : null }
+                  {
+                    isCreatingOrEditing && leftSelectOptions.length > 0 &&
+                    <MemberAvatarWrapper>
+                      <MemberAvatar
+                        size={ 'xs' }
+                        new
+                        // white={ this.state.isLeftSelectOpened }
+                        // onClick={ () => this.toggleSelect('left') }
                       >
-                        <Icon icon={ longLeftArrow }/>
-                      </ExecutorsButton>
-                    }
+                        <Icon icon={ plus }/>
 
-                    <Members>
+                        <Select onChange={ (e) => this.handleSelectChange(e, 'left') }>
+                          { leftSelectOptions }
+                        </Select>
+                      </MemberAvatar>
+
                       {
-                        rightSideMembers && rightSideMembers.length > 0 && rightSideMembers.map((member, i) => {
-                          const person = context.persons.find((person) => {
-                            return person.id === member.personId;
-                          });
-
-                          const nameFirstLetters = member.name.split(' ').map((word) => {
-                            return word[0];
-                          }).join('');
-
-                          return (
-                            <StyledAvatar
-                              url={ person.avatar ? person.avatar.url : null }
-                              size={ 'xs' }
-                              key={ i }
-                            >
-                              { !person.avatar ? nameFirstLetters : null }
-                            </StyledAvatar>
-                          );
-                        })
+                        // this.state.isLeftSelectOpened &&
+                        // <OutsideAlerter onClick={ () => this.toggleSelect('left') }>
+                        //   <StyledSelect
+                        //     options={ leftSelectOptions }
+                        //     type={ 'multi' }
+                        //     theme={ 'avatar' }
+                        //     menuIsOpen
+                        //     onChange={ (data) => this.handleSelectChange(data, 'left') }
+                        //   />
+                        // </OutsideAlerter>
                       }
+                    </MemberAvatarWrapper>
+                  }
+                </Members>
 
-                      {
-                        (this.state.isCreating || this.state.isEditing) && rightSelectOptions.length > 0 &&
-                        <React.Fragment>
-                          <StyledAvatar
+                {
+                  (isCreatingOrEditing || (rightSideMembers && rightSideMembers.length > 0)) &&
+                  <ExecutorsButton
+                    type={ 'icon' }
+                    theme={ executors === 'left' ? 'primary' : 'secondary' }
+                    executors={ executors }
+                    hoverable={ isCreatingOrEditing }
+                    withoutRipple={ !isCreatingOrEditing }
+                    onClick={ isCreatingOrEditing ? this.handleExecutorsButtonClick : null }
+                  >
+                    <Icon icon={ longLeftArrow }/>
+                  </ExecutorsButton>
+                }
+
+                <Members>
+                  {
+                    rightSideMembers && rightSideMembers.length > 0 && rightSideMembers.map((member) => {
+                      const person = this.props.context.persons.find((person) => {
+                        return person.id === member.personId;
+                      });
+
+                      const nameFirstLetters = member.name.split(' ').map((word) => {
+                        return word[0];
+                      }).join('');
+
+                      return (
+                        <MemberAvatarWrapper key={ member.personId }>
+                          <MemberAvatar
                             size={ 'xs' }
-                            new
-                            // white={ this.state.isRightSelectOpened }
-                            // onClick={ () => this.toggleSelect('right') }
+                            url={ person.avatar ? person.avatar.url : null }
                           >
-                            <Icon icon={ plus }/>
-                          </StyledAvatar>
+                            { !person.avatar ? nameFirstLetters : null }
+                          </MemberAvatar>
 
                           {
-                            // this.state.isRightSelectOpened &&
-                            // <OutsideAlerter onClick={ () => this.toggleSelect('right') }>
-                            //   <StyledSelect
-                            //     options={ rightSelectOptions }
-                            //     type={ 'multi' }
-                            //     theme={ 'avatar' }
-                            //     menuIsOpen
-                            //     onChange={ (data) => this.handleSelectChange(data, 'right') }
-                            //   />
-                            // </OutsideAlerter>
+                            isCreatingOrEditing &&
+                            <RemoveMember onClick={ () => this.handleRemoveMemberButtonClick(member.personId) }>
+                              <Icon icon={ close }/>
+                            </RemoveMember>
                           }
-                        </React.Fragment>
+                        </MemberAvatarWrapper>
+                      );
+                    })
+                  }
+
+                  {
+                    isCreatingOrEditing && rightSelectOptions.length > 0 &&
+                    <MemberAvatarWrapper>
+                      <MemberAvatar
+                        size={ 'xs' }
+                        new
+                        // white={ this.state.isRightSelectOpened }
+                        // onClick={ () => this.toggleSelect('right') }
+                      >
+                        <Icon icon={ plus }/>
+                      </MemberAvatar>
+
+                      {
+                        // this.state.isRightSelectOpened &&
+                        // <OutsideAlerter onClick={ () => this.toggleSelect('right') }>
+                        //   <StyledSelect
+                        //     options={ rightSelectOptions }
+                        //     type={ 'multi' }
+                        //     theme={ 'avatar' }
+                        //     menuIsOpen
+                        //     onChange={ (data) => this.handleSelectChange(data, 'right') }
+                        //   />
+                        // </OutsideAlerter>
                       }
-                    </Members>
-                  </React.Fragment>
-                }
-              </FooterLeftSide>
 
-              <FooterRightSide>
-                {
-                  !this.state.isCreating && !this.state.isEditing ?
-                    <React.Fragment>
-                      <Button
-                        type={ 'flat' }
-                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                        onClick={ () => this.handleEditButtonClick(this.props.id) }
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                        onClick={ this.props.onMoreButtonClick }
-                      >
-                        More
-                      </Button>
-                    </React.Fragment>
-                    :
-                    <React.Fragment>
-                      <Button
-                        type={ 'flat' }
-                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                        onClick={ this.handleCancelButtonClick }
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        theme={ this.state.executors && this.state.executors === 'left' ? 'primary' : 'secondary' }
-                        onClick={ this.handleSaveButtonClick }
-                      >
-                        Save
-                      </Button>
-                    </React.Fragment>
-                }
-              </FooterRightSide>
-            </Footer>
+                      <Select onChange={ (e) => this.handleSelectChange(e, 'right') }>
+                        { rightSelectOptions }
+                      </Select>
+                    </MemberAvatarWrapper>
+                  }
+                </Members>
+              </React.Fragment>
+            }
+          </FooterLeftSide>
 
-            <Border
-              type={ this.state.karma }
-              hoverable={ this.state.isCreating || this.state.isEditing }
-              onClick={ this.state.isCreating || this.state.isEditing ? this.handleBorderClick : null }
-            />
-          </Wrapper>
-        ) }
-      </AppConsumer>
+          <FooterRightSide>
+            {
+              !isCreating && !isEditing ?
+                <React.Fragment>
+                  <Button
+                    type={ 'flat' }
+                    theme={ executors && executors === 'left' ? 'primary' : 'secondary' }
+                    onClick={ () => this.handleEditButtonClick(this.props.id) }
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    theme={ executors && executors === 'left' ? 'primary' : 'secondary' }
+                    onClick={ this.props.onMoreButtonClick }
+                  >
+                    More
+                  </Button>
+                </React.Fragment>
+                :
+                <React.Fragment>
+                  <Button
+                    type={ 'flat' }
+                    theme={ executors && executors === 'left' ? 'primary' : 'secondary' }
+                    onClick={ this.handleCancelButtonClick }
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    theme={ executors && executors === 'left' ? 'primary' : 'secondary' }
+                    onClick={ this.handleSaveButtonClick }
+                  >
+                    Save
+                  </Button>
+                </React.Fragment>
+            }
+          </FooterRightSide>
+        </Footer>
+
+        <Border
+          type={ karma }
+          hoverable={ isCreatingOrEditing }
+          onClick={ isCreatingOrEditing ? this.handleBorderClick : null }
+        />
+      </Wrapper>
     );
   }
 }
@@ -1016,11 +1117,11 @@ export class ActionCardComponent extends React.Component {
 ActionCardComponent.propTypes = {
   id: PropTypes.string,
   className: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  date: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  karma: PropTypes.string.isRequired,
-  executors: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  date: PropTypes.string,
+  description: PropTypes.string,
+  karma: PropTypes.string,
+  executors: PropTypes.string,
   members: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -1036,7 +1137,15 @@ ActionCardComponent.propTypes = {
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
   updateAction: PropTypes.func,
+  context: PropTypes.object,
 };
 
 
-export const ActionCard = graphql(UPDATE_ACTION, { name: 'updateAction' })(ActionCardComponent);
+const ActionCardWithContext = React.forwardRef((props, ref) => (
+  <AppConsumer>
+    { (context) => <ActionCardComponent { ...props } context={ context } ref={ ref }/> }
+  </AppConsumer>
+));
+
+
+export const ActionCard = graphql(UPDATE_ACTION, { name: 'updateAction' })(ActionCardWithContext);

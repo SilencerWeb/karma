@@ -67,9 +67,6 @@ export class CreateActionCard extends React.Component {
   };
 
   render() {
-    const placeholderTitle = 'Action title';
-    const placeholderDate = '12.05.2018';
-    const placeholderDescription = 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
 
     return (
       <React.Fragment>
@@ -84,17 +81,11 @@ export class CreateActionCard extends React.Component {
                 <Mutation mutation={ CREATE_ACTION }>
                   { (createAction) => (
                     <ActionCard
-                      title={ placeholderTitle }
-                      date={ placeholderDate }
-                      description={ placeholderDescription }
-                      karma={ 'neutral' }
-                      executors={ 'left' }
                       create
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (action) => {
                         createAction({
                           variables: action,
-                          refetchQueries: [{ query: GET_ACTIONS }],
                         });
 
                         this.props.onSaveButtonClick && this.props.onSaveButtonClick();
