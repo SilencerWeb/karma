@@ -132,6 +132,7 @@ export class AuthenticationPage extends React.Component {
                                       required
                                       textFieldName={ 'email' }
                                       textFieldType={ 'email' }
+                                      textFieldAttributes={ { autoComplete: 'email' } }
                                       textFieldValue={ values.email }
                                       label={ 'Email' }
                                       helperText={ !!errors.email ? errors.email : null }
@@ -158,6 +159,7 @@ export class AuthenticationPage extends React.Component {
                                       placeholder={ 'John Doe' }
                                       textFieldName={ 'name' }
                                       textFieldValue={ values.name }
+                                      textFieldAttributes={ { autoComplete: 'name' } }
                                       label={ 'Name' }
                                       helperText={ !!errors.name ? errors.name : null }
                                       error={ !!errors.name }
@@ -172,6 +174,7 @@ export class AuthenticationPage extends React.Component {
                                       textFieldName={ 'password' }
                                       textFieldType={ 'password' }
                                       textFieldValue={ values.password }
+                                      textFieldAttributes={ { autoComplete: 'new-password' } }
                                       label={ 'Password' }
                                       helperText={ !!errors.password ? errors.password : null }
                                       error={ !!errors.password }
@@ -186,6 +189,7 @@ export class AuthenticationPage extends React.Component {
                                       textFieldName={ 'confirmPassword' }
                                       textFieldType={ 'password' }
                                       textFieldValue={ values.confirmPassword }
+                                      textFieldAttributes={ { autoComplete: 'new-password' } }
                                       label={ 'Confirm password' }
                                       helperText={ !!errors.confirmPassword ? errors.confirmPassword : null }
                                       error={ !!errors.confirmPassword }
@@ -254,6 +258,7 @@ export class AuthenticationPage extends React.Component {
                                       required
                                       textFieldName={ 'login' }
                                       textFieldValue={ values.login }
+                                      textFieldAttributes={ { autoComplete: 'email' } }
                                       label={ 'Email or nickname' }
                                       helperText={ !!errors.login ? errors.login : null }
                                       error={ !!errors.login }
@@ -268,6 +273,7 @@ export class AuthenticationPage extends React.Component {
                                       textFieldName={ 'password' }
                                       textFieldType={ 'password' }
                                       textFieldValue={ values.password }
+                                      textFieldAttributes={ { autoComplete: 'current-password' } }
                                       label={ 'Password' }
                                       helperText={ !!errors.password ? errors.password : null }
                                       error={ !!errors.password }

@@ -155,6 +155,7 @@ export const TextField = (props) => {
         onChange={ props.onChange }
         onFocus={ props.onFocus }
         onBlur={ props.onBlur }
+        { ...props.attributes }
       />
       { props.icon && props.iconPosition === 'right' && icon }
     </Wrapper>
@@ -184,6 +185,7 @@ TextField.propTypes = {
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
+  attributes: PropTypes.object,
 };
 
 TextField.defaultProps = {

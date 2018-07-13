@@ -95,6 +95,7 @@ export class FormField extends React.Component {
               onChange={ isLimited ? this.handleTextFieldChange : this.props.onChange }
               onFocus={ this.handleTextFieldFocus }
               onBlur={ this.handleTextFieldBlur }
+              attributes={ this.props.textFieldAttributes }
             />
             :
             <Select
@@ -155,6 +156,7 @@ FormField.propTypes = {
   textFieldIconPosition: PropTypes.string,
   textFieldIconRotation: PropTypes.number,
   textFieldLimit: PropTypes.number,
+  textFieldAttributes: PropTypes.object,
 
   selectOptions: PropTypes.arrayOf(
     PropTypes.shape({
