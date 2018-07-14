@@ -586,12 +586,10 @@ export class ActionCardComponent extends React.Component {
     editableDescription.innerHTML = this.state.action.description;
   };
 
-  handleDeleteButtonClick = (deleteAction) => {
-    deleteAction({
-      variables: {
-        id: this.props.id,
-      },
-    });
+  handleDeleteButtonClick = () => {
+    this.props.context.changeActionForDeleteId(this.props.id);
+
+    this.props.context.showModal('DeleteActionConfirmation');
   };
 
   handleRemoveMemberButtonClick = (personId) => {
@@ -889,29 +887,13 @@ export class ActionCardComponent extends React.Component {
           {
             isEditing &&
             <div>
-              <Mutation
-                mutation={ DELETE_ACTION }
-                refetchQueries={ [{ query: GET_ACTIONS }] }
+              <DeleteActionButton
+                icon={ trashCan }
+                iconPosition={ 'left' }
+                onClick={ this.handleDeleteButtonClick }
               >
-                { (deleteAction, { loading, error }) => {
-                  if (error) {
-                    return <div>mutation DELETE_ACTION got error: ${ error.message }</div>;
-                  } else if (loading) {
-                    return <div>mutation DELETE_ACTION is loading...</div>;
-                  }
-
-                  return (
-                    <DeleteActionButton
-                      icon={ trashCan }
-                      iconPosition={ 'left' }
-                      onClick={ () => this.handleDeleteButtonClick(deleteAction) }
-                    >
-                      Delete
-                    </DeleteActionButton>
-                  );
-                }
-                }
-              </Mutation>
+                Delete
+              </DeleteActionButton>
             </div>
           }
         </Header>

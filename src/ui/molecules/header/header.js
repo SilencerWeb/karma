@@ -9,8 +9,6 @@ import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
 
 import { exit } from 'ui/outlines';
 
-import { AUTH_TOKEN } from 'constants.js';
-
 
 const Avatar = styled.div`
   width: 4rem;
@@ -53,9 +51,7 @@ const Wrapper = styled.header`
 
 export const Header = (props: props) => {
   const handleLogoutButtonClick = (context) => {
-    localStorage.removeItem(AUTH_TOKEN);
-
-    context.logout();
+    context.showModal('LogoutConfirmation');
   };
 
   return (

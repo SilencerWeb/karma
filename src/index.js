@@ -11,6 +11,9 @@ import { Overlay } from 'ui/atoms';
 import {
   Modal,
   ContactForm,
+  DeletePersonConfirmation,
+  DeleteActionConfirmation,
+  LogoutConfirmation,
 
   GetUserQuery,
   GetPersonsQuery,
@@ -188,6 +191,15 @@ class App extends React.Component {
   };
 
 
+  changePersonForDeleteId = (id) => {
+    this.setState({ personForDeleteId: id });
+  };
+
+  changeActionForDeleteId = (id) => {
+    this.setState({ actionForDeleteId: id });
+  };
+
+
   showModal = (modalName) => {
     document.querySelector('body').style.overflow = 'hidden';
 
@@ -236,6 +248,9 @@ class App extends React.Component {
       updatePersonsOrActions: this.updatePersonsOrActions,
       deletePersonOrAction: this.deletePersonOrAction,
 
+      changePersonForDeleteId: this.changePersonForDeleteId,
+      changeActionForDeleteId: this.changeActionForDeleteId,
+
       showModal: this.showModal,
       hideModal: this.hideModal,
     };
@@ -270,6 +285,26 @@ class App extends React.Component {
                 this.state.visibleModal === 'ContactForm' &&
                 <StyledModal>
                   <ContactForm/>
+                </StyledModal>
+              }
+
+              {
+                this.state.visibleModal === 'DeletePersonConfirmation' &&
+                <StyledModal>
+                  <DeletePersonConfirmation id={ this.state.personForDeleteId }/>
+                </StyledModal>
+              }
+
+              {
+                this.state.visibleModal === 'DeleteActionConfirmation' &&
+                <StyledModal>
+                  <DeleteActionConfirmation id={ this.state.actionForDeleteId }/>
+                </StyledModal>
+              }
+              {
+                this.state.visibleModal === 'LogoutConfirmation' &&
+                <StyledModal>
+                  <LogoutConfirmation id={ this.state.actionForDeleteId }/>
                 </StyledModal>
               }
             </ModalsWrapper>

@@ -18,5 +18,8 @@ export { DeletePersonSubscription } from './subscriptions/delete-person-subscrip
 export { CreateActionSubscription } from './subscriptions/create-action-subscription';
 export { UpdateActionSubscription } from './subscriptions/update-action-subscription';
 export { DeleteActionSubscription } from './subscriptions/delete-action-subscription';
-export { ContactForm } from './contact-form/contact-form';
 export { Modal } from './modal/modal';
+export { ContactForm } from './contact-form/contact-form';
+export { DeletePersonConfirmation } from './action-confirmations/delete-person-confirmation';
+export { DeleteActionConfirmation } from './action-confirmations/delete-action-confirmation';
+export { LogoutConfirmation } from './action-confirmations/logout-confirmation';

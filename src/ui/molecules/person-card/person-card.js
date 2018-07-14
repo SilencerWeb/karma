@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Mutation, graphql } from 'react-apollo';
 
+import { AppConsumer } from 'index';
+
 import { Button, Heading } from 'ui/atoms';
 
 import { Avatar } from 'ui/molecules';
@@ -13,7 +15,7 @@ import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
-import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
+import { UPDATE_PERSON } from 'graphql/mutations/person';
 
 
 const StyledAvatar = styled(Avatar)`
@@ -378,12 +380,10 @@ class PersonCardComponent extends React.PureComponent {
     });
   };
 
-  handleDeleteButtonClick = (deletePerson) => {
-    deletePerson({
-      variables: {
-        id: this.props.id,
-      },
-    });
+  handleDeleteButtonClick = () => {
+    this.props.context.changePersonForDeleteId(this.props.id);
+
+    this.props.context.showModal('DeletePersonConfirmation');
   };
 
   handleEditButtonClick = () => {
@@ -600,28 +600,16 @@ class PersonCardComponent extends React.PureComponent {
               :
               <React.Fragment>
                 <FooterLeftSide>
-                  { this.state.isEditing &&
-                  <Mutation mutation={ DELETE_PERSON }>
-                    { (deletePerson, { loading, error }) => {
-                      if (error) {
-                        return <div>mutation DELETE_PERSON got error: ${ error.message }</div>;
-                      } else if (loading) {
-                        return <div>mutation DELETE_PERSON is loading...</div>;
-                      }
-
-                      return (
-                        <DeletePersonButton
-                          icon={ trashCan }
-                          iconPosition={ 'left' }
-                          disabled={ this.state.isAvatarLoading }
-                          onClick={ () => this.handleDeleteButtonClick(deletePerson) }
-                        >
-                          Delete
-                        </DeletePersonButton>
-                      );
-                    }
-                    }
-                  </Mutation>
+                  {
+                    this.state.isEditing &&
+                    <DeletePersonButton
+                      icon={ trashCan }
+                      iconPosition={ 'left' }
+                      disabled={ this.state.isAvatarLoading }
+                      onClick={ this.handleDeleteButtonClick }
+                    >
+                      Delete
+                    </DeletePersonButton>
                   }
                 </FooterLeftSide>
 
@@ -666,6 +654,7 @@ PersonCardComponent.propTypes = {
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
   updatePerson: PropTypes.func,
+  context: PropTypes.object,
 };
 
 PersonCardComponent.defaultProps = {
@@ -673,4 +662,11 @@ PersonCardComponent.defaultProps = {
 };
 
 
-export const PersonCard = graphql(UPDATE_PERSON, { name: 'updatePerson' })(PersonCardComponent);
+const PersonCardWithContext = React.forwardRef((props, ref) => (
+  <AppConsumer>
+    { (context) => <PersonCardComponent { ...props } context={ context } ref={ ref }/> }
+  </AppConsumer>
+));
+
+
+export const PersonCard = graphql(UPDATE_PERSON, { name: 'updatePerson' })(PersonCardWithContext);

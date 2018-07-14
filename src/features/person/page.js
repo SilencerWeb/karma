@@ -17,7 +17,7 @@ import { pencil, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
-import { UPDATE_PERSON, DELETE_PERSON } from 'graphql/mutations/person';
+import { UPDATE_PERSON } from 'graphql/mutations/person';
 
 
 const HeaderBackground = styled.div`
@@ -317,7 +317,7 @@ const ActionsHeader = styled.div`
   margin-bottom: 2.4rem;
 `;
 
-export class PersonPage extends React.Component {
+class Page extends React.Component {
   state = {
     isPersonInfoEditing: false,
     isDescriptionEditing: false,
@@ -597,14 +597,10 @@ export class PersonPage extends React.Component {
     this.setState({ isActionCreating: true });
   };
 
-  handleDeleteButtonClick = (deletePerson) => {
-    deletePerson({
-      variables: {
-        id: this.state.person.id,
-      },
-    }).then(() => {
-      this.setState({ shouldRedirectToMainPage: true });
-    });
+  handleDeleteButtonClick = () => {
+    this.props.context.changePersonForDeleteId(this.state.person.id);
+
+    this.props.context.showModal('DeletePersonConfirmation');
   };
 
   handleCancelButtonClick = () => {
@@ -663,27 +659,14 @@ export class PersonPage extends React.Component {
 
               <Header>
                 <HeaderBackground>
-                  <Mutation mutation={ DELETE_PERSON }>
-                    { (deletePerson, { loading, error }) => {
-                      if (error) {
-                        return <div>mutation DELETE_PERSON got error: ${ error.message }</div>;
-                      } else if (loading) {
-                        return <div>mutation DELETE_PERSON is loading...</div>;
-                      }
-
-                      return (
-                        <BackgroundButton
-                          type={ 'icon' }
-                          theme={ 'white' }
-                          left
-                          onClick={ () => this.handleDeleteButtonClick(deletePerson) }
-                        >
-                          <Icon icon={ trashCan }/>
-                        </BackgroundButton>
-                      );
-                    }
-                    }
-                  </Mutation>
+                  <BackgroundButton
+                    type={ 'icon' }
+                    theme={ 'white' }
+                    left
+                    onClick={ this.handleDeleteButtonClick }
+                  >
+                    <Icon icon={ trashCan }/>
+                  </BackgroundButton>
 
                   <BackgroundButton type={ 'icon' } theme={ 'white' } right>
                     <Icon icon={ pencil }/>
@@ -858,10 +841,21 @@ export class PersonPage extends React.Component {
 };
 
 
-PersonPage.propTypes = {
+Page.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
+  context: PropTypes.object,
 };
+
+
+const PageWithContext = React.forwardRef((props, ref) => (
+  <AppConsumer>
+    { (context) => <Page { ...props } context={ context } ref={ ref }/> }
+  </AppConsumer>
+));
+
+
+export const PersonPage = PageWithContext;
