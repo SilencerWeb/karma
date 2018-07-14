@@ -62,70 +62,78 @@ const Wrapper = styled.div`
 `;
 
 
-export const DeletePersonConfirmation = (props) => {
+export const DeletePersonConfirmationComponent = (props) => {
+  const person = props.context.persons.find((person) => {
+    return person.id === props.id;
+  });
+
   return (
     <Wrapper className={ props.className }>
-      <AppConsumer>
-        { (context) => (
-          <React.Fragment>
-            <Header>
-              <Title tag={ 'h3' } type={ 'title' }>
-                Are you sure that you want to
-                <Highlight>&nbsp;delete&nbsp;</Highlight>
-                this person?
-              </Title>
-              <Note>You will not be able to reestablish data, even I will not be able to help you :(</Note>
-            </Header>
+      <Header>
+        <Title tag={ 'h3' } type={ 'title' }>
+          Are you sure that you want to
+          <Highlight>&nbsp;delete&nbsp;</Highlight>
+          person { person.name }?
+        </Title>
+        <Note>You will not be able to restore data, even I will not be able to help you :(</Note>
+      </Header>
 
-            <Footer>
+      <Footer>
+        <ActionConfirmationButton
+          type={ 'flat' }
+          onClick={ () => props.context.hideModal() }
+        >
+          No, cancel
+        </ActionConfirmationButton>
+
+        <Mutation mutation={ DELETE_PERSON }>
+          { (deletePerson, { loading, error }) => {
+            if (error) {
+              return <div>mutation DELETE_PERSON got error: ${ error.message }</div>;
+            } else if (loading) {
+              return <div>mutation DELETE_PERSON is loading...</div>;
+            }
+
+            return (
               <ActionConfirmationButton
-                type={ 'flat' }
-                onClick={ () => context.hideModal() }
+                icon={ trashCan }
+                iconPosition={ 'left' }
+                delete
+                onClick={ () => {
+                  deletePerson({
+                    variables: {
+                      id: props.id,
+                    },
+                  }).then(() => {
+                    props.context.hideModal();
+
+                    props.context.changePersonForDeleteId(null);
+                  });
+                } }
               >
-                No, cancel
+                Yes, delete this person
               </ActionConfirmationButton>
-
-              <Mutation mutation={ DELETE_PERSON }>
-                { (deletePerson, { loading, error }) => {
-                  if (error) {
-                    return <div>mutation DELETE_PERSON got error: ${ error.message }</div>;
-                  } else if (loading) {
-                    return <div>mutation DELETE_PERSON is loading...</div>;
-                  }
-
-                  return (
-                    <ActionConfirmationButton
-                      icon={ trashCan }
-                      iconPosition={ 'left' }
-                      delete
-                      onClick={ () => {
-                        deletePerson({
-                          variables: {
-                            id: props.id,
-                          },
-                        }).then(() => {
-                          context.hideModal();
-
-                          context.changePersonForDeleteId(null);
-                        });
-                      } }
-                    >
-                      Yes, delete this person
-                    </ActionConfirmationButton>
-                  );
-                }
-                }
-              </Mutation>
-            </Footer>
-          </React.Fragment>
-        ) }
-      </AppConsumer>
+            );
+          }
+          }
+        </Mutation>
+      </Footer>
     </Wrapper>
   );
 };
 
 
-DeletePersonConfirmation.propTypes = {
+DeletePersonConfirmationComponent.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string.isRequired,
+  context: PropTypes.object,
 };
+
+
+const DeletePersonConfirmationWithContext = React.forwardRef((props, ref) => (
+  <AppConsumer>
+    { (context) => <DeletePersonConfirmationComponent { ...props } context={ context } ref={ ref }/> }
+  </AppConsumer>
+));
+
+export const DeletePersonConfirmation = DeletePersonConfirmationWithContext;

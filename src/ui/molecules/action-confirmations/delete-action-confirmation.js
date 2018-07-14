@@ -62,70 +62,78 @@ const Wrapper = styled.div`
 `;
 
 
-export const DeleteActionConfirmation = (props) => {
+export const DeleteActionConfirmationComponent = (props) => {
+  const action = props.context.actions.find((action) => {
+    return action.id === props.id;
+  });
+
   return (
     <Wrapper className={ props.className }>
-      <AppConsumer>
-        { (context) => (
-          <React.Fragment>
-            <Header>
-              <Title tag={ 'h3' } type={ 'title' }>
-                Are you sure that you want to
-                <Highlight>&nbsp;delete&nbsp;</Highlight>
-                this action?
-              </Title>
-              <Note>You will not be able to reestablish data, even I will not be able to help you :(</Note>
-            </Header>
+      <Header>
+        <Title tag={ 'h3' } type={ 'title' }>
+          Are you sure that you want to
+          <Highlight>&nbsp;delete&nbsp;</Highlight>
+          action '{ action.title }'?
+        </Title>
+        <Note>You will not be able to restore data, even I will not be able to help you :(</Note>
+      </Header>
 
-            <Footer>
+      <Footer>
+        <ActionConfirmationButton
+          type={ 'flat' }
+          onClick={ () => props.context.hideModal() }
+        >
+          No, cancel
+        </ActionConfirmationButton>
+
+        <Mutation mutation={ DELETE_ACTION }>
+          { (deleteAction, { loading, error }) => {
+            if (error) {
+              return <div>mutation DELETE_ACTION got error: ${ error.message }</div>;
+            } else if (loading) {
+              return <div>mutation DELETE_ACTION is loading...</div>;
+            }
+
+            return (
               <ActionConfirmationButton
-                type={ 'flat' }
-                onClick={ () => context.hideModal() }
+                icon={ trashCan }
+                iconPosition={ 'left' }
+                delete
+                onClick={ () => {
+                  deleteAction({
+                    variables: {
+                      id: props.id,
+                    },
+                  }).then(() => {
+                    props.context.hideModal();
+
+                    props.context.changeActionForDeleteId(null);
+                  });
+                } }
               >
-                No, cancel
+                Yes, delete this action
               </ActionConfirmationButton>
-
-              <Mutation mutation={ DELETE_ACTION }>
-                { (deleteAction, { loading, error }) => {
-                  if (error) {
-                    return <div>mutation DELETE_ACTION got error: ${ error.message }</div>;
-                  } else if (loading) {
-                    return <div>mutation DELETE_ACTION is loading...</div>;
-                  }
-
-                  return (
-                    <ActionConfirmationButton
-                      icon={ trashCan }
-                      iconPosition={ 'left' }
-                      delete
-                      onClick={ () => {
-                        deleteAction({
-                          variables: {
-                            id: props.id,
-                          },
-                        }).then(() => {
-                          context.hideModal();
-
-                          context.changeActionForDeleteId(null);
-                        });
-                      } }
-                    >
-                      Yes, delete this action
-                    </ActionConfirmationButton>
-                  );
-                }
-                }
-              </Mutation>
-            </Footer>
-          </React.Fragment>
-        ) }
-      </AppConsumer>
+            );
+          }
+          }
+        </Mutation>
+      </Footer>
     </Wrapper>
   );
 };
 
 
-DeleteActionConfirmation.propTypes = {
+DeleteActionConfirmationComponent.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string.isRequired,
+  context: PropTypes.object,
 };
+
+
+const DeleteActionConfirmationWithContext = React.forwardRef((props, ref) => (
+  <AppConsumer>
+    { (context) => <DeleteActionConfirmationComponent { ...props } context={ context } ref={ ref }/> }
+  </AppConsumer>
+));
+
+export const DeleteActionConfirmation = DeleteActionConfirmationWithContext;
