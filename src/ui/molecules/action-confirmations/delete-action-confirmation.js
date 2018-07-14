@@ -15,6 +15,12 @@ import { color } from 'ui/theme';
 import { DELETE_ACTION } from 'graphql/mutations/action';
 
 
+const Highlight = styled.span`
+  display: inline-block;
+  vertical-align: top;
+  color: ${color.error};
+`;
+
 const Title = Heading.extend`
   margin-bottom: 1.2rem;
 `.withComponent('h2');
@@ -22,7 +28,6 @@ const Title = Heading.extend`
 const Note = styled.p`
   margin-top: 0;
   margin-bottom: 0;
-  opacity: 0.8;
 `;
 
 const Header = styled.div`
@@ -64,7 +69,11 @@ export const DeleteActionConfirmation = (props) => {
         { (context) => (
           <React.Fragment>
             <Header>
-              <Title tag={ 'h3' } type={ 'title' }>Are you sure that you want to delete this action?</Title>
+              <Title tag={ 'h3' } type={ 'title' }>
+                Are you sure that you want to
+                <Highlight>&nbsp;delete&nbsp;</Highlight>
+                this action?
+              </Title>
               <Note>You will not be able to reestablish data, even I will not be able to help you :(</Note>
             </Header>
 

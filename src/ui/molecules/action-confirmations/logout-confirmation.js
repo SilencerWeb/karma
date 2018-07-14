@@ -8,8 +8,16 @@ import { Button, Heading } from 'ui/atoms';
 
 import { exit } from 'ui/outlines';
 
+import { color } from 'ui/theme';
+
 import { AUTH_TOKEN } from 'constants.js';
 
+
+const Highlight = styled.span`
+  display: inline-block;
+  vertical-align: top;
+  color: ${color.primary};
+`;
 
 const Title = Heading.withComponent('h2');
 
@@ -41,7 +49,11 @@ export const LogoutConfirmation = (props) => {
         { (context) => (
           <React.Fragment>
             <Header>
-              <Title tag={ 'h3' } type={ 'title' }>Are you sure that you want to logout?</Title>
+              <Title tag={ 'h3' } type={ 'title' }>
+                Are you sure that you want to
+                <Highlight>&nbsp;logout</Highlight>
+                ?
+              </Title>
             </Header>
 
             <Footer>
