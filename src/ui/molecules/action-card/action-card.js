@@ -469,7 +469,7 @@ export class ActionCardComponent extends React.Component {
     isEditing: false,
     action: null,
     updatedAction: null,
-    fieldsEditedInfo: {},
+    fieldsEditedInfo: null,
     // isLeftSelectOpened: false,
     // isRightSelectOpened: false,
   };
@@ -575,8 +575,6 @@ export class ActionCardComponent extends React.Component {
   };
 
   handleEditButtonClick = (actionId) => {
-    this.setState({ isEditing: true });
-
     const editableTitle = document.querySelector(`#${actionId}-editable-title`);
     const editableDate = document.querySelector(`#${actionId}-editable-date`);
     const editableDescription = document.querySelector(`#${actionId}-editable-description`);
@@ -584,6 +582,8 @@ export class ActionCardComponent extends React.Component {
     editableTitle.innerHTML = this.state.action.title;
     editableDate.innerHTML = this.state.action.date;
     editableDescription.innerHTML = this.state.action.description;
+
+    this.setState({ isEditing: true });
   };
 
   handleDeleteButtonClick = () => {
@@ -738,9 +738,9 @@ export class ActionCardComponent extends React.Component {
       const defaultMembers = defaultActiveMember ? [defaultActiveMember] : [];
 
       const action = {
-        title: props.title,
-        date: props.date,
-        description: props.description,
+        title: props.title || '',
+        date: props.date || '',
+        description: props.description || '',
         karma: props.karma || 'neutral',
         executors: props.executors || 'left',
         members: props.members || defaultMembers,
@@ -749,12 +749,14 @@ export class ActionCardComponent extends React.Component {
 
       state.action = action;
       state.updatedAction = action;
+      state.fieldsEditedInfo = {};
     }
 
     state.isCreating = props.create;
 
     return state;
   };
+
 
   render() {
     let isCreating = this.state.isCreating;
@@ -790,7 +792,7 @@ export class ActionCardComponent extends React.Component {
       description = description ? description : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
     }
 
-    
+
     if (!description && !isCreatingOrEditing) {
       description = 'No description';
     }
@@ -847,7 +849,7 @@ export class ActionCardComponent extends React.Component {
               <Title
                 tag={ 'h3' }
                 creating={ isCreatingOrEditing }
-                edited={ this.state.fieldsEditedInfo.title || isEditing }
+                edited={ this.state.fieldsEditedInfo.title }
               >
                 { title }
               </Title>
@@ -856,7 +858,7 @@ export class ActionCardComponent extends React.Component {
                 id={ `${this.props.id}-editable-title` }
                 tag={ 'h3' }
                 creating={ isCreatingOrEditing }
-                edited={ this.state.fieldsEditedInfo.title || isEditing }
+                edited={ this.state.fieldsEditedInfo.title }
                 contentEditable={ isCreatingOrEditing }
                 onInput={ (e) => this.handleInput(e, 'title') }
                 onKeyPress={ (e) => this.handleKeyPress(e, false) }
@@ -867,7 +869,7 @@ export class ActionCardComponent extends React.Component {
             <ContentEditableWrapper>
               <Date
                 creating={ isCreatingOrEditing }
-                edited={ this.state.fieldsEditedInfo.date || isEditing }
+                edited={ this.state.fieldsEditedInfo.date }
               >
                 { date }
               </Date>
@@ -875,7 +877,7 @@ export class ActionCardComponent extends React.Component {
               <EditableDate
                 id={ `${this.props.id}-editable-date` }
                 creating={ isCreatingOrEditing }
-                edited={ this.state.fieldsEditedInfo.date || isEditing }
+                edited={ this.state.fieldsEditedInfo.date }
                 contentEditable={ isCreatingOrEditing }
                 onInput={ (e) => this.handleInput(e, 'date') }
                 onKeyPress={ (e) => this.handleKeyPress(e, false) }
@@ -914,7 +916,7 @@ export class ActionCardComponent extends React.Component {
         <ContentEditableWrapper fullHeight>
           <Description
             creating={ isCreatingOrEditing }
-            edited={ this.state.fieldsEditedInfo.descrption || isEditing }
+            edited={ this.state.fieldsEditedInfo.descrption }
           >
             { description }
           </Description>
@@ -922,7 +924,7 @@ export class ActionCardComponent extends React.Component {
           <EditableDescription
             id={ `${this.props.id}-editable-description` }
             creating={ isCreatingOrEditing }
-            edited={ this.state.fieldsEditedInfo.descrption || isEditing }
+            edited={ this.state.fieldsEditedInfo.descrption }
             contentEditable={ isCreatingOrEditing }
             onInput={ (e) => this.handleInput(e, 'description') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }

@@ -4,6 +4,7 @@ import { lighten } from 'polished';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Mutation, graphql } from 'react-apollo';
+import deepEqual from 'deep-equal';
 
 import { AppConsumer } from 'index';
 
@@ -248,37 +249,12 @@ const Wrapper = styled.div`
 
 class PersonCardComponent extends React.PureComponent {
   state = {
-    isCreating: this.props.create || false,
+    isCreating: false,
     isEditing: false,
-    person: {
-      name: {
-        content: '',
-        isEdited: false,
-      },
-      position: {
-        content: '',
-        isEdited: false,
-      },
-      description: {
-        content: '',
-        isEdited: false,
-      },
-    },
-    updatedPerson: {
-      name: {
-        content: '',
-        isEdited: false,
-      },
-      position: {
-        content: '',
-        isEdited: false,
-      },
-      description: {
-        content: '',
-        isEdited: false,
-      },
-    },
-    invalidFields: this.props.create ? ['name', 'position'] : [],
+    person: null,
+    updatedPerson: null,
+    fieldsEditedInfo: null,
+    invalidFields: null,
   };
 
   handleInput = (e, element) => {
@@ -290,7 +266,7 @@ class PersonCardComponent extends React.PureComponent {
       const invalidFields = [];
 
       fields.forEach((field) => {
-        const content = field === element ? target.textContent : prevState.updatedPerson[field].content;
+        const content = field === element ? target.textContent : prevState.updatedPerson[field];
 
         if (content.length === 0) {
           invalidFields.push(field);
@@ -301,10 +277,11 @@ class PersonCardComponent extends React.PureComponent {
         ...prevState,
         updatedPerson: {
           ...prevState.updatedPerson,
-          [element]: {
-            content: target.textContent,
-            isEdited: target.textContent.length > 0,
-          },
+          [element]: target.textContent,
+        },
+        fieldsEditedInfo: {
+          ...prevState.fieldsEditedInfo,
+          [element]: target.textContent.length > 0,
         },
         invalidFields: invalidFields,
       };
@@ -391,39 +368,53 @@ class PersonCardComponent extends React.PureComponent {
     const editablePosition = document.querySelector(`#${this.props.id}-editable-position`);
     const editableDescription = document.querySelector(`#${this.props.id}-editable-description`);
 
-    this.setState((prevState) => {
-      editableName.innerHTML = prevState.person.name.content;
-      editablePosition.innerHTML = prevState.person.position.content;
-      editableDescription.innerHTML = prevState.person.description.content;
+    editableName.innerHTML = this.state.person.name;
+    editablePosition.innerHTML = this.state.person.position;
+    editableDescription.innerHTML = this.state.person.description;
 
-      return {
-        ...prevState,
-        updatedPerson: {
-          id: this.props.id,
-          avatar: this.props.avatar,
-          name: {
-            content: this.props.name,
-            isEdited: false,
-          },
-          position: {
-            content: this.props.position,
-            isEdited: false,
-          },
-          description: {
-            content: this.props.description,
-            isEdited: false,
-          },
-        },
-        invalidFields: [],
-        isEditing: true,
-      };
-    });
+    this.setState({ isEditing: true });
   };
 
   handleCancelButtonClick = () => {
-    this.setState({ isEditing: false });
+    if (this.state.isCreating) {
+      const fields = ['name', 'position', 'description'];
 
-    this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+      const isAnyFieldFilled = fields.some((field) => {
+        return this.state.updatedPerson[field].length > 0;
+      });
+
+      if (isAnyFieldFilled) {
+        this.props.context.showModal('DiscardCreatingPersonConfirmation');
+
+        this.props.context.changeDiscardConfirmationFunction(() => {
+          this.setState({ isEditing: false });
+
+          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+        });
+      } else {
+        this.setState({ isEditing: false });
+
+        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+      }
+    } else {
+      const arePersonAndUpdatedPersonEqual = deepEqual(this.state.person, this.state.updatedPerson);
+
+      if (!arePersonAndUpdatedPersonEqual) {
+        this.props.context.changeEditingPersonId(this.props.id);
+
+        this.props.context.changeDiscardConfirmationFunction(() => {
+          this.setState({ isEditing: false });
+
+          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+        });
+
+        this.props.context.showModal('DiscardPersonChangesConfirmation');
+      } else {
+        this.setState({ isEditing: false });
+
+        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+      }
+    }
   };
 
   handleSaveButtonClick = () => {
@@ -433,9 +424,9 @@ class PersonCardComponent extends React.PureComponent {
 
       if (prevState.invalidFields.length === 0) {
         const person = {
-          name: state.updatedPerson.name.content,
-          position: state.updatedPerson.position.content,
-          description: state.updatedPerson.description.content,
+          name: state.updatedPerson.name,
+          position: state.updatedPerson.position,
+          description: state.updatedPerson.description,
         };
 
         if (state.updatedPerson.avatar && state.updatedPerson.avatar.id) {
@@ -463,36 +454,69 @@ class PersonCardComponent extends React.PureComponent {
     });
   };
 
+
   static getDerivedStateFromProps = (props, state) => {
-    if (!state.isCreating && !state.isEditing) {
-      state.person.name.content = props.name;
-      state.person.position.content = props.position;
-      state.person.description.content = props.description;
+    if (!state.person || (!state.isCreating && !state.isEditing)) {
+      const person = {
+        id: props.id,
+        avatar: props.avatar,
+        name: props.name || '',
+        position: props.position || '',
+        description: props.description || '',
+      };
+
+      state.person = person;
+      state.updatedPerson = person;
+      state.fieldsEditedInfo = {};
+      state.invalidFields = [];
+
+      if (props.create) {
+        state.isCreating = props.create;
+        state.invalidFields = ['name', 'position'];
+      }
     }
 
     return state;
   };
 
   render() {
-    let name = this.state.person && this.state.person.name ? this.state.person.name.content : this.props.name;
-    let position = this.state.person && this.state.person.position ? this.state.person.position.content : this.props.position;
-    let description = this.state.person && this.state.person.description ? this.state.person.description.content : this.props.description;
-    let avatar = this.state.person && this.state.person.avatar && this.state.person.avatar.url ? this.state.person.avatar.url : null;
+    let isCreating = this.state.isCreating;
+    let isEditing = this.state.isEditing;
+    let isCreatingOrEditing = isCreating || isEditing;
 
-    if (!avatar && this.props.avatar && this.props.avatar.url) {
-      avatar = this.props.avatar.url;
+
+    let person = this.state.person;
+    let updatedPerson = this.state.updatedPerson;
+
+
+    let avatar;
+    let name;
+    let position;
+    let description;
+
+    if (person) {
+      name = isCreatingOrEditing ? updatedPerson.name : person.name;
+      position = isCreatingOrEditing ? updatedPerson.position : person.position;
+      description = isCreatingOrEditing ? updatedPerson.description : person.description;
+
+      if ((isCreatingOrEditing && updatedPerson.avatar) || person.avatar) {
+        avatar = isCreatingOrEditing ? updatedPerson.avatar.url : person.avatar.url;
+      }
     }
 
-    if (this.state.isCreating || this.state.isEditing) {
-      name = this.state.updatedPerson.name.content.length > 0 ? this.state.updatedPerson.name.content : 'John Doe';
-      position = this.state.updatedPerson.position.content.length > 0 ? this.state.updatedPerson.position.content : 'Buddy';
-      description = this.state.updatedPerson.description.content.length > 0 ? this.state.updatedPerson.description.content : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
-      avatar = this.state.updatedPerson.avatar && this.state.updatedPerson.avatar.url ? this.state.updatedPerson.avatar.url : null;
+
+    if (isCreatingOrEditing) {
+      // Placeholders
+      name = name ? name : 'John Doe';
+      position = position ? position : 'Buddy';
+      description = description ? description : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
     }
 
-    if (!description) {
+
+    if (!description && !isCreatingOrEditing) {
       description = 'No description';
     }
+
 
     let karmaStatus;
     let karma = this.props.karma;
@@ -510,10 +534,10 @@ class PersonCardComponent extends React.PureComponent {
     return (
       <Wrapper className={ this.props.className }>
         <StyledAvatar
-          url={ avatar }
+          url={ avatar ? avatar : null }
           alt={ name }
           icon={ user }
-          edit={ this.state.isCreating || this.state.isEditing }
+          edit={ isCreatingOrEditing }
           onRemoveAvatarClick={ this.handleRemoveAvatarClick }
           onFileInputChange={ this.handleFileInputChange }
         />
@@ -522,18 +546,18 @@ class PersonCardComponent extends React.PureComponent {
           <Name
             tag={ 'h2' }
             type={ 'title' }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.name.isEdited }
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.name }
           >
             { name }
           </Name>
           <EditableName
-            id={ this.props.id && `${this.props.id}-editable-name` }
+            id={ `${this.props.id}-editable-name` }
             tag={ 'h2' }
             type={ 'title' }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.name.isEdited }
-            contentEditable={ this.state.isCreating || this.state.isEditing }
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.name }
+            contentEditable={ isCreatingOrEditing }
             onInput={ (e) => this.handleInput(e, 'name') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
             onPaste={ (e) => this.handlePaste(e) }
@@ -542,16 +566,16 @@ class PersonCardComponent extends React.PureComponent {
 
         <ContentEditableWrapper>
           <Position
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.position.isEdited }
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.position }
           >
             { position }
           </Position>
           <EditablePosition
-            id={ this.props.id && `${this.props.id}-editable-position` }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.position.isEdited }
-            contentEditable={ this.state.isCreating || this.state.isEditing }
+            id={ `${this.props.id}-editable-position` }
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.position }
+            contentEditable={ isCreatingOrEditing }
             onInput={ (e) => this.handleInput(e, 'position') }
             onKeyPress={ (e) => this.handleKeyPress(e, false) }
             onPaste={ (e) => this.handlePaste(e) }
@@ -562,16 +586,16 @@ class PersonCardComponent extends React.PureComponent {
 
         <ContentEditableWrapper fullHeight>
           <Description
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.description.isEdited }
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.description }
           >
             { description }
           </Description>
           <EditableDescription
-            id={ this.props.id && `${this.props.id}-editable-description` }
-            creating={ this.state.isCreating || this.state.isEditing }
-            edited={ (this.state.isCreating || this.state.isEditing) && this.state.updatedPerson.description.isEdited }
-            contentEditable={ this.state.isCreating || this.state.isEditing }
+            id={ `${this.props.id}-editable-description` }
+            creating={ isCreatingOrEditing }
+            edited={ this.state.fieldsEditedInfo.description }
+            contentEditable={ isCreatingOrEditing }
             onInput={ (e) => this.handleInput(e, 'description') }
             onKeyPress={ (e) => this.handleKeyPress(e, true) }
             onPaste={ (e) => this.handlePaste(e) }
@@ -580,7 +604,7 @@ class PersonCardComponent extends React.PureComponent {
 
         <Footer>
           {
-            !this.state.isCreating && !this.state.isEditing ?
+            !isCreatingOrEditing ?
               <React.Fragment>
                 <FooterLeftSide/>
 
@@ -601,7 +625,7 @@ class PersonCardComponent extends React.PureComponent {
               <React.Fragment>
                 <FooterLeftSide>
                   {
-                    this.state.isEditing &&
+                    isEditing &&
                     <DeletePersonButton
                       icon={ trashCan }
                       iconPosition={ 'left' }

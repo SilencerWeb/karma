@@ -14,6 +14,8 @@ import {
   DeletePersonConfirmation,
   DeleteActionConfirmation,
   LogoutConfirmation,
+  DiscardPersonChangesConfirmation,
+  DiscardCreatingPersonConfirmation,
 
   GetUserQuery,
   GetPersonsQuery,
@@ -195,8 +197,21 @@ class App extends React.Component {
     this.setState({ personForDeleteId: id });
   };
 
+  changeEditingPersonId = (id) => {
+    this.setState({ editingPersonId: id });
+  };
+
+  changeDiscardConfirmationFunction = (discardConfirmationFunction) => {
+    this.setState({ discardConfirmationFunction: discardConfirmationFunction });
+  };
+
+
   changeActionForDeleteId = (id) => {
     this.setState({ actionForDeleteId: id });
+  };
+
+  changeEditingActionId = (id) => {
+    this.setState({ editingActionId: id });
   };
 
 
@@ -249,7 +264,12 @@ class App extends React.Component {
       deletePersonOrAction: this.deletePersonOrAction,
 
       changePersonForDeleteId: this.changePersonForDeleteId,
+      changeEditingPersonId: this.changeEditingPersonId,
+      discardConfirmationFunction: this.state.discardConfirmationFunction,
+      changeDiscardConfirmationFunction: this.changeDiscardConfirmationFunction,
+
       changeActionForDeleteId: this.changeActionForDeleteId,
+      changeEditingActionId: this.changeEditingActionId,
 
       showModal: this.showModal,
       hideModal: this.hideModal,
@@ -303,10 +323,25 @@ class App extends React.Component {
                   <DeleteActionConfirmation id={ this.state.actionForDeleteId }/>
                 </StyledModal>
               }
+
               {
                 this.state.visibleModal === 'LogoutConfirmation' &&
                 <StyledModal>
-                  <LogoutConfirmation id={ this.state.actionForDeleteId }/>
+                  <LogoutConfirmation/>
+                </StyledModal>
+              }
+
+              {
+                this.state.visibleModal === 'DiscardPersonChangesConfirmation' &&
+                <StyledModal>
+                  <DiscardPersonChangesConfirmation id={ this.state.editingPersonId }/>
+                </StyledModal>
+              }
+
+              {
+                this.state.visibleModal === 'DiscardCreatingPersonConfirmation' &&
+                <StyledModal>
+                  <DiscardCreatingPersonConfirmation/>
                 </StyledModal>
               }
             </ModalsWrapper>

@@ -23,3 +23,5 @@ export { ContactForm } from './contact-form/contact-form';
 export { DeletePersonConfirmation } from './action-confirmations/delete-person-confirmation';
 export { DeleteActionConfirmation } from './action-confirmations/delete-action-confirmation';
 export { LogoutConfirmation } from './action-confirmations/logout-confirmation';
+export { DiscardPersonChangesConfirmation } from './action-confirmations/discard-person-changes-confirmation';
+export { DiscardCreatingPersonConfirmation } from './action-confirmations/discard-creating-person-confirmation';
