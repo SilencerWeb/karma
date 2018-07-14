@@ -2,7 +2,8 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { lighten, rgba } from 'polished';
 import PropTypes from 'prop-types';
-import { Mutation, graphql } from 'react-apollo';
+import { graphql } from 'react-apollo';
+import deepEqual from 'deep-equal';
 
 import { AppConsumer } from 'index';
 
@@ -14,8 +15,7 @@ import { handsUpHuman, longLeftArrow, plus, trashCan, close } from 'ui/outlines'
 
 import { font, color, transition } from 'ui/theme';
 
-import { GET_ACTIONS } from 'graphql/queries/action';
-import { UPDATE_ACTION, DELETE_ACTION } from 'graphql/mutations/action';
+import { UPDATE_ACTION } from 'graphql/mutations/action';
 
 
 const DeleteActionButton = styled(Button)`
@@ -626,9 +626,45 @@ export class ActionCardComponent extends React.Component {
   };
 
   handleCancelButtonClick = () => {
-    this.setState({ isEditing: false });
+    if (this.state.isCreating) {
+      const fields = ['title', 'date', 'description'];
 
-    this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+      const isAnyFieldFilled = fields.some((field) => {
+        return this.state.updatedAction[field].length > 0;
+      });
+
+      if (isAnyFieldFilled) {
+        this.props.context.showModal('DiscardCreatingActionConfirmation');
+
+        this.props.context.changeDiscardActionConfirmationFunction(() => {
+          this.setState({ isEditing: false });
+
+          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+        });
+      } else {
+        this.setState({ isEditing: false });
+
+        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+      }
+    } else {
+      const areActionAndUpdatedActionEqual = deepEqual(this.state.action, this.state.updatedAction);
+
+      if (!areActionAndUpdatedActionEqual) {
+        this.props.context.changeEditingActionId(this.props.id);
+
+        this.props.context.changeDiscardActionConfirmationFunction(() => {
+          this.setState({ isEditing: false });
+
+          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+        });
+
+        this.props.context.showModal('DiscardActionChangesConfirmation');
+      } else {
+        this.setState({ isEditing: false });
+
+        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+      }
+    }
   };
 
   handleSaveButtonClick = () => {

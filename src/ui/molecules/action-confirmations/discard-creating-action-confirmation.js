@@ -41,18 +41,14 @@ const Wrapper = styled.div`
 `;
 
 
-export const DiscardPersonChangesConfirmationComponent = (props) => {
-  const person = props.context.persons.find((person) => {
-    return person.id === props.id;
-  });
-
+export const DiscardCreatingActionConfirmationComponent = (props) => {
   return (
     <Wrapper className={ props.className }>
       <Header>
         <Title tag={ 'h3' } type={ 'title' }>
           Are you sure that you want to
           <Highlight>&nbsp;discard&nbsp;</Highlight>
-          changes of person '{ person.name }'?
+          creating new action?
         </Title>
       </Header>
 
@@ -66,12 +62,12 @@ export const DiscardPersonChangesConfirmationComponent = (props) => {
 
         <ActionConfirmationButton
           onClick={ () => {
-            props.context.discardPersonConfirmationFunction();
+            props.context.discardActionConfirmationFunction();
 
             props.context.hideModal();
           } }
         >
-          Yes, discard changes
+          Yes, discard creating
         </ActionConfirmationButton>
       </Footer>
     </Wrapper>
@@ -79,18 +75,17 @@ export const DiscardPersonChangesConfirmationComponent = (props) => {
 };
 
 
-DiscardPersonChangesConfirmationComponent.propTypes = {
+DiscardCreatingActionConfirmationComponent.propTypes = {
   className: PropTypes.string,
-  id: PropTypes.string.isRequired,
   context: PropTypes.object,
 };
 
 
-const DiscardPersonChangesConfirmationWithContext = React.forwardRef((props, ref) => (
+const DiscardCreatingActionConfirmationWithContext = React.forwardRef((props, ref) => (
   <AppConsumer>
-    { (context) => <DiscardPersonChangesConfirmationComponent { ...props } context={ context } ref={ ref }/> }
+    { (context) => <DiscardCreatingActionConfirmationComponent { ...props } context={ context } ref={ ref }/> }
   </AppConsumer>
 ));
 
 
-export const DiscardPersonChangesConfirmation = DiscardPersonChangesConfirmationWithContext;
+export const DiscardCreatingActionConfirmation = DiscardCreatingActionConfirmationWithContext;

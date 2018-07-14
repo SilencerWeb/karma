@@ -41,9 +41,9 @@ const Wrapper = styled.div`
 `;
 
 
-export const DiscardPersonChangesConfirmationComponent = (props) => {
-  const person = props.context.persons.find((person) => {
-    return person.id === props.id;
+export const DiscardActionChangesConfirmationComponent = (props) => {
+  const action = props.context.actions.find((action) => {
+    return action.id === props.id;
   });
 
   return (
@@ -52,7 +52,7 @@ export const DiscardPersonChangesConfirmationComponent = (props) => {
         <Title tag={ 'h3' } type={ 'title' }>
           Are you sure that you want to
           <Highlight>&nbsp;discard&nbsp;</Highlight>
-          changes of person '{ person.name }'?
+          changes of action '{ action.title }'?
         </Title>
       </Header>
 
@@ -66,7 +66,7 @@ export const DiscardPersonChangesConfirmationComponent = (props) => {
 
         <ActionConfirmationButton
           onClick={ () => {
-            props.context.discardPersonConfirmationFunction();
+            props.context.discardActionConfirmationFunction();
 
             props.context.hideModal();
           } }
@@ -79,18 +79,18 @@ export const DiscardPersonChangesConfirmationComponent = (props) => {
 };
 
 
-DiscardPersonChangesConfirmationComponent.propTypes = {
+DiscardActionChangesConfirmationComponent.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string.isRequired,
   context: PropTypes.object,
 };
 
 
-const DiscardPersonChangesConfirmationWithContext = React.forwardRef((props, ref) => (
+const DiscardActionChangesConfirmationWithContext = React.forwardRef((props, ref) => (
   <AppConsumer>
-    { (context) => <DiscardPersonChangesConfirmationComponent { ...props } context={ context } ref={ ref }/> }
+    { (context) => <DiscardActionChangesConfirmationComponent { ...props } context={ context } ref={ ref }/> }
   </AppConsumer>
 ));
 
 
-export const DiscardPersonChangesConfirmation = DiscardPersonChangesConfirmationWithContext;
+export const DiscardActionChangesConfirmation = DiscardActionChangesConfirmationWithContext;

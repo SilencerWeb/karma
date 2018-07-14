@@ -62,7 +62,7 @@ export const DiscardCreatingPersonConfirmationComponent = (props) => {
 
         <ActionConfirmationButton
           onClick={ () => {
-            props.context.discardConfirmationFunction();
+            props.context.discardPersonConfirmationFunction();
 
             props.context.hideModal();
           } }

@@ -386,7 +386,7 @@ class PersonCardComponent extends React.PureComponent {
       if (isAnyFieldFilled) {
         this.props.context.showModal('DiscardCreatingPersonConfirmation');
 
-        this.props.context.changeDiscardConfirmationFunction(() => {
+        this.props.context.changeDiscardPersonConfirmationFunction(() => {
           this.setState({ isEditing: false });
 
           this.props.onCancelButtonClick && this.props.onCancelButtonClick();
@@ -402,7 +402,7 @@ class PersonCardComponent extends React.PureComponent {
       if (!arePersonAndUpdatedPersonEqual) {
         this.props.context.changeEditingPersonId(this.props.id);
 
-        this.props.context.changeDiscardConfirmationFunction(() => {
+        this.props.context.changeDiscardPersonConfirmationFunction(() => {
           this.setState({ isEditing: false });
 
           this.props.onCancelButtonClick && this.props.onCancelButtonClick();
