@@ -136,4 +136,5 @@ const DeleteActionConfirmationWithContext = React.forwardRef((props, ref) => (
   </AppConsumer>
 ));
 
+
 export const DeleteActionConfirmation = DeleteActionConfirmationWithContext;

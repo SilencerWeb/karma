@@ -4,7 +4,7 @@ export const CREATE_ACTION = gql`
   mutation createAction(
     $title: String!,
     $date: String!,
-    $description: String!,
+    $description: String,
     $karma: String!,
     $executors: String!,
     $members: [CreateActionMemberInput!]!,

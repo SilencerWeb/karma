@@ -738,9 +738,9 @@ export class ActionCardComponent extends React.Component {
       const defaultMembers = defaultActiveMember ? [defaultActiveMember] : [];
 
       const action = {
-        title: props.title || 'Action title',
-        date: props.date || '12.05.2018',
-        description: props.description || 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.',
+        title: props.title,
+        date: props.date,
+        description: props.description,
         karma: props.karma || 'neutral',
         executors: props.executors || 'left',
         members: props.members || defaultMembers,
@@ -780,6 +780,19 @@ export class ActionCardComponent extends React.Component {
       karma = isCreatingOrEditing ? updatedAction.karma : action.karma;
       executors = isCreatingOrEditing ? updatedAction.executors : action.executors;
       members = isCreatingOrEditing ? updatedAction.members : action.members;
+    }
+
+
+    if (isCreatingOrEditing) {
+      // Placeholders
+      title = title ? title : 'Action title';
+      date = date ? date : '12.05.2018';
+      description = description ? description : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
+    }
+
+    
+    if (!description && !isCreatingOrEditing) {
+      description = 'No description';
     }
 
 

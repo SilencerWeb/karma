@@ -73,7 +73,7 @@ export const DeletePersonConfirmationComponent = (props) => {
         <Title tag={ 'h3' } type={ 'title' }>
           Are you sure that you want to
           <Highlight>&nbsp;delete&nbsp;</Highlight>
-          person { person.name }?
+          person '{ person.name }'?
         </Title>
         <Note>You will not be able to restore data, even I will not be able to help you :(</Note>
       </Header>
@@ -135,5 +135,6 @@ const DeletePersonConfirmationWithContext = React.forwardRef((props, ref) => (
     { (context) => <DeletePersonConfirmationComponent { ...props } context={ context } ref={ ref }/> }
   </AppConsumer>
 ));
+
 
 export const DeletePersonConfirmation = DeletePersonConfirmationWithContext;

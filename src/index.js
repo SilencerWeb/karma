@@ -290,6 +290,7 @@ class App extends React.Component {
 
               {
                 this.state.visibleModal === 'DeletePersonConfirmation' &&
+                this.state.deletedPersonsIds.every((deletedPersonId) => deletedPersonId !== this.state.personForDeleteId) &&
                 <StyledModal>
                   <DeletePersonConfirmation id={ this.state.personForDeleteId }/>
                 </StyledModal>
@@ -297,6 +298,7 @@ class App extends React.Component {
 
               {
                 this.state.visibleModal === 'DeleteActionConfirmation' &&
+                this.state.deletedActionsIds.every((deletedActionId) => deletedActionId !== this.state.actionForDeleteId) &&
                 <StyledModal>
                   <DeleteActionConfirmation id={ this.state.actionForDeleteId }/>
                 </StyledModal>
