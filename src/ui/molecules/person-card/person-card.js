@@ -3,14 +3,16 @@ import styled, { css } from 'styled-components';
 import { lighten } from 'polished';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Mutation, graphql } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import deepEqual from 'deep-equal';
 
 import { AppConsumer } from 'index';
 
 import { Button, Heading } from 'ui/atoms';
 
-import { Avatar } from 'ui/molecules';
+import { Avatar, Modal } from 'ui/molecules';
+
+import { DeletePersonConfirmation } from 'ui/organisms';
 
 import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
@@ -358,9 +360,7 @@ class PersonCardComponent extends React.PureComponent {
   };
 
   handleDeleteButtonClick = () => {
-    this.props.context.changePersonForDeleteId(this.props.id);
-
-    this.props.context.showModal('DeletePersonConfirmation');
+    this.setState({ isDeletePersonConfirmationOpen: true });
   };
 
   handleEditButtonClick = () => {
@@ -484,6 +484,7 @@ class PersonCardComponent extends React.PureComponent {
     return state;
   };
 
+  
   render() {
     let isCreating = this.state.isCreating;
     let isEditing = this.state.isEditing;
@@ -663,6 +664,16 @@ class PersonCardComponent extends React.PureComponent {
               </React.Fragment>
           }
         </Footer>
+
+        {
+          this.state.isDeletePersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <DeletePersonConfirmation
+              id={ this.props.id }
+              onRejectButtonClick={ () => this.setState({ isDeletePersonConfirmationOpen: false }) }
+            />
+          </Modal>
+        }
       </Wrapper>
     );
   }

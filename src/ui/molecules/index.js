@@ -20,10 +20,4 @@ export { UpdateActionSubscription } from './subscriptions/update-action-subscrip
 export { DeleteActionSubscription } from './subscriptions/delete-action-subscription';
 export { Modal } from './modal/modal';
 export { ContactForm } from './contact-form/contact-form';
-export { DeletePersonConfirmation } from './action-confirmations/delete-person-confirmation';
-export { DeleteActionConfirmation } from './action-confirmations/delete-action-confirmation';
-export { LogoutConfirmation } from './action-confirmations/logout-confirmation';
-export { DiscardPersonChangesConfirmation } from './action-confirmations/discard-person-changes-confirmation';
-export { DiscardCreatingPersonConfirmation } from './action-confirmations/discard-creating-person-confirmation';
-export { DiscardActionChangesConfirmation } from './action-confirmations/discard-action-changes-confirmation';
-export { DiscardCreatingActionConfirmation } from './action-confirmations/discard-creating-action-confirmation';
+export { ActionConfirmation } from './action-confirmation/action-confirmation';

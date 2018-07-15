@@ -7,7 +7,13 @@ import { AppConsumer } from 'index';
 
 import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
 
+import { Modal } from 'ui/molecules';
+
+import { LogoutConfirmation } from 'ui/organisms';
+
 import { exit } from 'ui/outlines';
+
+import { AUTH_TOKEN } from 'constants.js';
 
 
 const Avatar = styled.div`
@@ -49,59 +55,83 @@ const Wrapper = styled.header`
 `;
 
 
-export const Header = (props: props) => {
-  const handleLogoutButtonClick = (context) => {
-    context.showModal('LogoutConfirmation');
+export class Header extends React.Component {
+  state = {
+    isModalOpen: false,
   };
 
-  return (
-    <Wrapper className={ props.className }>
-      <AppConsumer>
-        { (context) => (
-          <Container>
-            <div>
-              <Link to={ '/' }>
-                <Logo/>
-              </Link>
-            </div>
-            <ContainerRightSide>
-              {
-                context.isLoggedIn ?
-                  <React.Fragment>
-                    <Link to={ '/my-actions' }>
-                      <Button>
-                        My actions
-                      </Button>
-                    </Link>
-                    <Button
-                      icon={ exit }
-                      iconPosition={ 'right' }
-                      onClick={ () => handleLogoutButtonClick(context) }
-                    >
-                      Logout
-                    </Button>
-                  </React.Fragment>
-                  :
-                  <React.Fragment>
-                    <Link to={ '/signup' }>
-                      <Button>
-                        Register
-                      </Button>
-                    </Link>
+  render() {
+    return (
+      <Wrapper className={ this.props.className }>
+        <AppConsumer>
+          { (context) => (
+            <React.Fragment>
+              <Container>
+                <div>
+                  <Link to={ '/' }>
+                    <Logo/>
+                  </Link>
+                </div>
+                <ContainerRightSide>
+                  {
+                    context.isLoggedIn ?
+                      <React.Fragment>
+                        <Link to={ '/my-actions' }>
+                          <Button>
+                            My actions
+                          </Button>
+                        </Link>
+                        <Button
+                          icon={ exit }
+                          iconPosition={ 'right' }
+                          onClick={ () => {
+                            this.setState({ isModalOpen: true });
+                          } }
+                        >
+                          Logout
+                        </Button>
+                      </React.Fragment>
+                      :
+                      <React.Fragment>
+                        <Link to={ '/signup' }>
+                          <Button>
+                            Register
+                          </Button>
+                        </Link>
 
-                    <Link to={ '/login' }>
-                      <Button>
-                        Login
-                      </Button>
-                    </Link>
-                  </React.Fragment>
+                        <Link to={ '/login' }>
+                          <Button>
+                            Login
+                          </Button>
+                        </Link>
+                      </React.Fragment>
+                  }
+                </ContainerRightSide>
+              </Container>
+
+              {
+                this.state.isModalOpen &&
+                <Modal isOpen={ true }>
+                  <LogoutConfirmation
+                    onRejectButtonClick={ () => {
+                      this.setState({ isModalOpen: false });
+                    } }
+                    onConfirmButtonClick={ () => {
+                      localStorage.removeItem(AUTH_TOKEN);
+
+                      this.setState({ isModalOpen: false });
+
+                      context.logout();
+                    } }
+                  />
+                </Modal>
               }
-            </ContainerRightSide>
-          </Container>
-        ) }
-      </AppConsumer>
-    </Wrapper>
-  );
+            </React.Fragment>
+          ) }
+        </AppConsumer>
+      </Wrapper>
+    );
+  }
 };
 
 

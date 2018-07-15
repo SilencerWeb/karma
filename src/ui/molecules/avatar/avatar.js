@@ -7,7 +7,7 @@ import MDSpinner from 'react-md-spinner';
 
 import { Icon } from 'ui/atoms';
 
-import { upload } from 'ui/outlines';
+import { upload, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
 
@@ -157,7 +157,7 @@ export const Avatar = (props) => {
                   <Mutation mutation={ DELETE_FILE }>
                     { (deleteFile) => (
                       <RemoveAvatar onClick={ () => props.onRemoveAvatarClick(deleteFile) }>
-                        Delete
+                        <Icon icon={ trashCan }/>
                       </RemoveAvatar>
                     ) }
                   </Mutation>

@@ -9,7 +9,9 @@ import { AppConsumer } from 'index';
 
 import { Heading, Button, Icon } from 'ui/atoms';
 
-import { ActionCardList, Avatar } from 'ui/molecules';
+import { ActionCardList, Avatar, Modal } from 'ui/molecules';
+
+import { DeletePersonConfirmation } from 'ui/organisms';
 
 import { CommonTemplate } from 'ui/templates';
 
@@ -325,26 +327,6 @@ class Page extends React.Component {
     shouldRedirectToMainPage: false,
   };
 
-  getPerson = (context) => {
-    const person = context.persons.filter((person) => {
-      return person.id === this.props.match.params.id;
-    })[0];
-
-    if (person === undefined) {
-      this.setState({ shouldRedirectToMainPage: true });
-
-      return;
-    }
-
-    const shouldPersonBeUpdated = !deepEqual(this.state.person, person);
-
-    if (shouldPersonBeUpdated) {
-      this.setState({
-        person: person,
-      });
-    }
-  };
-
   handleInput = (e, element) => {
     const target = e.currentTarget;
 
@@ -607,9 +589,7 @@ class Page extends React.Component {
   };
 
   handleDeleteButtonClick = () => {
-    this.props.context.changePersonForDeleteId(this.state.person.id);
-
-    this.props.context.showModal('DeletePersonConfirmation');
+    this.setState({ isDeletePersonConfirmationOpen: true });
   };
 
   handleCancelButtonClick = () => {
@@ -619,6 +599,31 @@ class Page extends React.Component {
   handleSaveButtonClick = () => {
     this.setState({ isActionCreating: false });
   };
+
+
+  static getDerivedStateFromProps = (props, state) => {
+    const person = props.context.persons && props.context.persons.find((person) => {
+      return person.id === props.match.params.id;
+    });
+
+    if (person === undefined) {
+      state.shouldRedirectToMainPage = true;
+
+      return;
+    }
+
+    const shouldPersonBeUpdated = !deepEqual(state.person, person);
+
+    if (shouldPersonBeUpdated) {
+      state.person = person;
+      state.updatedPerson = person;
+    }
+
+    if (!state) return null;
+
+    return state;
+  };
+
 
   render() {
     let name = this.state.person && this.state.person.name ? this.state.person.name : null;
@@ -657,193 +662,199 @@ class Page extends React.Component {
       }
     }
 
+    const shouldRedirectToMainPage = this.props.context.persons && this.props.context.persons.every((person) => {
+      return person.id !== this.props.match.params.id;
+    }) || this.state.shouldRedirectToMainPage;
+
     return (
       <CommonTemplate>
-        { this.state.shouldRedirectToMainPage && <Redirect to={ '/' }/> }
+        { shouldRedirectToMainPage && <Redirect to={ '/' }/> }
 
-        <AppConsumer>
-          { (context) => (
-            <React.Fragment>
-              { context.persons && this.getPerson(context) }
+        <Header>
+          <HeaderBackground>
+            <BackgroundButton
+              type={ 'icon' }
+              theme={ 'white' }
+              left
+              onClick={ this.handleDeleteButtonClick }
+            >
+              <Icon icon={ trashCan }/>
+            </BackgroundButton>
 
-              <Header>
-                <HeaderBackground>
-                  <BackgroundButton
-                    type={ 'icon' }
-                    theme={ 'white' }
-                    left
-                    onClick={ this.handleDeleteButtonClick }
+            <BackgroundButton type={ 'icon' } theme={ 'white' } right>
+              <Icon icon={ pencil }/>
+            </BackgroundButton>
+          </HeaderBackground>
+
+          <PersonInfo>
+            <PersonAvatar
+              url={ avatar }
+              alt={ name }
+              size={ 'lg' }
+              icon={ user }
+              edit={ this.state.isPersonInfoEditing }
+              onRemoveAvatarClick={ this.handleRemoveAvatarClick }
+              onFileInputChange={ this.handleFileInputChange }
+            />
+
+            <ContentEditableWrapper>
+              <Name
+                type={ 'title' }
+                creating={ this.state.isPersonInfoEditing }
+                edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.name.isEdited }
+              >
+                { name }
+              </Name>
+              <EditableName
+                id={ 'editable-name' }
+                type={ 'title' }
+                creating={ this.state.isPersonInfoEditing }
+                edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.name.isEdited }
+                contentEditable={ this.state.isPersonInfoEditing }
+                onInput={ (e) => this.handleInput(e, 'name') }
+                onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                onPaste={ (e) => this.handlePaste(e) }
+              />
+            </ContentEditableWrapper>
+
+            <ContentEditableWrapper>
+              <Position
+                creating={ this.state.isPersonInfoEditing }
+                edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.position.isEdited }
+              >
+                { position }
+              </Position>
+              <EditablePosition
+                id={ 'editable-position' }
+                creating={ this.state.isPersonInfoEditing }
+                edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.position.isEdited }
+                contentEditable={ this.state.isPersonInfoEditing }
+                onInput={ (e) => this.handleInput(e, 'position') }
+                onKeyPress={ (e) => this.handleKeyPress(e, false) }
+                onPaste={ (e) => this.handlePaste(e) }
+              />
+            </ContentEditableWrapper>
+
+            <Karma type={ 'title' } tag={ 'h2' } status={ karmaStatus }>
+              { `${ karma }` }
+            </Karma>
+
+            {
+              !this.state.isPersonInfoEditing ?
+                <EditPersonInfoButton
+                  type={ 'icon' }
+                  theme={ 'white' }
+                  onClick={ this.handleEditPersonInfoButtonClick }
+                >
+                  <Icon icon={ pencil }/>
+                </EditPersonInfoButton>
+                :
+                <React.Fragment>
+                  <CancelPersonInfoButton
+                    type={ 'flat' }
+                    disabled={ this.state.isAvatarLoading }
+                    onClick={ this.handleCancelPersonInfoButtonClick }
                   >
-                    <Icon icon={ trashCan }/>
-                  </BackgroundButton>
+                    Cancel
+                  </CancelPersonInfoButton>
 
-                  <BackgroundButton type={ 'icon' } theme={ 'white' } right>
-                    <Icon icon={ pencil }/>
-                  </BackgroundButton>
-                </HeaderBackground>
-
-                <PersonInfo>
-                  <PersonAvatar
-                    url={ avatar }
-                    alt={ name }
-                    size={ 'lg' }
-                    icon={ user }
-                    edit={ this.state.isPersonInfoEditing }
-                    onRemoveAvatarClick={ this.handleRemoveAvatarClick }
-                    onFileInputChange={ this.handleFileInputChange }
-                  />
-
-                  <ContentEditableWrapper>
-                    <Name
-                      type={ 'title' }
-                      creating={ this.state.isPersonInfoEditing }
-                      edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.name.isEdited }
-                    >
-                      { name }
-                    </Name>
-                    <EditableName
-                      id={ 'editable-name' }
-                      type={ 'title' }
-                      creating={ this.state.isPersonInfoEditing }
-                      edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.name.isEdited }
-                      contentEditable={ this.state.isPersonInfoEditing }
-                      onInput={ (e) => this.handleInput(e, 'name') }
-                      onKeyPress={ (e) => this.handleKeyPress(e, false) }
-                      onPaste={ (e) => this.handlePaste(e) }
-                    />
-                  </ContentEditableWrapper>
-
-                  <ContentEditableWrapper>
-                    <Position
-                      creating={ this.state.isPersonInfoEditing }
-                      edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.position.isEdited }
-                    >
-                      { position }
-                    </Position>
-                    <EditablePosition
-                      id={ 'editable-position' }
-                      creating={ this.state.isPersonInfoEditing }
-                      edited={ this.state.isPersonInfoEditing && this.state.updatedPerson.position.isEdited }
-                      contentEditable={ this.state.isPersonInfoEditing }
-                      onInput={ (e) => this.handleInput(e, 'position') }
-                      onKeyPress={ (e) => this.handleKeyPress(e, false) }
-                      onPaste={ (e) => this.handlePaste(e) }
-                    />
-                  </ContentEditableWrapper>
-
-                  <Karma type={ 'title' } tag={ 'h2' } status={ karmaStatus }>
-                    { `${ karma }` }
-                  </Karma>
-
-                  {
-                    !this.state.isPersonInfoEditing ?
-                      <EditPersonInfoButton
-                        type={ 'icon' }
-                        theme={ 'white' }
-                        onClick={ this.handleEditPersonInfoButtonClick }
+                  <Mutation mutation={ UPDATE_PERSON }>
+                    { (updatePerson) => (
+                      <SavePersonInfoButton
+                        disabled={ this.state.isAvatarLoading || !!this.state.invalidFields.length }
+                        onClick={ () => this.handleSavePersonInfoButtonClick(updatePerson) }
                       >
-                        <Icon icon={ pencil }/>
-                      </EditPersonInfoButton>
-                      :
-                      <React.Fragment>
-                        <CancelPersonInfoButton
-                          type={ 'flat' }
-                          disabled={ this.state.isAvatarLoading }
-                          onClick={ this.handleCancelPersonInfoButtonClick }
-                        >
-                          Cancel
-                        </CancelPersonInfoButton>
+                        Save
+                      </SavePersonInfoButton>
+                    ) }
+                  </Mutation>
+                </React.Fragment>
+            }
+          </PersonInfo>
+        </Header>
 
-                        <Mutation mutation={ UPDATE_PERSON }>
-                          { (updatePerson) => (
-                            <SavePersonInfoButton
-                              disabled={ this.state.isAvatarLoading || !!this.state.invalidFields.length }
-                              onClick={ () => this.handleSavePersonInfoButtonClick(updatePerson) }
-                            >
-                              Save
-                            </SavePersonInfoButton>
-                          ) }
-                        </Mutation>
-                      </React.Fragment>
-                  }
-                </PersonInfo>
-              </Header>
+        <About>
+          <AboutHeader>
+            <Subtitle tag={ 'h2' }>
+              About
+            </Subtitle>
 
-              <About>
-                <AboutHeader>
-                  <Subtitle tag={ 'h2' }>
-                    About
-                  </Subtitle>
-
-                  {
-                    !this.state.isDescriptionEditing ?
-                      <EditDescriptionButton
-                        type={ 'icon' }
-                        theme={ 'gray' }
-                        onClick={ this.handleEditDescriptionButtonClick }
-                      >
-                        <Icon icon={ pencil }/>
-                      </EditDescriptionButton>
-                      :
-                      <div>
-                        <Button
-                          type={ 'flat' }
-                          onClick={ this.handleCancelDescriptionButtonClick }
-                        >
-                          Cancel
-                        </Button>
-
-                        <Mutation mutation={ UPDATE_PERSON }>
-                          { (updatePerson) => (
-                            <Button
-                              onClick={ () => this.handleSaveDescriptionButtonClick(updatePerson) }
-                            >
-                              Save
-                            </Button>
-                          ) }
-                        </Mutation>
-                      </div>
-                  }
-                </AboutHeader>
-
-                <ContentEditableWrapper>
-                  <Description
-                    creating={ this.state.isDescriptionEditing }
-                    edited={ this.state.isDescriptionEditing && this.state.updatedPerson.description.isEdited }
+            {
+              !this.state.isDescriptionEditing ?
+                <EditDescriptionButton
+                  type={ 'icon' }
+                  theme={ 'gray' }
+                  onClick={ this.handleEditDescriptionButtonClick }
+                >
+                  <Icon icon={ pencil }/>
+                </EditDescriptionButton>
+                :
+                <div>
+                  <Button
+                    type={ 'flat' }
+                    onClick={ this.handleCancelDescriptionButtonClick }
                   >
-                    { description }
-                  </Description>
-                  <EditableDescription
-                    id={ 'editable-description' }
-                    creating={ this.state.isDescriptionEditing }
-                    edited={ this.state.isDescriptionEditing && this.state.updatedPerson.description.isEdited }
-                    contentEditable={ this.state.isDescriptionEditing }
-                    onInput={ (e) => this.handleInput(e, 'description') }
-                    onKeyPress={ (e) => this.handleKeyPress(e, true) }
-                    onPaste={ (e) => this.handlePaste(e) }
-                  />
-                </ContentEditableWrapper>
-              </About>
+                    Cancel
+                  </Button>
 
-              <div>
-                <ActionsHeader>
-                  <Subtitle tag={ 'h2' }>
-                    Action list
-                  </Subtitle>
+                  <Mutation mutation={ UPDATE_PERSON }>
+                    { (updatePerson) => (
+                      <Button
+                        onClick={ () => this.handleSaveDescriptionButtonClick(updatePerson) }
+                      >
+                        Save
+                      </Button>
+                    ) }
+                  </Mutation>
+                </div>
+            }
+          </AboutHeader>
 
-                  <Button onClick={ this.handleAddActionButtonClick }>Add an action</Button>
-                </ActionsHeader>
+          <ContentEditableWrapper>
+            <Description
+              creating={ this.state.isDescriptionEditing }
+              edited={ this.state.isDescriptionEditing && this.state.updatedPerson.description.isEdited }
+            >
+              { description }
+            </Description>
+            <EditableDescription
+              id={ 'editable-description' }
+              creating={ this.state.isDescriptionEditing }
+              edited={ this.state.isDescriptionEditing && this.state.updatedPerson.description.isEdited }
+              contentEditable={ this.state.isDescriptionEditing }
+              onInput={ (e) => this.handleInput(e, 'description') }
+              onKeyPress={ (e) => this.handleKeyPress(e, true) }
+              onPaste={ (e) => this.handlePaste(e) }
+            />
+          </ContentEditableWrapper>
+        </About>
 
-                <ActionCardList
-                  activeMemberId={ this.state.person && this.state.person.id }
-                  isActionCreating={ this.state.isActionCreating }
-                  onCancelButtonClick={ this.handleCancelButtonClick }
-                  onSaveButtonClick={ this.handleSaveButtonClick }
-                />
-              </div>
-            </React.Fragment>
-          ) }
-        </AppConsumer>
+        <div>
+          <ActionsHeader>
+            <Subtitle tag={ 'h2' }>
+              Action list
+            </Subtitle>
+
+            <Button onClick={ this.handleAddActionButtonClick }>Add an action</Button>
+          </ActionsHeader>
+
+          <ActionCardList
+            activeMemberId={ this.state.person && this.state.person.id }
+            isActionCreating={ this.state.isActionCreating }
+            onCancelButtonClick={ this.handleCancelButtonClick }
+            onSaveButtonClick={ this.handleSaveButtonClick }
+          />
+        </div>
+
+        {
+          this.state.isDeletePersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <DeletePersonConfirmation
+              id={ this.state.person.id }
+              onRejectButtonClick={ () => this.setState({ isDeletePersonConfirmationOpen: false }) }
+            />
+          </Modal>
+        }
       </CommonTemplate>
     );
   }

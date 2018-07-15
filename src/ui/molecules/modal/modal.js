@@ -1,9 +1,13 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
+import ReactModal from 'react-modal';
 
 
-const Wrapper = styled.div`
+ReactModal.setAppElement('#root');
+
+
+const ChildrenWrapper = styled.div`
   max-width: 50rem;
   background-color: #ffffff;
   border-radius: 1.6rem;
@@ -15,20 +19,21 @@ const Wrapper = styled.div`
 `;
 
 
-export class Modal extends React.Component {
-  state = {};
-
-  render() {
-    return (
-      <Wrapper className={ this.props.className }>
-        { this.props.children }
-      </Wrapper>
-    );
-  }
-}
+export const Modal = (props) => {
+  return (
+    <ReactModal
+      className={ 'modal' }
+      isOpen={ props.isOpen }
+    >
+      <ChildrenWrapper>
+        { props.children }
+      </ChildrenWrapper>
+    </ReactModal>
+  );
+};
 
 
 Modal.propTypes = {
-  className: PropTypes.string,
+  isOpen: PropTypes.bool.isRequired,
   children: PropTypes.element.isRequired,
 };

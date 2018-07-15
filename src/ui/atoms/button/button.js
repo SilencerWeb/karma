@@ -68,6 +68,17 @@ const WrapperAsButton = styled.button`
           }
         `}
       `}
+      
+      ${p.theme === 'error' && css`
+        background-color: ${color.error};
+        
+        ${!p.disabled && !p.loading && css`
+
+          &:hover {
+            background-color: ${lighten(0.15, color.error)}
+          }
+        `}
+      `}
     `}
   
     ${p.type === 'flat' && css`
@@ -250,4 +261,5 @@ Button.defaultProps = {
   tag: 'button',
   type: 'raised',
   theme: 'primary',
+  iconPosition: 'left',
 };

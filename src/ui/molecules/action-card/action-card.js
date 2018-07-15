@@ -9,7 +9,9 @@ import { AppConsumer } from 'index';
 
 import { Heading, Button, Icon } from 'ui/atoms';
 
-import { Avatar } from 'ui/molecules';
+import { Avatar, Modal } from 'ui/molecules';
+
+import { DeleteActionConfirmation } from 'ui/organisms';
 
 import { handsUpHuman, longLeftArrow, plus, trashCan, close } from 'ui/outlines';
 
@@ -587,9 +589,7 @@ export class ActionCardComponent extends React.Component {
   };
 
   handleDeleteButtonClick = () => {
-    this.props.context.changeActionForDeleteId(this.props.id);
-
-    this.props.context.showModal('DeleteActionConfirmation');
+    this.setState({ isDeleteActionConfirmationOpen: true });
   };
 
   handleRemoveMemberButtonClick = (personId) => {
@@ -1159,6 +1159,16 @@ export class ActionCardComponent extends React.Component {
           hoverable={ isCreatingOrEditing }
           onClick={ isCreatingOrEditing ? this.handleBorderClick : null }
         />
+
+        {
+          this.state.isDeleteActionConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <DeleteActionConfirmation
+              id={ this.props.id }
+              onRejectButtonClick={ () => this.setState({ isDeleteActionConfirmationOpen: false }) }
+            />
+          </Modal>
+        }
       </Wrapper>
     );
   }

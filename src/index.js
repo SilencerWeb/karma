@@ -11,13 +11,6 @@ import { Overlay } from 'ui/atoms';
 import {
   Modal,
   ContactForm,
-  DeletePersonConfirmation,
-  DeleteActionConfirmation,
-  LogoutConfirmation,
-  DiscardPersonChangesConfirmation,
-  DiscardCreatingPersonConfirmation,
-  DiscardActionChangesConfirmation,
-  DiscardCreatingActionConfirmation,
 
   GetUserQuery,
   GetPersonsQuery,
@@ -31,6 +24,12 @@ import {
   UpdateActionSubscription,
   DeleteActionSubscription,
 } from 'ui/molecules';
+
+import {
+  LogoutConfirmation,
+  DeleteActionConfirmation
+  ,
+} from 'ui/organisms/';
 
 import { globalStyles, transition } from 'ui/theme';
 
@@ -47,38 +46,6 @@ injectGlobal`${normalize} ${globalStyles}`;
 const AppContext = React.createContext();
 
 export const AppConsumer = AppContext.Consumer;
-
-
-const StyledModal = styled(Modal)`
-  margin-top: auto;
-  margin-bottom: auto;
-`;
-
-const ModalsWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-  opacity: 0;
-  visibility: hidden;
-  transition: ${transition};
-  overflow-x: hidden;
-  overflow-y: auto;
-  
-  ${p => css`
-    
-    ${p.visible && css`
-      opacity: 1;
-      visibility: visible;
-    `}
-  `}
-`;
 
 
 class App extends React.Component {
@@ -195,49 +162,6 @@ class App extends React.Component {
   };
 
 
-  changePersonForDeleteId = (id) => {
-    this.setState({ personForDeleteId: id });
-  };
-
-  changeEditingPersonId = (id) => {
-    this.setState({ editingPersonId: id });
-  };
-
-  changeDiscardPersonConfirmationFunction = (discardPersonConfirmationFunction) => {
-    this.setState({ discardPersonConfirmationFunction: discardPersonConfirmationFunction });
-  };
-
-
-  changeActionForDeleteId = (id) => {
-    this.setState({ actionForDeleteId: id });
-  };
-
-  changeEditingActionId = (id) => {
-    this.setState({ editingActionId: id });
-  };
-
-  changeDiscardActionConfirmationFunction = (discardActionConfirmationFunction) => {
-    this.setState({ discardActionConfirmationFunction: discardActionConfirmationFunction });
-  };
-
-
-  showModal = (modalName) => {
-    document.querySelector('body').style.overflow = 'hidden';
-
-    this.setState({
-      visibleModal: modalName,
-    });
-  };
-
-  hideModal = () => {
-    this.setState({
-      visibleModal: '',
-    });
-
-    document.querySelector('body').style.overflow = '';
-  };
-
-
   componentDidMount = () => {
     const token = localStorage.getItem(AUTH_TOKEN);
 
@@ -268,19 +192,6 @@ class App extends React.Component {
       updatePersonOrAction: this.updatePersonOrAction,
       updatePersonsOrActions: this.updatePersonsOrActions,
       deletePersonOrAction: this.deletePersonOrAction,
-
-      changePersonForDeleteId: this.changePersonForDeleteId,
-      changeEditingPersonId: this.changeEditingPersonId,
-      discardPersonConfirmationFunction: this.state.discardPersonConfirmationFunction,
-      changeDiscardPersonConfirmationFunction: this.changeDiscardPersonConfirmationFunction,
-
-      changeActionForDeleteId: this.changeActionForDeleteId,
-      changeEditingActionId: this.changeEditingActionId,
-      discardActionConfirmationFunction: this.state.discardActionConfirmationFunction,
-      changeDiscardActionConfirmationFunction: this.changeDiscardActionConfirmationFunction,
-
-      showModal: this.showModal,
-      hideModal: this.hideModal,
     };
 
     return (
@@ -305,68 +216,6 @@ class App extends React.Component {
                 <DeleteActionSubscription/>
               </React.Fragment>
             }
-
-            <Overlay visible={ !!this.state.visibleModal }/>
-
-            <ModalsWrapper visible={ !!this.state.visibleModal }>
-              {
-                this.state.visibleModal === 'ContactForm' &&
-                <StyledModal>
-                  <ContactForm/>
-                </StyledModal>
-              }
-
-              {
-                this.state.visibleModal === 'DeletePersonConfirmation' &&
-                this.state.deletedPersonsIds.every((deletedPersonId) => deletedPersonId !== this.state.personForDeleteId) &&
-                <StyledModal>
-                  <DeletePersonConfirmation id={ this.state.personForDeleteId }/>
-                </StyledModal>
-              }
-
-              {
-                this.state.visibleModal === 'DeleteActionConfirmation' &&
-                this.state.deletedActionsIds.every((deletedActionId) => deletedActionId !== this.state.actionForDeleteId) &&
-                <StyledModal>
-                  <DeleteActionConfirmation id={ this.state.actionForDeleteId }/>
-                </StyledModal>
-              }
-
-              {
-                this.state.visibleModal === 'LogoutConfirmation' &&
-                <StyledModal>
-                  <LogoutConfirmation/>
-                </StyledModal>
-              }
-
-              {
-                this.state.visibleModal === 'DiscardPersonChangesConfirmation' &&
-                <StyledModal>
-                  <DiscardPersonChangesConfirmation id={ this.state.editingPersonId }/>
-                </StyledModal>
-              }
-
-              {
-                this.state.visibleModal === 'DiscardCreatingPersonConfirmation' &&
-                <StyledModal>
-                  <DiscardCreatingPersonConfirmation/>
-                </StyledModal>
-              }
-
-              {
-                this.state.visibleModal === 'DiscardActionChangesConfirmation' &&
-                <StyledModal>
-                  <DiscardActionChangesConfirmation id={ this.state.editingActionId }/>
-                </StyledModal>
-              }
-
-              {
-                this.state.visibleModal === 'DiscardCreatingActionConfirmation' &&
-                <StyledModal>
-                  <DiscardCreatingActionConfirmation/>
-                </StyledModal>
-              }
-            </ModalsWrapper>
           </AppContext.Provider>
         </BrowserRouter>
       </ApolloProvider>

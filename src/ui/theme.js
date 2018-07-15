@@ -72,4 +72,23 @@ export const globalStyles = css`
   a {
     text-decoration: none;
   }
+  
+  .ReactModal__Overlay {
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .ReactModal__Content {
+    margin-top: auto;
+    margin-bottom: auto;
+    outline: none;
+  }
 `;
