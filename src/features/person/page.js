@@ -355,7 +355,7 @@ class Page extends React.Component {
         const fields = ['name', 'position'];
 
         fields.forEach((field) => {
-          const content = field === element ? target.textContent : prevState.updatedPerson[field].content;
+          const content = field === element ? target.textContent : prevState.updatedPerson[field];
 
           if (content.length === 0) {
             invalidFields.push(field);
@@ -367,10 +367,11 @@ class Page extends React.Component {
         ...prevState,
         updatedPerson: {
           ...prevState.updatedPerson,
-          [element]: {
-            content: target.textContent,
-            isEdited: target.textContent.length > 0,
-          },
+          [element]: target.textContent,
+        },
+        fieldsEditedInfo: {
+          ...prevState.fieldsEditedInfo,
+          [element]: target.textContent.length > 0,
         },
         invalidFields: invalidFields,
       };
@@ -409,18 +410,8 @@ class Page extends React.Component {
 
       return {
         ...prevState,
-        updatedPerson: {
-          id: person.id,
-          avatar: person.avatar,
-          name: {
-            content: person.name,
-            isEdited: false,
-          },
-          position: {
-            content: person.position,
-            isEdited: false,
-          },
-        },
+        updatedPerson: person,
+        fieldsEditedInfo: {},
         invalidFields: [],
         isPersonInfoEditing: true,
       };
@@ -428,29 +419,43 @@ class Page extends React.Component {
   };
 
   handleCancelPersonInfoButtonClick = () => {
-    this.setState((prevState) => {
-      const person = {
-        ...prevState.person,
-      };
+    const arePersonAndUpdatedPersonEqual = deepEqual(this.state.person, this.state.updatedPerson);
 
-      return {
-        ...prevState,
-        updatedPerson: {
-          id: person.id,
-          avatar: person.avatar,
-          name: {
-            content: person.name,
-            isEdited: false,
-          },
-          position: {
-            content: person.position,
-            isEdited: false,
-          },
-        },
-        invalidFields: [],
-        isPersonInfoEditing: false,
-      };
-    });
+    if (!arePersonAndUpdatedPersonEqual) {
+      this.props.context.changeEditingPersonId(this.state.person.id);
+
+      this.props.context.changeDiscardPersonConfirmationFunction(() => {
+        this.setState((prevState) => {
+          const person = {
+            ...prevState.person,
+          };
+
+          return {
+            ...prevState,
+            updatedPerson: person,
+            fieldsEditedInfo: {},
+            invalidFields: [],
+            isPersonInfoEditing: false,
+          };
+        });
+      });
+
+      this.props.context.showModal('DiscardPersonChangesConfirmation');
+    } else {
+      this.setState((prevState) => {
+        const person = {
+          ...prevState.person,
+        };
+
+        return {
+          ...prevState,
+          updatedPerson: person,
+          fieldsEditedInfo: {},
+          invalidFields: [],
+          isPersonInfoEditing: false,
+        };
+      });
+    }
   };
 
   handleSavePersonInfoButtonClick = (updatePerson) => {
@@ -458,8 +463,8 @@ class Page extends React.Component {
     this.setState((prevState) => {
       const person = {
         id: prevState.updatedPerson.id,
-        name: prevState.updatedPerson.name.content,
-        position: prevState.updatedPerson.position.content,
+        name: prevState.updatedPerson.name,
+        position: prevState.updatedPerson.position,
       };
 
       if (prevState.updatedPerson.avatar && prevState.updatedPerson.avatar.id) {
@@ -512,12 +517,6 @@ class Page extends React.Component {
 
   handleRemoveAvatarClick = (deleteFile) => {
     this.setState((prevState) => {
-      deleteFile({
-        variables: {
-          id: prevState.updatedPerson.avatar.id,
-        },
-      });
-
       return {
         ...prevState,
         updatedPerson: {
@@ -540,36 +539,46 @@ class Page extends React.Component {
 
       return {
         ...prevState,
-        updatedPerson: {
-          id: person.id,
-          description: {
-            content: person.description,
-            isEdited: false,
-          },
-        },
+        updatedPerson: person,
         isDescriptionEditing: true,
       };
     });
   };
 
   handleCancelDescriptionButtonClick = () => {
-    this.setState((prevState) => {
-      const person = {
-        ...prevState.person,
-      };
+    const areDescriptionAndUpdatedDescriptionEqual = this.state.person.description === this.state.updatedPerson.description;
 
-      return {
-        ...prevState,
-        updatedPerson: {
-          id: person.id,
-          description: {
-            content: person.description,
-            isEdited: false,
-          },
-        },
-        isDescriptionEditing: false,
-      };
-    });
+    if (!areDescriptionAndUpdatedDescriptionEqual) {
+      this.props.context.changeEditingPersonId(this.state.person.id);
+
+      this.props.context.changeDiscardPersonConfirmationFunction(() => {
+        this.setState((prevState) => {
+          const person = {
+            ...prevState.person,
+          };
+
+          return {
+            ...prevState,
+            updatedPerson: person,
+            isDescriptionEditing: false,
+          };
+        });
+      });
+
+      this.props.context.showModal('DiscardPersonChangesConfirmation');
+    } else {
+      this.setState((prevState) => {
+        const person = {
+          ...prevState.person,
+        };
+
+        return {
+          ...prevState,
+          updatedPerson: person,
+          isDescriptionEditing: false,
+        };
+      });
+    }
   };
 
   handleSaveDescriptionButtonClick = (updatePerson) => {
@@ -577,7 +586,7 @@ class Page extends React.Component {
     this.setState((prevState) => {
       const person = {
         id: prevState.updatedPerson.id,
-        description: prevState.updatedPerson.description.content,
+        description: prevState.updatedPerson.description,
       };
 
       updatePerson({
@@ -618,13 +627,13 @@ class Page extends React.Component {
     let avatar = this.state.person && this.state.person.avatar && this.state.person.avatar.url ? this.state.person.avatar.url : null;
 
     if (this.state.isPersonInfoEditing) {
-      name = this.state.updatedPerson.name.content.length > 0 ? this.state.updatedPerson.name.content : 'John Doe';
-      position = this.state.updatedPerson.position.content.length > 0 ? this.state.updatedPerson.position.content : 'Buddy';
+      name = this.state.updatedPerson.name.length > 0 ? this.state.updatedPerson.name : 'John Doe';
+      position = this.state.updatedPerson.position.length > 0 ? this.state.updatedPerson.position : 'Buddy';
       avatar = this.state.updatedPerson.avatar && this.state.updatedPerson.avatar.url ? this.state.updatedPerson.avatar.url : null;
     }
 
     if (this.state.isDescriptionEditing) {
-      description = this.state.updatedPerson.description.content.length > 0 ? this.state.updatedPerson.description.content : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
+      description = this.state.updatedPerson.description.length > 0 ? this.state.updatedPerson.description : 'Music fan. Alcohol enthusiast. Creator. Devoted social media geek. Total analyst. Coffee lover. Beer junkie. Coffee maven. Avid alcohol lover. Twitter expert. Lifelong tv ninja. Creator. Passionate tv nerd. Problem solver. Proud alcohol evangelist. Lifelong web junkie. Coffee maven. Unapologetic social media advocate. Analyst. Tv trailblazer. Zombie geek. Twitter aficionado. Reader.';
     }
 
     if (!description) {
