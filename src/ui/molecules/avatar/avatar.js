@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { rgba } from 'polished';
 import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
+import MDSpinner from 'react-md-spinner';
 
 import { Icon } from 'ui/atoms';
 
@@ -143,7 +144,11 @@ export const Avatar = (props) => {
         <Mutation mutation={ UPLOAD_FILE }>
           { (uploadFile, { loading }) => {
             if (loading) {
-              return <Overlay>Loading...</Overlay>;
+              return (
+                <Overlay>
+                  <MDSpinner size={ 46 } singleColor={ '#fff' }/>
+                </Overlay>
+              );
             }
 
             return (

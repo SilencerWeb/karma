@@ -29,8 +29,10 @@ stories
       secondary: 'secondary',
     }, 'primary');
 
+    const disabled = boolean('disabled', false);
+
     return (
-      <Button tag={ tag } type={ type } theme={ theme }>
+      <Button tag={ tag } type={ type } theme={ theme } disabled={ disabled }>
         { content }
       </Button>
     );
@@ -60,6 +62,10 @@ stories
     }, 'right');
     const iconRotation = number('icon\'s rotation (deg)', 0);
 
+    const loading = boolean('loading', false);
+
+    const disabled = boolean('disabled', false);
+
     return (
       <Button
         tag={ tag }
@@ -68,6 +74,8 @@ stories
         icon={ icon && shortLeftArrow }
         iconPosition={ iconPosition }
         iconRotation={ iconRotation }
+        loading={ loading }
+        disabled={ disabled }
       >
         { content }
       </Button>

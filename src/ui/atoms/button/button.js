@@ -3,11 +3,17 @@ import styled, { css } from 'styled-components';
 import { lighten, rgba } from 'polished';
 import PropTypes from 'prop-types';
 import Ink from 'react-ink';
+import MDSpinner from 'react-md-spinner';
 
 import { Icon } from 'ui/atoms';
 
 import { color, transition } from 'ui/theme';
 
+
+const Text = styled.span`
+  display: inline-block;
+  vertical-align: middle;
+`;
 
 const WrapperAsButton = styled.button`
   position: relative;
@@ -26,12 +32,7 @@ const WrapperAsButton = styled.button`
   padding-left: 2rem;
   outline: none;
   cursor: pointer;
-  transition: ${transition};
-  
-  span {
-    display: inline-block;
-    vertical-align: middle;
-  }
+  transition: background-color ${transition}, box-shadow ${transition};
 
   ${p => css`
 
@@ -39,7 +40,7 @@ const WrapperAsButton = styled.button`
       color: ${color.text.secondary};
       box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.24);
       
-      ${!p.disabled && css`
+      ${!p.disabled && !p.loading && css`
 
         &:hover {
           box-shadow: 0 0.4rem 0.8rem rgba(176, 190, 197, 0.44);
@@ -49,7 +50,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'primary' && css`
         background-color: ${color.primary};
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${lighten(0.15, color.primary)}
@@ -60,7 +61,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'secondary' && css`
         background-color: ${color.secondary};
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${lighten(0.15, color.secondary)}
@@ -75,7 +76,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'primary' && css`
         color: ${color.primary};
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${rgba(color.primary, 0.1)}
@@ -86,7 +87,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'secondary' && css`
         color: ${color.secondary};
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${rgba(color.secondary, 0.1)}
@@ -106,7 +107,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'primary' && css`
         color: ${color.primary};
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${rgba(color.primary, 0.1)}
@@ -117,7 +118,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'secondary' && css`
         color: ${color.secondary};
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${rgba(color.secondary, 0.1)}
@@ -128,7 +129,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'gray' && css`
         color: #3c4858;
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${rgba('#3c4858', 0.1)}
@@ -139,7 +140,7 @@ const WrapperAsButton = styled.button`
       ${p.theme === 'white' && css`
         color: #ffffff;
         
-        ${!p.disabled && css`
+        ${!p.disabled && !p.loading && css`
 
           &:hover {
             background-color: ${rgba('#ffffff', 0.1)}
@@ -148,7 +149,7 @@ const WrapperAsButton = styled.button`
       `}
     `}
     
-    ${p.icon && css`
+    ${(p.icon || p.loading) && css`
 
       svg {
         font-size: 1.6rem;
@@ -159,7 +160,7 @@ const WrapperAsButton = styled.button`
       ${p.iconPosition === 'left' && css`
         padding-left: 1.2rem;
         
-        span {
+        ${Text} {
           margin-left: 2rem;
         }
       `}
@@ -167,7 +168,7 @@ const WrapperAsButton = styled.button`
       ${p.iconPosition === 'right' && css`
         padding-right: 1.2rem;
         
-        span {
+        ${Text} {
           margin-right: 2rem;
         }
       `}
@@ -181,9 +182,13 @@ const WrapperAsButton = styled.button`
       `}
     `}
     
-    ${p.disabled && css`
+    ${p.disabled && !p.loading && css`
       opacity: 0.4;
       cursor: not-allowed;
+    `}
+    
+    ${p.loading && css`
+      cursor: progress;
     `}
   `}
 `;
@@ -194,7 +199,11 @@ const WrapperAsLink = WrapperAsButton.withComponent('a');
 export const Button = (props) => {
   const Wrapper = props.tag && props.tag === 'a' ? WrapperAsLink : WrapperAsButton;
 
-  const icon = props.icon ? <Icon icon={ props.icon }/> : null;
+  let icon = props.icon ? <Icon icon={ props.icon }/> : null;
+
+  if (props.loading) {
+    icon = <MDSpinner size={ 16 } singleColor={ '#fff' }/>;
+  }
 
   return (
     <Wrapper
@@ -205,16 +214,17 @@ export const Button = (props) => {
       iconPosition={ props.iconPosition }
       iconRotation={ props.iconRotation }
       { ...props.attributes }
+      loading={ props.loading }
       disabled={ props.disabled }
-      onClick={ !props.disabled ? props.onClick : null }
+      onClick={ !props.disabled && !props.loading ? props.onClick : null }
     >
-      { props.icon && props.iconPosition === 'left' && icon }
-      <span>
+      { (props.icon || props.loading ) && props.iconPosition === 'left' && icon }
+      <Text>
         { props.children }
-      </span>
-      { props.icon && props.iconPosition === 'right' && icon }
+      </Text>
+      { (props.icon || props.loading ) && props.iconPosition === 'right' && icon }
 
-      { !props.withoutRipple && !props.disabled && <Ink/> }
+      { !props.withoutRipple && !props.disabled && !props.loading && <Ink/> }
     </Wrapper>
   );
 };
@@ -230,6 +240,7 @@ Button.propTypes = {
   iconRotation: PropTypes.number,
   attributes: PropTypes.object,
   withoutRipple: PropTypes.bool,
+  loading: PropTypes.bool,
   disabled: PropTypes.bool,
   onClick: PropTypes.func,
   children: PropTypes.any.isRequired,

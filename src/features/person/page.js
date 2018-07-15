@@ -515,7 +515,7 @@ class Page extends React.Component {
     }
   };
 
-  handleRemoveAvatarClick = (deleteFile) => {
+  handleRemoveAvatarClick = () => {
     this.setState((prevState) => {
       return {
         ...prevState,

@@ -75,12 +75,12 @@ export class CreatePersonCard extends React.Component {
                       create
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (person) => {
-                        createPerson({
+                        return createPerson({
                           variables: person,
-                        });
-
-                        this.setState({
-                          isCreating: false,
+                        }).then(() => {
+                          this.setState({
+                            isCreating: false,
+                          });
                         });
                       } }
                     />

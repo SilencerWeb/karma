@@ -440,13 +440,18 @@ class PersonCardComponent extends React.PureComponent {
 
           this.props.updatePerson({
             variables: person,
+          }).then(() => {
+            this.setState({
+              isEditing: false,
+              isLoading: false,
+            });
           });
 
-          state.isEditing = false;
+          state.isLoading = true;
         } else {
           this.props.onSaveButtonClick(person);
 
-          state.isCreating = false;
+          state.isLoading = true;
         }
       }
 
@@ -647,6 +652,8 @@ class PersonCardComponent extends React.PureComponent {
                   </Button>
 
                   <Button
+                    iconPosition={ 'left' }
+                    loading={ this.state.isLoading }
                     disabled={ this.state.isAvatarLoading || !!this.state.invalidFields.length }
                     onClick={ this.handleSaveButtonClick }
                   >
