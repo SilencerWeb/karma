@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import { lighten } from 'polished';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { graphql } from 'react-apollo';
 import deepEqual from 'deep-equal';
 
 import { AppConsumer } from 'index';
@@ -12,13 +11,11 @@ import { Button, Heading } from 'ui/atoms';
 
 import { Avatar, Modal } from 'ui/molecules';
 
-import { DeletePersonConfirmation } from 'ui/organisms';
+import { UpdatePersonConfirmation, DeletePersonConfirmation } from 'ui/organisms';
 
 import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
-
-import { UPDATE_PERSON } from 'graphql/mutations/person';
 
 
 const StyledAvatar = styled(Avatar)`
@@ -422,7 +419,9 @@ class PersonCardComponent extends React.PureComponent {
     this.setState((prevState) => {
       const state = { ...prevState };
 
-      if (prevState.invalidFields.length === 0) {
+      const arePersonAndUpdatedPersonEqual = deepEqual(this.state.person, this.state.updatedPerson);
+
+      if (!arePersonAndUpdatedPersonEqual && prevState.invalidFields.length === 0) {
         const person = {
           name: state.updatedPerson.name,
           position: state.updatedPerson.position,
@@ -438,21 +437,15 @@ class PersonCardComponent extends React.PureComponent {
         if (state.isEditing) {
           person.id = this.props.id;
 
-          this.props.updatePerson({
-            variables: person,
-          }).then(() => {
-            this.setState({
-              isEditing: false,
-              isLoading: false,
-            });
-          });
-
-          state.isLoading = true;
+          state.personForUpdate = person;
+          state.isUpdatePersonConfirmationOpen = true;
         } else {
           this.props.onSaveButtonClick(person);
 
           state.isLoading = true;
         }
+      } else {
+        state.isEditing = false;
       }
 
       return state;
@@ -484,7 +477,7 @@ class PersonCardComponent extends React.PureComponent {
     return state;
   };
 
-  
+
   render() {
     let isCreating = this.state.isCreating;
     let isEditing = this.state.isEditing;
@@ -504,10 +497,7 @@ class PersonCardComponent extends React.PureComponent {
       name = isCreatingOrEditing ? updatedPerson.name : person.name;
       position = isCreatingOrEditing ? updatedPerson.position : person.position;
       description = isCreatingOrEditing ? updatedPerson.description : person.description;
-
-      if ((isCreatingOrEditing && updatedPerson.avatar) || person.avatar) {
-        avatar = isCreatingOrEditing ? updatedPerson.avatar.url : person.avatar.url;
-      }
+      avatar = isCreatingOrEditing ? updatedPerson.avatar && updatedPerson.avatar.url : person.avatar && person.avatar.url;
     }
 
 
@@ -666,6 +656,27 @@ class PersonCardComponent extends React.PureComponent {
         </Footer>
 
         {
+          this.state.isUpdatePersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <UpdatePersonConfirmation
+              person={ this.state.personForUpdate }
+              onRejectButtonClick={ () => {
+                this.setState({
+                  isUpdatePersonConfirmationOpen: false,
+                });
+              } }
+              onSuccess={ () => {
+                this.setState({
+                  isEditing: false,
+                  isUpdatePersonConfirmationOpen: false,
+                  personForUpdate: null,
+                });
+              } }
+            />
+          </Modal>
+        }
+
+        {
           this.state.isDeletePersonConfirmationOpen &&
           <Modal isOpen={ true }>
             <DeletePersonConfirmation
@@ -695,7 +706,6 @@ PersonCardComponent.propTypes = {
   authorNickname: PropTypes.string,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
-  updatePerson: PropTypes.func,
   context: PropTypes.object,
 };
 
@@ -711,4 +721,4 @@ const PersonCardWithContext = React.forwardRef((props, ref) => (
 ));
 
 
-export const PersonCard = graphql(UPDATE_PERSON, { name: 'updatePerson' })(PersonCardWithContext);
+export const PersonCard = PersonCardWithContext;

@@ -52,7 +52,7 @@ class DeletePersonConfirmationComponent extends React.Component {
         loading={ this.state.isLoading }
         onClick={ this.handleConfirmButtonClick }
       >
-        Yes, delete this person
+        Yes, delete the person
       </Button>
     );
 

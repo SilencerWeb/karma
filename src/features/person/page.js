@@ -11,7 +11,7 @@ import { Heading, Button, Icon } from 'ui/atoms';
 
 import { ActionCardList, Avatar, Modal } from 'ui/molecules';
 
-import { DeletePersonConfirmation } from 'ui/organisms';
+import { UpdatePersonConfirmation, DeletePersonConfirmation } from 'ui/organisms';
 
 import { CommonTemplate } from 'ui/templates';
 
@@ -440,7 +440,7 @@ class Page extends React.Component {
     }
   };
 
-  handleSavePersonInfoButtonClick = (updatePerson) => {
+  handleSavePersonInfoButtonClick = () => {
 
     this.setState((prevState) => {
       const person = {
@@ -455,13 +455,10 @@ class Page extends React.Component {
         person.deleteAvatar = true;
       }
 
-      updatePerson({
-        variables: person,
-      });
-
       return {
         ...prevState,
-        isPersonInfoEditing: false,
+        personForUpdate: person,
+        isUpdatePersonConfirmationOpen: true,
       };
     });
   };
@@ -563,7 +560,7 @@ class Page extends React.Component {
     }
   };
 
-  handleSaveDescriptionButtonClick = (updatePerson) => {
+  handleSaveDescriptionButtonClick = () => {
 
     this.setState((prevState) => {
       const person = {
@@ -571,13 +568,10 @@ class Page extends React.Component {
         description: prevState.updatedPerson.description,
       };
 
-      updatePerson({
-        variables: person,
-      });
-
       return {
         ...prevState,
-        isDescriptionEditing: false,
+        personForUpdate: person,
+        isUpdatePersonConfirmationOpen: true,
       };
     });
   };
@@ -758,16 +752,12 @@ class Page extends React.Component {
                     Cancel
                   </CancelPersonInfoButton>
 
-                  <Mutation mutation={ UPDATE_PERSON }>
-                    { (updatePerson) => (
-                      <SavePersonInfoButton
-                        disabled={ this.state.isAvatarLoading || !!this.state.invalidFields.length }
-                        onClick={ () => this.handleSavePersonInfoButtonClick(updatePerson) }
-                      >
-                        Save
-                      </SavePersonInfoButton>
-                    ) }
-                  </Mutation>
+                  <SavePersonInfoButton
+                    disabled={ this.state.isAvatarLoading || !!this.state.invalidFields.length }
+                    onClick={ this.handleSavePersonInfoButtonClick }
+                  >
+                    Save
+                  </SavePersonInfoButton>
                 </React.Fragment>
             }
           </PersonInfo>
@@ -797,15 +787,11 @@ class Page extends React.Component {
                     Cancel
                   </Button>
 
-                  <Mutation mutation={ UPDATE_PERSON }>
-                    { (updatePerson) => (
-                      <Button
-                        onClick={ () => this.handleSaveDescriptionButtonClick(updatePerson) }
-                      >
-                        Save
-                      </Button>
-                    ) }
-                  </Mutation>
+                  <Button
+                    onClick={ this.handleSaveDescriptionButtonClick }
+                  >
+                    Save
+                  </Button>
                 </div>
             }
           </AboutHeader>
@@ -845,6 +831,28 @@ class Page extends React.Component {
             onSaveButtonClick={ this.handleSaveButtonClick }
           />
         </div>
+
+        {
+          this.state.isUpdatePersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <UpdatePersonConfirmation
+              person={ this.state.personForUpdate }
+              onRejectButtonClick={ () => {
+                this.setState({
+                  isUpdatePersonConfirmationOpen: false,
+                });
+              } }
+              onSuccess={ () => {
+                this.setState({
+                  isPersonInfoEditing: false,
+                  isDescriptionEditing: false,
+                  isUpdatePersonConfirmationOpen: false,
+                  personForUpdate: null,
+                });
+              } }
+            />
+          </Modal>
+        }
 
         {
           this.state.isDeletePersonConfirmationOpen &&

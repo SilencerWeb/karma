@@ -82,6 +82,9 @@ class App extends React.Component {
     this.setState({
       isLoggedIn: false,
       persons: [],
+      didGetUserQueryMount: false,
+      didGetPersonsQueryMount: false,
+      didGetActionsQueryMount: false,
     });
 
     client.cache.reset();
