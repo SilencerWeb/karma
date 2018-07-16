@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
-import { Mutation } from 'react-apollo';
 import { Redirect } from 'react-router-dom';
 import deepEqual from 'deep-equal';
 
@@ -11,15 +10,17 @@ import { Heading, Button, Icon } from 'ui/atoms';
 
 import { ActionCardList, Avatar, Modal } from 'ui/molecules';
 
-import { UpdatePersonConfirmation, DeletePersonConfirmation } from 'ui/organisms';
+import {
+  CancelActionConfirmation,
+  UpdatePersonConfirmation,
+  DeletePersonConfirmation,
+} from 'ui/organisms';
 
 import { CommonTemplate } from 'ui/templates';
 
 import { pencil, user, trashCan } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
-
-import { UPDATE_PERSON } from 'graphql/mutations/person';
 
 
 const HeaderBackground = styled.div`
@@ -404,6 +405,7 @@ class Page extends React.Component {
     const arePersonAndUpdatedPersonEqual = deepEqual(this.state.person, this.state.updatedPerson);
 
     if (!arePersonAndUpdatedPersonEqual) {
+      this.setState({ isCancelUpdatingPersonConfirmationOpen: true });
     } else {
       this.setState((prevState) => {
         const person = {
@@ -425,11 +427,13 @@ class Page extends React.Component {
 
     this.setState((prevState) => {
       const personInfo = {
+        avatar: prevState.person.avatar,
         name: prevState.person.name,
         position: prevState.person.position,
       };
 
       const updatedPersonInfo = {
+        avatar: prevState.updatedPerson.avatar,
         name: prevState.updatedPerson.name,
         position: prevState.updatedPerson.position,
       };
@@ -528,7 +532,7 @@ class Page extends React.Component {
     const areDescriptionAndUpdatedDescriptionEqual = this.state.person.description === this.state.updatedPerson.description;
 
     if (!areDescriptionAndUpdatedDescriptionEqual) {
-
+      this.setState({ isCancelUpdatingPersonConfirmationOpen: true });
     } else {
       this.setState((prevState) => {
         const person = {
@@ -824,6 +828,25 @@ class Page extends React.Component {
             onSaveButtonClick={ this.handleSaveButtonClick }
           />
         </div>
+
+        {
+          this.state.isCancelUpdatingPersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <CancelActionConfirmation
+              type={ 'person' }
+              actionType={ 'updating' }
+              title={ this.state.person.name }
+              onRejectButtonClick={ () => this.setState({ isCancelUpdatingPersonConfirmationOpen: false }) }
+              onConfirmButtonClick={ () => {
+                this.setState({
+                  isPersonInfoEditing: false,
+                  isDescriptionEditing: false,
+                  isCancelUpdatingPersonConfirmationOpen: false,
+                });
+              } }
+            />
+          </Modal>
+        }
 
         {
           this.state.isUpdatePersonConfirmationOpen &&

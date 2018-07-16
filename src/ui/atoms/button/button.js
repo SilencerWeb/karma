@@ -32,7 +32,13 @@ const WrapperAsButton = styled.button`
   padding-left: 2rem;
   outline: none;
   cursor: pointer;
-  transition: background-color ${transition}, box-shadow ${transition};
+  transition: color ${transition}, background-color ${transition}, box-shadow ${transition}; // DO NOT APPLY TRANSITION FOR EVERYTHING COZ THE BUTTON WILL JUMP WHEN LOADING STATE CHANGES
+
+  svg {
+    font-size: 1.6rem;
+    vertical-align: middle;
+    transition: transform ${transition};
+  }
 
   ${p => css`
 
@@ -160,14 +166,9 @@ const WrapperAsButton = styled.button`
       `}
     `}
     
+    
     ${(p.icon || p.loading) && css`
 
-      svg {
-        font-size: 1.6rem;
-        vertical-align: middle;
-      }
-  
-  
       ${p.iconPosition === 'left' && css`
         padding-left: 1.2rem;
         
@@ -183,14 +184,13 @@ const WrapperAsButton = styled.button`
           margin-right: 2rem;
         }
       `}
-      
-      
-      ${p.iconRotation > 0 && css`
-  
-        svg {
-          transform: rotate(${p.iconRotation}deg);
-        }
-      `}
+    `}
+        
+    ${p.iconRotation > 0 && css`
+
+      svg {
+        transform: rotate(${p.iconRotation}deg);
+      }
     `}
     
     ${p.disabled && !p.loading && css`

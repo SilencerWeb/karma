@@ -321,15 +321,6 @@ const ExecutorsButton = styled(Button)`
 
   ${p => css`
   
-    ${p.executors === 'left' && css`
-      color: ${color.primary};
-      transform: rotate(180deg);
-    `}
-    
-    ${p.executors === 'right' && css`
-      color: ${color.secondary};
-    `}
-    
     ${!p.hoverable && css`
       background-color: transparent;
       cursor: default;
@@ -337,6 +328,11 @@ const ExecutorsButton = styled(Button)`
       &:hover {
         background-color: transparent;
       }
+    `}
+    
+    ${p.invisible && css`
+      opacity: 0;
+      visibility: hidden;
     `}
   `}
   
@@ -1031,19 +1027,17 @@ export class ActionCardComponent extends React.Component {
                   }
                 </Members>
 
-                {
-                  (isCreatingOrEditing || (rightSideMembers && rightSideMembers.length > 0)) &&
-                  <ExecutorsButton
-                    type={ 'icon' }
-                    theme={ executors === 'left' ? 'primary' : 'secondary' }
-                    executors={ executors }
-                    hoverable={ isCreatingOrEditing }
-                    withoutRipple={ !isCreatingOrEditing }
-                    onClick={ isCreatingOrEditing ? this.handleExecutorsButtonClick : null }
-                  >
-                    <Icon icon={ longLeftArrow }/>
-                  </ExecutorsButton>
-                }
+                <ExecutorsButton
+                  type={ 'icon' }
+                  theme={ executors === 'left' ? 'primary' : 'secondary' }
+                  iconRotation={ executors === 'left' ? 180 : 0 }
+                  hoverable={ isCreatingOrEditing }
+                  withoutRipple={ !isCreatingOrEditing }
+                  invisible={ !rightSideMembers }
+                  onClick={ isCreatingOrEditing ? this.handleExecutorsButtonClick : null }
+                >
+                  <Icon icon={ longLeftArrow }/>
+                </ExecutorsButton>
 
                 <Members>
                   {
@@ -1180,7 +1174,7 @@ export class ActionCardComponent extends React.Component {
             <CancelActionConfirmation
               type={ 'action' }
               actionType={ 'updating' }
-              title={ this.state.updatedAction.title }
+              title={ this.state.action.title }
               onRejectButtonClick={ () => this.setState({ isCancelUpdatingActionConfirmationOpen: false }) }
               onConfirmButtonClick={ () => {
                 this.setState({

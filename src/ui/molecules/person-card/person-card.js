@@ -382,7 +382,7 @@ export class PersonCard extends React.PureComponent {
         return this.state.updatedPerson[field].length > 0;
       });
 
-      if (isAnyFieldFilled) {
+      if (isAnyFieldFilled || this.state.updatedPerson.avatar) {
         this.setState({ isCancelCreatingPersonConfirmationOpen: true });
       } else {
         this.props.onCancelButtonClick && this.props.onCancelButtonClick();
@@ -666,7 +666,7 @@ export class PersonCard extends React.PureComponent {
             <CancelActionConfirmation
               type={ 'person' }
               actionType={ 'updating' }
-              title={ this.state.updatedPerson.name }
+              title={ this.state.person.name }
               onRejectButtonClick={ () => this.setState({ isCancelUpdatingPersonConfirmationOpen: false }) }
               onConfirmButtonClick={ () => {
                 this.setState({

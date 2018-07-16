@@ -73,6 +73,11 @@ export const globalStyles = css`
     text-decoration: none;
   }
   
+  .ReactModalPortal > * {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
   .ReactModal__Overlay {
     z-index: 999;
     display: flex;
@@ -82,8 +87,18 @@ export const globalStyles = css`
     background-color: rgba(0, 0, 0, 0.5) !important;
     padding-top: 4rem;
     padding-bottom: 4rem;
+    transition: opacity ${transition};
     overflow-x: hidden;
     overflow-y: auto;
+    
+    &--after-open {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    &--before-close {
+      opacity: 0;
+    }
   }
   
   .ReactModal__Content {
