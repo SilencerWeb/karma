@@ -5,13 +5,11 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import deepEqual from 'deep-equal';
 
-import { AppConsumer } from 'index';
-
 import { Button, Heading } from 'ui/atoms';
 
 import { Avatar, Modal } from 'ui/molecules';
 
-import { UpdatePersonConfirmation, DeletePersonConfirmation } from 'ui/organisms';
+import { CancelCreatingPersonConfirmation, UpdatePersonConfirmation, DeletePersonConfirmation } from 'ui/organisms';
 
 import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
@@ -381,10 +379,10 @@ export class PersonCard extends React.PureComponent {
       });
 
       if (isAnyFieldFilled) {
-        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
-      } else {
-        this.setState({ isEditing: false });
+        // this.props.onCancelButtonClick && this.props.onCancelButtonClick();
 
+        this.setState({ isCancelCreatingPersonConfirmationOpen: true });
+      } else {
         this.props.onCancelButtonClick && this.props.onCancelButtonClick();
       }
     } else {
@@ -640,6 +638,23 @@ export class PersonCard extends React.PureComponent {
               </React.Fragment>
           }
         </Footer>
+
+        {
+          this.state.isCancelCreatingPersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <CancelCreatingPersonConfirmation
+              person={ this.state.updatedPerson }
+              onRejectButtonClick={ () => this.setState({ isCancelCreatingPersonConfirmationOpen: false }) }
+              onConfirmButtonClick={ () => {
+                this.setState({
+                  isCancelCreatingPersonConfirmationOpen: false,
+                });
+
+                this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+              } }
+            />
+          </Modal>
+        }
 
         {
           this.state.isUpdatePersonConfirmationOpen &&
