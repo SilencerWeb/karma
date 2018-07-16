@@ -9,7 +9,11 @@ import { Button, Heading } from 'ui/atoms';
 
 import { Avatar, Modal } from 'ui/molecules';
 
-import { CancelCreatingPersonConfirmation, UpdatePersonConfirmation, DeletePersonConfirmation } from 'ui/organisms';
+import {
+  CancelActionConfirmation,
+  UpdatePersonConfirmation,
+  DeletePersonConfirmation,
+} from 'ui/organisms';
 
 import { shortLeftArrow, user, trashCan } from 'ui/outlines';
 
@@ -379,8 +383,6 @@ export class PersonCard extends React.PureComponent {
       });
 
       if (isAnyFieldFilled) {
-        // this.props.onCancelButtonClick && this.props.onCancelButtonClick();
-
         this.setState({ isCancelCreatingPersonConfirmationOpen: true });
       } else {
         this.props.onCancelButtonClick && this.props.onCancelButtonClick();
@@ -389,7 +391,7 @@ export class PersonCard extends React.PureComponent {
       const arePersonAndUpdatedPersonEqual = deepEqual(this.state.person, this.state.updatedPerson);
 
       if (!arePersonAndUpdatedPersonEqual) {
-        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+        this.setState({ isCancelUpdatingPersonConfirmationOpen: true });
       } else {
         this.setState({ isEditing: false });
 
@@ -642,12 +644,34 @@ export class PersonCard extends React.PureComponent {
         {
           this.state.isCancelCreatingPersonConfirmationOpen &&
           <Modal isOpen={ true }>
-            <CancelCreatingPersonConfirmation
-              person={ this.state.updatedPerson }
+            <CancelActionConfirmation
+              type={ 'person' }
+              actionType={ 'creating' }
+              title={ this.state.updatedPerson.name }
               onRejectButtonClick={ () => this.setState({ isCancelCreatingPersonConfirmationOpen: false }) }
               onConfirmButtonClick={ () => {
                 this.setState({
                   isCancelCreatingPersonConfirmationOpen: false,
+                });
+
+                this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+              } }
+            />
+          </Modal>
+        }
+
+        {
+          this.state.isCancelUpdatingPersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <CancelActionConfirmation
+              type={ 'person' }
+              actionType={ 'updating' }
+              title={ this.state.updatedPerson.name }
+              onRejectButtonClick={ () => this.setState({ isCancelUpdatingPersonConfirmationOpen: false }) }
+              onConfirmButtonClick={ () => {
+                this.setState({
+                  isEditing: false,
+                  isCancelUpdatingPersonConfirmationOpen: false,
                 });
 
                 this.props.onCancelButtonClick && this.props.onCancelButtonClick();

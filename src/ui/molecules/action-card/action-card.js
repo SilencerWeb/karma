@@ -10,7 +10,11 @@ import { Heading, Button, Icon } from 'ui/atoms';
 
 import { Avatar, Modal } from 'ui/molecules';
 
-import { UpdateActionConfirmation, DeleteActionConfirmation } from 'ui/organisms';
+import {
+  CancelActionConfirmation,
+  UpdateActionConfirmation,
+  DeleteActionConfirmation,
+} from 'ui/organisms';
 
 import { handsUpHuman, longLeftArrow, plus, trashCan, close } from 'ui/outlines';
 
@@ -631,19 +635,15 @@ export class ActionCardComponent extends React.Component {
       });
 
       if (isAnyFieldFilled) {
-
-
-        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+        this.setState({ isCancelActionCreatingConfirmationOpen: true });
       } else {
-        this.setState({ isEditing: false });
-
         this.props.onCancelButtonClick && this.props.onCancelButtonClick();
       }
     } else {
       const areActionAndUpdatedActionEqual = deepEqual(this.state.action, this.state.updatedAction);
 
       if (!areActionAndUpdatedActionEqual) {
-
+        this.setState({ isCancelUpdatingActionConfirmationOpen: true });
       } else {
         this.setState({ isEditing: false });
 
@@ -1154,6 +1154,45 @@ export class ActionCardComponent extends React.Component {
           hoverable={ isCreatingOrEditing }
           onClick={ isCreatingOrEditing ? this.handleBorderClick : null }
         />
+
+        {
+          this.state.isCancelActionCreatingConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <CancelActionConfirmation
+              type={ 'action' }
+              actionType={ 'creating' }
+              title={ this.state.updatedAction.title }
+              onRejectButtonClick={ () => this.setState({ isCancelActionCreatingConfirmationOpen: false }) }
+              onConfirmButtonClick={ () => {
+                this.setState({
+                  isCancelActionCreatingConfirmationOpen: false,
+                });
+
+                this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+              } }
+            />
+          </Modal>
+        }
+
+        {
+          this.state.isCancelUpdatingActionConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <CancelActionConfirmation
+              type={ 'action' }
+              actionType={ 'updating' }
+              title={ this.state.updatedAction.title }
+              onRejectButtonClick={ () => this.setState({ isCancelUpdatingActionConfirmationOpen: false }) }
+              onConfirmButtonClick={ () => {
+                this.setState({
+                  isEditing: false,
+                  isCancelUpdatingActionConfirmationOpen: false,
+                });
+
+                this.props.onCancelButtonClick && this.props.onCancelButtonClick();
+              } }
+            />
+          </Modal>
+        }
 
         {
           this.state.isActionPersonConfirmationOpen &&
