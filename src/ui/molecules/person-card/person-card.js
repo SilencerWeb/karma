@@ -246,7 +246,7 @@ const Wrapper = styled.div`
 `;
 
 
-class PersonCardComponent extends React.PureComponent {
+export class PersonCard extends React.PureComponent {
   state = {
     isCreating: false,
     isEditing: false,
@@ -381,13 +381,7 @@ class PersonCardComponent extends React.PureComponent {
       });
 
       if (isAnyFieldFilled) {
-        this.props.context.showModal('DiscardCreatingPersonConfirmation');
-
-        this.props.context.changeDiscardPersonConfirmationFunction(() => {
-          this.setState({ isEditing: false });
-
-          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
-        });
+        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
       } else {
         this.setState({ isEditing: false });
 
@@ -397,15 +391,7 @@ class PersonCardComponent extends React.PureComponent {
       const arePersonAndUpdatedPersonEqual = deepEqual(this.state.person, this.state.updatedPerson);
 
       if (!arePersonAndUpdatedPersonEqual) {
-        this.props.context.changeEditingPersonId(this.props.id);
-
-        this.props.context.changeDiscardPersonConfirmationFunction(() => {
-          this.setState({ isEditing: false });
-
-          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
-        });
-
-        this.props.context.showModal('DiscardPersonChangesConfirmation');
+        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
       } else {
         this.setState({ isEditing: false });
 
@@ -691,7 +677,7 @@ class PersonCardComponent extends React.PureComponent {
 }
 
 
-PersonCardComponent.propTypes = {
+PersonCard.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
   avatar: PropTypes.shape({
@@ -706,19 +692,8 @@ PersonCardComponent.propTypes = {
   authorNickname: PropTypes.string,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
-  context: PropTypes.object,
 };
 
-PersonCardComponent.defaultProps = {
+PersonCard.defaultProps = {
   create: false,
 };
-
-
-const PersonCardWithContext = React.forwardRef((props, ref) => (
-  <AppConsumer>
-    { (context) => <PersonCardComponent { ...props } context={ context } ref={ ref }/> }
-  </AppConsumer>
-));
-
-
-export const PersonCard = PersonCardWithContext;

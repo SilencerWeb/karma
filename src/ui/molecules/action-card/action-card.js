@@ -2,7 +2,6 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { lighten, rgba } from 'polished';
 import PropTypes from 'prop-types';
-import { graphql } from 'react-apollo';
 import deepEqual from 'deep-equal';
 
 import { AppConsumer } from 'index';
@@ -11,13 +10,11 @@ import { Heading, Button, Icon } from 'ui/atoms';
 
 import { Avatar, Modal } from 'ui/molecules';
 
-import { DeleteActionConfirmation } from 'ui/organisms';
+import { UpdateActionConfirmation, DeleteActionConfirmation } from 'ui/organisms';
 
 import { handsUpHuman, longLeftArrow, plus, trashCan, close } from 'ui/outlines';
 
 import { font, color, transition } from 'ui/theme';
-
-import { UPDATE_ACTION } from 'graphql/mutations/action';
 
 
 const DeleteActionButton = styled(Button)`
@@ -634,13 +631,9 @@ export class ActionCardComponent extends React.Component {
       });
 
       if (isAnyFieldFilled) {
-        this.props.context.showModal('DiscardCreatingActionConfirmation');
 
-        this.props.context.changeDiscardActionConfirmationFunction(() => {
-          this.setState({ isEditing: false });
 
-          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
-        });
+        this.props.onCancelButtonClick && this.props.onCancelButtonClick();
       } else {
         this.setState({ isEditing: false });
 
@@ -650,15 +643,7 @@ export class ActionCardComponent extends React.Component {
       const areActionAndUpdatedActionEqual = deepEqual(this.state.action, this.state.updatedAction);
 
       if (!areActionAndUpdatedActionEqual) {
-        this.props.context.changeEditingActionId(this.props.id);
 
-        this.props.context.changeDiscardActionConfirmationFunction(() => {
-          this.setState({ isEditing: false });
-
-          this.props.onCancelButtonClick && this.props.onCancelButtonClick();
-        });
-
-        this.props.context.showModal('DiscardActionChangesConfirmation');
       } else {
         this.setState({ isEditing: false });
 
@@ -710,20 +695,30 @@ export class ActionCardComponent extends React.Component {
         };
 
         if (prevState.isEditing) {
-          action.id = this.props.id;
+          const areActionAndUpdatedActionEqual = deepEqual(this.state.action, this.state.updatedAction);
 
-          this.props.updateAction({
-            variables: action,
-          });
+          if (!areActionAndUpdatedActionEqual) {
+            action.id = this.props.id;
+
+            return {
+              ...prevState,
+              actionForUpdate: action,
+              isActionPersonConfirmationOpen: true,
+            };
+          } else {
+            return {
+              ...prevState,
+              isEditing: false,
+            };
+          }
         } else {
           this.props.onSaveButtonClick(action);
-        }
 
-        return {
-          ...prevState,
-          isCreating: false,
-          isEditing: false,
-        };
+          return {
+            ...prevState,
+            isCreating: false,
+          };
+        }
       }
     });
   };
@@ -1161,6 +1156,27 @@ export class ActionCardComponent extends React.Component {
         />
 
         {
+          this.state.isActionPersonConfirmationOpen &&
+          <Modal isOpen={ true }>
+            <UpdateActionConfirmation
+              action={ this.state.actionForUpdate }
+              onRejectButtonClick={ () => {
+                this.setState({
+                  isActionPersonConfirmationOpen: false,
+                });
+              } }
+              onSuccess={ () => {
+                this.setState({
+                  isEditing: false,
+                  isActionPersonConfirmationOpen: false,
+                  actionForUpdate: null,
+                });
+              } }
+            />
+          </Modal>
+        }
+
+        {
           this.state.isDeleteActionConfirmationOpen &&
           <Modal isOpen={ true }>
             <DeleteActionConfirmation
@@ -1198,7 +1214,6 @@ ActionCardComponent.propTypes = {
   onMoreButtonClick: PropTypes.func,
   onCancelButtonClick: PropTypes.func,
   onSaveButtonClick: PropTypes.func,
-  updateAction: PropTypes.func,
   context: PropTypes.object,
 };
 
@@ -1210,4 +1225,4 @@ const ActionCardWithContext = React.forwardRef((props, ref) => (
 ));
 
 
-export const ActionCard = graphql(UPDATE_ACTION, { name: 'updateAction' })(ActionCardWithContext);
+export const ActionCard = ActionCardWithContext;

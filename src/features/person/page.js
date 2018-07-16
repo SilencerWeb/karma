@@ -404,25 +404,6 @@ class Page extends React.Component {
     const arePersonAndUpdatedPersonEqual = deepEqual(this.state.person, this.state.updatedPerson);
 
     if (!arePersonAndUpdatedPersonEqual) {
-      this.props.context.changeEditingPersonId(this.state.person.id);
-
-      this.props.context.changeDiscardPersonConfirmationFunction(() => {
-        this.setState((prevState) => {
-          const person = {
-            ...prevState.person,
-          };
-
-          return {
-            ...prevState,
-            updatedPerson: person,
-            fieldsEditedInfo: {},
-            invalidFields: [],
-            isPersonInfoEditing: false,
-          };
-        });
-      });
-
-      this.props.context.showModal('DiscardPersonChangesConfirmation');
     } else {
       this.setState((prevState) => {
         const person = {
@@ -443,23 +424,42 @@ class Page extends React.Component {
   handleSavePersonInfoButtonClick = () => {
 
     this.setState((prevState) => {
-      const person = {
-        id: prevState.updatedPerson.id,
+      const personInfo = {
+        name: prevState.person.name,
+        position: prevState.person.position,
+      };
+
+      const updatedPersonInfo = {
         name: prevState.updatedPerson.name,
         position: prevState.updatedPerson.position,
       };
 
-      if (prevState.updatedPerson.avatar && prevState.updatedPerson.avatar.id) {
-        person.avatar = prevState.updatedPerson.avatar.id;
-      } else {
-        person.deleteAvatar = true;
-      }
+      const arePersonInfoAndUpdatedPersonInfoEqual = deepEqual(personInfo, updatedPersonInfo);
 
-      return {
-        ...prevState,
-        personForUpdate: person,
-        isUpdatePersonConfirmationOpen: true,
-      };
+      if (!arePersonInfoAndUpdatedPersonInfoEqual) {
+        const person = {
+          id: prevState.updatedPerson.id,
+          name: prevState.updatedPerson.name,
+          position: prevState.updatedPerson.position,
+        };
+
+        if (prevState.updatedPerson.avatar && prevState.updatedPerson.avatar.id) {
+          person.avatar = prevState.updatedPerson.avatar.id;
+        } else {
+          person.deleteAvatar = true;
+        }
+
+        return {
+          ...prevState,
+          personForUpdate: person,
+          isUpdatePersonConfirmationOpen: true,
+        };
+      } else {
+        return {
+          ...prevState,
+          isPersonInfoEditing: false,
+        };
+      }
     });
   };
 
@@ -528,23 +528,7 @@ class Page extends React.Component {
     const areDescriptionAndUpdatedDescriptionEqual = this.state.person.description === this.state.updatedPerson.description;
 
     if (!areDescriptionAndUpdatedDescriptionEqual) {
-      this.props.context.changeEditingPersonId(this.state.person.id);
 
-      this.props.context.changeDiscardPersonConfirmationFunction(() => {
-        this.setState((prevState) => {
-          const person = {
-            ...prevState.person,
-          };
-
-          return {
-            ...prevState,
-            updatedPerson: person,
-            isDescriptionEditing: false,
-          };
-        });
-      });
-
-      this.props.context.showModal('DiscardPersonChangesConfirmation');
     } else {
       this.setState((prevState) => {
         const person = {
@@ -563,16 +547,25 @@ class Page extends React.Component {
   handleSaveDescriptionButtonClick = () => {
 
     this.setState((prevState) => {
-      const person = {
-        id: prevState.updatedPerson.id,
-        description: prevState.updatedPerson.description,
-      };
+      const areDescriptionAndUpdatedDescriptionEqual = deepEqual(prevState.person.description, prevState.updatedPerson.description);
 
-      return {
-        ...prevState,
-        personForUpdate: person,
-        isUpdatePersonConfirmationOpen: true,
-      };
+      if (!areDescriptionAndUpdatedDescriptionEqual) {
+        const person = {
+          id: prevState.updatedPerson.id,
+          description: prevState.updatedPerson.description,
+        };
+
+        return {
+          ...prevState,
+          personForUpdate: person,
+          isUpdatePersonConfirmationOpen: true,
+        };
+      } else {
+        return {
+          ...prevState,
+          isDescriptionEditing: false,
+        };
+      }
     });
   };
 

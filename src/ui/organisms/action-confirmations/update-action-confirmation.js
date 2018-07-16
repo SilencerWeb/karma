@@ -9,12 +9,10 @@ import { Button } from 'ui/atoms';
 
 import { ActionConfirmation } from 'ui/molecules';
 
-import { trashCan } from 'ui/outlines';
-
-import { DELETE_ACTION } from 'graphql/mutations/action';
+import { UPDATE_ACTION } from 'graphql/mutations/action';
 
 
-class DeleteActionConfirmationComponent extends React.Component {
+class UpdateActionConfirmationComponent extends React.Component {
   state = {
     isLoading: false,
   };
@@ -24,43 +22,43 @@ class DeleteActionConfirmationComponent extends React.Component {
 
     this.props.onConfirmButtonClick && this.props.onConfirmButtonClick();
 
-    this.props.deleteAction({
-      variables: {
-        id: this.props.id,
-      },
+    this.props.updateAction({
+      variables: this.props.action,
     }).then(() => {
       this.props.onSuccess && this.props.onSuccess();
-    }).catch(() => {
+    }).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.log('error!', error);
+
       this.props.onError && this.props.onError();
     });
   };
 
   render() {
-    if (!this.props.id) return;
+    if (!this.props.action) return null;
 
     const action = this.props.context.actions.find((action) => {
-      return action.id === this.props.id;
+      return action.id === this.props.action.id;
     });
 
     const confirmButton = (
       <Button
-        theme={ 'error' }
-        icon={ trashCan }
         loading={ this.state.isLoading }
         onClick={ this.handleConfirmButtonClick }
       >
-        Yes, delete the action
+        Yes, update the action
       </Button>
     );
 
     return (
       <div className={ this.props.className }>
         <ActionConfirmation
-          title={ `Are you sure that you want to delete action '${action.title}'?` }
+          title={ `Are you sure that you want to update action '${action.title}'?` }
           note={ 'You will not be able to restore data, even I will not be able to help you :(' }
-          rejectButtonText={ 'No, cancel deleting' }
+          rejectButtonText={ 'No, cancel updating' }
           confirmButton={ confirmButton }
           onRejectButtonClick={ this.props.onRejectButtonClick }
+          onConfirmButtonClick={ this.handleConfirmButtonClick }
         />
       </div>
     );
@@ -68,23 +66,23 @@ class DeleteActionConfirmationComponent extends React.Component {
 };
 
 
-DeleteActionConfirmationComponent.propTypes = {
+UpdateActionConfirmationComponent.propTypes = {
   className: PropTypes.string,
-  id: PropTypes.string.isRequired,
+  action: PropTypes.object.isRequired,
   onRejectButtonClick: PropTypes.func.isRequired,
   onConfirmButtonClick: PropTypes.func,
   onSuccess: PropTypes.func,
   onError: PropTypes.func,
   context: PropTypes.object,
-  deleteAction: PropTypes.func,
+  updateAction: PropTypes.func,
 };
 
 
-const DeleteActionConfirmationWithContext = React.forwardRef((props, ref) => (
+const UpdateActionConfirmationWithContext = React.forwardRef((props, ref) => (
   <AppConsumer>
-    { (context) => <DeleteActionConfirmationComponent { ...props } context={ context } ref={ ref }/> }
+    { (context) => <UpdateActionConfirmationComponent { ...props } context={ context } ref={ ref }/> }
   </AppConsumer>
 ));
 
 
-export const DeleteActionConfirmation = graphql(DELETE_ACTION, { name: 'deleteAction' })(DeleteActionConfirmationWithContext);
+export const UpdateActionConfirmation = graphql(UPDATE_ACTION, { name: 'updateAction' })(UpdateActionConfirmationWithContext);
