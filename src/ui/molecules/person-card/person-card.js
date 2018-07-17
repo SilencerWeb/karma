@@ -711,6 +711,7 @@ export class PersonCard extends React.PureComponent {
             <DeletePersonConfirmation
               id={ this.props.id }
               onRejectButtonClick={ () => this.setState({ isDeletePersonConfirmationOpen: false }) }
+              onSuccess={ () => this.setState({ isDeletePersonConfirmationOpen: false }) }
             />
           </Modal>
         }
