@@ -2,10 +2,11 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { ApolloConsumer, Mutation } from 'react-apollo';
+import { toast } from 'react-toastify';
 
 import { Icon } from 'ui/atoms';
 
-import { PersonCard } from 'ui/molecules';
+import { PersonCard, Notification } from 'ui/molecules';
 
 import { plus } from 'ui/outlines';
 
@@ -77,10 +78,42 @@ export class CreatePersonCard extends React.Component {
                       onSaveButtonClick={ (person) => {
                         return createPerson({
                           variables: person,
-                        }).then(() => {
+                        }).then((response) => {
+                          const name = response.data.createPerson.name;
+
+                          const message = name ?
+                            <React.Fragment>
+                              Person <span>{ name }</span> was successfully created
+                            </React.Fragment>
+                            :
+                            'Person was successfully created';
+
+                          toast(
+                            <Notification
+                              theme={ 'success' }
+                              message={ message }
+                            />,
+                          );
+
                           this.setState({
                             isCreating: false,
                           });
+                        }).catch((error) => {
+                          if (error) {
+                            const errorMessage = error.graphQLErrors[0].message;
+
+                            if (errorMessage) {
+                              toast(
+                                <Notification
+                                  theme={ 'error' }
+                                  message={ 'Something went wrong. Please, try again later.' }
+                                  errorMessage={ errorMessage }
+                                />,
+                              );
+
+                              throw new Error(errorMessage);
+                            }
+                          }
                         });
                       } }
                     />

@@ -10,11 +10,11 @@ import { color } from 'ui/theme';
 
 
 const StyledIcon = styled(Icon)`
-  font-size: 2.4rem;
+  font-size: 2rem;
 `;
 
 const IconWrapper = styled.div`
-  flex: 0 0 2.4rem;
+  flex: 0 0 2rem;
   margin-right: 0.8rem;
 `;
 
@@ -27,7 +27,7 @@ const Header = styled.div`
 `;
 
 const Text = styled.p`
-  padding-left: 3.2rem;
+  padding-left: 2.8rem;
   margin-top: auto;
   margin-bottom: auto;
   

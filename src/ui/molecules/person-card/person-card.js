@@ -426,7 +426,11 @@ export class PersonCard extends React.PureComponent {
           state.personForUpdate = person;
           state.isUpdatePersonConfirmationOpen = true;
         } else {
-          this.props.onSaveButtonClick(person);
+          this.props.onSaveButtonClick(person).catch((error) => {
+            if (error) {
+              this.setState({ isLoading: false });
+            }
+          });
 
           state.isLoading = true;
         }

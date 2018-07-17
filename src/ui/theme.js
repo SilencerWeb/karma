@@ -127,5 +127,6 @@ export const globalStyles = css`
     padding-right: 1.2rem;
     padding-bottom: 1.2rem;
     padding-left: 1.2rem;
+    animation-duration: 0.5s !important;
   }
 `;

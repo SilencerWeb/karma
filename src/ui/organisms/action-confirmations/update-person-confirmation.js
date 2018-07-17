@@ -2,12 +2,13 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
+import { toast } from 'react-toastify';
 
 import { AppConsumer } from 'index';
 
 import { Button } from 'ui/atoms';
 
-import { ActionConfirmation } from 'ui/molecules';
+import { ActionConfirmation, Notification } from 'ui/molecules';
 
 import { UPDATE_PERSON } from 'graphql/mutations/person';
 
@@ -24,13 +25,42 @@ class UpdatePersonConfirmationComponent extends React.Component {
 
     this.props.updatePerson({
       variables: this.props.person,
-    }).then(() => {
+    }).then((response) => {
+      const name = response.data.updatePerson.name;
+
+      const message = name ?
+        <React.Fragment>
+          Person <span>{ name }</span> was successfully updated
+        </React.Fragment>
+        :
+        'Person was successfully updated';
+
+      toast(
+        <Notification
+          theme={ 'success' }
+          message={ message }
+        />,
+      );
+
       this.props.onSuccess && this.props.onSuccess();
     }).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log('error!', error);
+      if (error) {
+        const errorMessage = error.graphQLErrors[0].message;
 
-      this.props.onError && this.props.onError();
+        if (errorMessage) {
+          toast(
+            <Notification
+              theme={ 'error' }
+              message={ 'Something went wrong. Please, try again later.' }
+              errorMessage={ errorMessage }
+            />,
+          );
+
+          this.setState({ isLoading: false });
+        }
+
+        this.props.onError && this.props.onError();
+      }
     });
   };
 

@@ -2,12 +2,13 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { graphql } from 'react-apollo';
+import { toast } from 'react-toastify';
 
 import { AppConsumer } from 'index';
 
 import { Button } from 'ui/atoms';
 
-import { ActionConfirmation } from 'ui/molecules';
+import { ActionConfirmation, Notification } from 'ui/molecules';
 
 import { trashCan } from 'ui/outlines';
 
@@ -28,10 +29,42 @@ class DeleteActionConfirmationComponent extends React.Component {
       variables: {
         id: this.props.id,
       },
-    }).then(() => {
+    }).then((response) => {
+      const title = response.data.deleteAction.title;
+
+      const message = title ?
+        <React.Fragment>
+          Action <span>{ title }</span> was successfully deleted
+        </React.Fragment>
+        :
+        'Action was successfully deleted';
+
+      toast(
+        <Notification
+          theme={ 'success' }
+          message={ message }
+        />,
+      );
+
       this.props.onSuccess && this.props.onSuccess();
-    }).catch(() => {
-      this.props.onError && this.props.onError();
+    }).catch((error) => {
+      if (error) {
+        const errorMessage = error.graphQLErrors[0].message;
+
+        if (errorMessage) {
+          toast(
+            <Notification
+              theme={ 'error' }
+              message={ 'Something went wrong. Please, try again later.' }
+              errorMessage={ errorMessage }
+            />,
+          );
+
+          this.setState({ isLoading: false });
+        }
+
+        this.props.onError && this.props.onError();
+      }
     });
   };
 

@@ -2,10 +2,11 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { ApolloConsumer, Mutation } from 'react-apollo';
+import { toast } from 'react-toastify';
 
 import { Icon } from 'ui/atoms';
 
-import { ActionCard } from 'ui/molecules';
+import { ActionCard, Notification } from 'ui/molecules';
 
 import { plus } from 'ui/outlines';
 
@@ -84,14 +85,46 @@ export class CreateActionCard extends React.Component {
                       create
                       onCancelButtonClick={ this.handleCancelButtonClick }
                       onSaveButtonClick={ (action) => {
-                        createAction({
+                        return createAction({
                           variables: action,
-                        });
+                        }).then((response) => {
+                          const title = response.data.createAction.title;
 
-                        this.props.onSaveButtonClick && this.props.onSaveButtonClick();
+                          const message = title ?
+                            <React.Fragment>
+                              Action <span>{ title }</span> was successfully created
+                            </React.Fragment>
+                            :
+                            'Action was successfully created';
 
-                        this.setState({
-                          isCreating: false,
+                          toast(
+                            <Notification
+                              theme={ 'success' }
+                              message={ message }
+                            />,
+                          );
+
+                          this.setState({
+                            isCreating: false,
+                          });
+
+                          this.props.onSaveButtonClick && this.props.onSaveButtonClick();
+                        }).catch((error) => {
+                          if (error) {
+                            const errorMessage = error.graphQLErrors[0].message;
+
+                            if (errorMessage) {
+                              toast(
+                                <Notification
+                                  theme={ 'error' }
+                                  message={ 'Something went wrong. Please, try again later.' }
+                                  errorMessage={ errorMessage }
+                                />,
+                              );
+
+                              throw new Error(errorMessage);
+                            }
+                          }
                         });
                       } }
                     />

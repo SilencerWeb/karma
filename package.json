@@ -2,6 +2,7 @@
   "name": "karma",
   "version": "0.1.0",
   "dependencies": {
+    "animate.css": "^3.6.1",
     "apollo-cache-inmemory": "^1.2.5",
     "apollo-client": "^2.3.5",
     "apollo-link": "^1.2.2",

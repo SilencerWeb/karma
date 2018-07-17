@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import styled, { css, injectGlobal } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
-import { ToastContainer, toast, Slide } from 'react-toastify';
+import { ToastContainer, toast, cssTransition } from 'react-toastify';
 
 import { client } from 'client';
 
@@ -30,7 +30,9 @@ import { Routes } from 'routes';
 import { AUTH_TOKEN } from './constants';
 
 import normalize from 'normalize.css/normalize.css';
-import reactToastify from 'react-toastify/dist/ReactToastify.css';
+import reactToastify from 'react-toastify/dist/ReactToastify.min.css';
+// eslint-disable-next-line import/no-unassigned-import
+import 'animate.css/animate.min.css';
 
 
 injectGlobal`${normalize} ${reactToastify} ${globalStyles}`;
@@ -235,8 +237,14 @@ class App extends React.Component {
             }
 
             <ToastContainer
+              autoClose={ 3000 }
               closeButton={ false }
-              transition={ Slide }
+              transition={
+                cssTransition({
+                  enter: 'fadeInRight',
+                  exit: 'fadeOutRight',
+                })
+              }
               hideProgressBar={ true }
               newestOnTop={ true }
               draggablePercent={ 40 }

@@ -90,6 +90,7 @@ export const DELETE_ACTION = gql`
       id: $id,
     ) {
       id
+      title
     }
   }
 `;

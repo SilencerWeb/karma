@@ -699,7 +699,7 @@ export class ActionCardComponent extends React.Component {
             return {
               ...prevState,
               actionForUpdate: action,
-              isActionPersonConfirmationOpen: true,
+              isUpdateActionConfirmationOpen: true,
             };
           } else {
             return {
@@ -708,11 +708,15 @@ export class ActionCardComponent extends React.Component {
             };
           }
         } else {
-          this.props.onSaveButtonClick(action);
+          this.props.onSaveButtonClick(action).catch((error) => {
+            if (error) {
+              this.setState({ isLoading: false });
+            }
+          });
 
           return {
             ...prevState,
-            isCreating: false,
+            isLoading: true,
           };
         }
       }
@@ -1136,6 +1140,7 @@ export class ActionCardComponent extends React.Component {
                   </Button>
                   <Button
                     theme={ executors && executors === 'left' ? 'primary' : 'secondary' }
+                    loading={ this.state.isLoading }
                     onClick={ this.handleSaveButtonClick }
                   >
                     Save
@@ -1191,19 +1196,19 @@ export class ActionCardComponent extends React.Component {
         }
 
         {
-          this.state.isActionPersonConfirmationOpen &&
+          this.state.isUpdateActionConfirmationOpen &&
           <Modal isOpen={ true }>
             <UpdateActionConfirmation
               action={ this.state.actionForUpdate }
               onRejectButtonClick={ () => {
                 this.setState({
-                  isActionPersonConfirmationOpen: false,
+                  isUpdateActionConfirmationOpen: false,
                 });
               } }
               onSuccess={ () => {
                 this.setState({
                   isEditing: false,
-                  isActionPersonConfirmationOpen: false,
+                  isUpdateActionConfirmationOpen: false,
                   actionForUpdate: null,
                 });
               } }

@@ -64,6 +64,7 @@ export const DELETE_PERSON = gql`
       id: $id,
     ) {
       id
+      name
     }
   }
 `;
