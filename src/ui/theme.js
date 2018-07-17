@@ -106,4 +106,26 @@ export const globalStyles = css`
     margin-bottom: auto;
     outline: none;
   }
+  
+  .Toastify .Toastify__toast-container {
+    width: 38rem;
+    color: inherit;
+    padding: 0;
+    
+    &--top-right {
+      top: 1.2rem;
+      right: 1.2rem;
+    }
+  }
+  
+  .Toastify .Toastify__toast {
+  	min-height: initial;
+    color: inherit;
+    border-radius: 0.8rem;
+    box-shadow: 0 0.6rem 1rem 0 rgba(176, 190, 197, 0.24), 0 0.1rem 0.3rem 0 rgba(176, 190, 197, 0.32);
+    padding-top: 1.2rem;
+    padding-right: 1.2rem;
+    padding-bottom: 1.2rem;
+    padding-left: 1.2rem;
+  }
 `;

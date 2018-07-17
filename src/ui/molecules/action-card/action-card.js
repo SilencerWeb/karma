@@ -842,7 +842,7 @@ export class ActionCardComponent extends React.Component {
       });
 
       rightSelectOptions = persons.filter((person) => {
-        return !person.isSelected && person.side !== 'left';
+        return !person.isSelected && person.side !== 'left' && person.id !== this.props.activeMemberId;
       }).map((person) => {
         return (
           <option value={ person.id } key={ person.id }>
@@ -867,6 +867,8 @@ export class ActionCardComponent extends React.Component {
         return member.side === 'right';
       });
     }
+
+    const isExecutorsButtonHoverable = isCreatingOrEditing && rightSideMembers.length;
 
     return (
       <Wrapper className={ this.props.className }>
@@ -1031,10 +1033,10 @@ export class ActionCardComponent extends React.Component {
                   type={ 'icon' }
                   theme={ executors === 'left' ? 'primary' : 'secondary' }
                   iconRotation={ executors === 'left' ? 180 : 0 }
-                  hoverable={ isCreatingOrEditing }
-                  withoutRipple={ !isCreatingOrEditing }
-                  invisible={ !rightSideMembers }
-                  onClick={ isCreatingOrEditing ? this.handleExecutorsButtonClick : null }
+                  hoverable={ isExecutorsButtonHoverable }
+                  withoutRipple={ isExecutorsButtonHoverable || isCreatingOrEditing }
+                  invisible={ (isCreatingOrEditing && !rightSelectOptions.length) || (!isCreatingOrEditing && !rightSideMembers.length) }
+                  onClick={ isExecutorsButtonHoverable ? this.handleExecutorsButtonClick : null }
                 >
                   <Icon icon={ longLeftArrow }/>
                 </ExecutorsButton>

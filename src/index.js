@@ -3,15 +3,11 @@ import * as ReactDOM from 'react-dom';
 import styled, { css, injectGlobal } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from 'react-apollo';
+import { ToastContainer, toast, Slide } from 'react-toastify';
 
 import { client } from 'client';
 
-import { Overlay } from 'ui/atoms';
-
 import {
-  Modal,
-  ContactForm,
-
   GetUserQuery,
   GetPersonsQuery,
   GetActionsQuery,
@@ -23,24 +19,21 @@ import {
   CreateActionSubscription,
   UpdateActionSubscription,
   DeleteActionSubscription,
+
+  Notification,
 } from 'ui/molecules';
 
-import {
-  LogoutConfirmation,
-  DeleteActionConfirmation
-  ,
-} from 'ui/organisms/';
-
-import { globalStyles, transition } from 'ui/theme';
+import { globalStyles } from 'ui/theme';
 
 import { Routes } from 'routes';
 
 import { AUTH_TOKEN } from './constants';
 
 import normalize from 'normalize.css/normalize.css';
+import reactToastify from 'react-toastify/dist/ReactToastify.css';
 
 
-injectGlobal`${normalize} ${globalStyles}`;
+injectGlobal`${normalize} ${reactToastify} ${globalStyles}`;
 
 
 const AppContext = React.createContext();
@@ -62,8 +55,6 @@ class App extends React.Component {
     actions: [],
     deletedActionsIds: [],
     didGetActionsQueryMount: false,
-
-    visibleModal: '',
   };
 
   login = (user) => {
@@ -75,19 +66,42 @@ class App extends React.Component {
         name: user.name,
         nickname: user.nickname,
       },
+    }, () => {
+      toast(
+        <Notification
+          theme={ 'success' }
+          message={ `Welcome, ${user.name ? user.name : user.nickname}` }
+        />,
+      );
     });
   };
 
   logout = () => {
+    const user = { ...this.state.user };
+
     this.setState({
       isLoggedIn: false,
-      persons: [],
-      didGetUserQueryMount: false,
-      didGetPersonsQueryMount: false,
-      didGetActionsQueryMount: false,
-    });
 
-    client.cache.reset();
+      user: null,
+      didGetUserQueryMount: false,
+
+      persons: [],
+      deletedPersonsIds: [],
+      didGetPersonsQueryMount: false,
+
+      actions: [],
+      deletedActionsIds: [],
+      didGetActionsQueryMount: false,
+    }, () => {
+      client.cache.reset();
+
+      toast(
+        <Notification
+          theme={ 'success' }
+          message={ `See ya, ${user.name ? user.name : user.nickname}` }
+        />,
+      );
+    });
   };
 
 
@@ -219,6 +233,14 @@ class App extends React.Component {
                 <DeleteActionSubscription/>
               </React.Fragment>
             }
+
+            <ToastContainer
+              closeButton={ false }
+              transition={ Slide }
+              hideProgressBar={ true }
+              newestOnTop={ true }
+              draggablePercent={ 40 }
+            />
           </AppContext.Provider>
         </BrowserRouter>
       </ApolloProvider>

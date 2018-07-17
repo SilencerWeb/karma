@@ -49,6 +49,7 @@ export const ActionCardList = (props) => {
                       karma={ action.karma }
                       executors={ action.executors }
                       members={ members }
+                      activeMemberId={ props.activeMemberId }
                     />
                   </ActionCardWrapper>
                 );

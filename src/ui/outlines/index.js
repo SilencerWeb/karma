@@ -14,3 +14,6 @@ export { default as exit } from './exit.svg';
 export { default as attachmentClip } from './attachment-clip.svg';
 export { default as heart } from './heart.svg';
 export { default as upload } from './upload.svg';
+export { default as block } from './block.svg';
+export { default as checkInCircle } from './check-in-circle.svg';
+export { default as roundInfoButton } from './round-info-button.svg';

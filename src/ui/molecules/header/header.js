@@ -2,12 +2,13 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import {toast} from 'react-toastify'
 
 import { AppConsumer } from 'index';
 
 import { Logo, Button, RetinaImage, Container } from 'ui/atoms';
 
-import { Modal } from 'ui/molecules';
+import { Modal, Notification } from 'ui/molecules';
 
 import { LogoutConfirmation } from 'ui/organisms';
 

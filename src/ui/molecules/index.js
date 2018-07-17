@@ -21,3 +21,4 @@ export { DeleteActionSubscription } from './subscriptions/delete-action-subscrip
 export { Modal } from './modal/modal';
 export { ContactForm } from './contact-form/contact-form';
 export { ActionConfirmation } from './action-confirmation/action-confirmation';
+export { Notification } from './notification/notification';
